@@ -1,19 +1,21 @@
 import flet
 from flet import *
-from flet_route import Params,Basket
+from flet_route import Params, Basket
+
 
 class WelcomePage:
-    def __int__(self):
+    def __init__(self):
         pass
 
-    def view(self,page:Page, params:Params, basket:Basket):
+    def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
 
         page.title = "Call A Doctor"
-        page.window_width = 1000
-        page.window_height = 900
+        page.window_width = 380
+        page.window_height = 1000
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
+
         page.theme_mode = "light"
 
         page.fonts = {
@@ -23,7 +25,7 @@ class WelcomePage:
         return View(
             "/",
             controls=[
-                Container(padding=padding.symmetric(horizontal=20, vertical=100),
+                Container(padding=padding.only(top=100),
                           width=350,
                           height=700,
                           bgcolor="#D0DCEE",
@@ -45,7 +47,7 @@ class WelcomePage:
                                        color="#3386C5",
                                        text_align=TextAlign.CENTER),
 
-                                  Container(padding=padding.symmetric(vertical=50),
+                                  Container(padding=padding.only(top=50,bottom=30),
                                             content=Image(src="pic/welcomePageImage.png",
                                                           width=250,
                                                           height=250)),
@@ -60,7 +62,7 @@ class WelcomePage:
                                              style=ButtonStyle(bgcolor={"": "#3386C5"},
                                                                shape={"": RoundedRectangleBorder(radius=7)}
                                                                ),
-                                             on_click=lambda _:page.go(f"/login")
+                                             on_click=lambda _: page.go(f"/login")
                                              ),
 
                                   IconButton(content=Text("Sign Up",
@@ -73,9 +75,10 @@ class WelcomePage:
                                              style=ButtonStyle(bgcolor={"": "WHITE"},
                                                                shape={"": RoundedRectangleBorder(radius=7)}
                                                                ),
-                                             )
+                                             on_click=lambda _: page.go(f"/signUp")
+                                             ),
                               ]
                           )
-                )
+                          )
             ]
         )

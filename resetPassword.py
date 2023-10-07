@@ -32,7 +32,7 @@ def DeleteTable():
     db.commit()
 
 
-class SignUpPage:
+class ResetPasswordPage:
     def __init__(self):
         pass
 
@@ -53,7 +53,7 @@ class SignUpPage:
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Successful!", text_align=TextAlign.CENTER),
-            content=Text("You have created your account successfully. Log in to your account to enjoy our service now!",
+            content=Text("You have updated your password successfully!",
                          text_align=TextAlign.CENTER),
             actions=[TextButton("Done", on_click=lambda _: page.go(f"/"))],
             actions_alignment=MainAxisAlignment.CENTER
@@ -61,26 +61,8 @@ class SignUpPage:
 
         paddingBottom = Container(padding=padding.only(bottom=5))
 
-        fullName = TextField(
-            label="Enter Full Name",
-            label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
-        username = TextField(
-            label="Enter Username",
-            label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
         email = TextField(
             label="Enter Email",
-            label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
-        phoneNumber = TextField(
-            label="Enter Phone Number",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=14),
             height=50)
@@ -93,33 +75,31 @@ class SignUpPage:
                                   size=14),
             height=50)
 
-        userType = "patient"
-
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
             page.update()
 
-        def addToDatabase(e):
-            # DeleteTable()
-            # ConnectToTable()
-            # print(ReadTable())
-            try:
-                if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
-                    c = db.cursor()
-                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password, userType) '
-                              'VALUES (?, ?, ?, ?, ?, ?)',
-                              (fullName.value, username.value, email.value, phoneNumber.value, password.value, userType))
-                    db.commit()
-                    page.update()
-                    open_dlg()
-                    print("success")
-                    print(ReadTable())
-            except Exception as e:
-                print(e)
+        # def addToDatabase(e):
+        #     # DeleteTable()
+        #     # ConnectToTable()
+        #     # print(ReadTable())
+        #     try:
+        #         if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
+        #             c = db.cursor()
+        #             c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password, userType) '
+        #                       'VALUES (?, ?, ?, ?, ?, ?)',
+        #                       (fullName.value, username.value, email.value, phoneNumber.value, password.value, userType))
+        #             db.commit()
+        #             page.update()
+        #             open_dlg()
+        #             print("success")
+        #             print(ReadTable())
+        #     except Exception as e:
+        #         print(e)
 
         return View(
-            "/signUp",
+            "/resetPassword",
             controls=[
                 Container(padding=padding.only(left=20, right=20, top=20),
                           width=350,
@@ -136,17 +116,17 @@ class SignUpPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _: page.go(f"/")),
+                                            on_click=lambda _: page.go(f"/login")),
 
-                                  Container(padding=padding.only(top=20, bottom=20),
+                                  Container(padding=padding.only(top=120, bottom=20),
                                             content=Row(
-                                                alignment=MainAxisAlignment.START,
+                                                alignment=MainAxisAlignment.CENTER,
                                                 controls=[
                                                     Image(src="pic/logo.png",
                                                           width=80,
                                                           height=80),
 
-                                                    Text(value="Create an account",
+                                                    Text(value="Reset Password",
                                                          size=18,
                                                          color="#3386C5",
                                                          font_family="RobotoSlab",
@@ -156,23 +136,14 @@ class SignUpPage:
 
                                             ),
 
-                                  fullName,
-                                  paddingBottom,
-
-                                  username,
-                                  paddingBottom,
-
                                   email,
-                                  paddingBottom,
-
-                                  phoneNumber,
                                   paddingBottom,
 
                                   password,
                                   paddingBottom,
 
                                   Container(padding=padding.only(top=30),
-                                            content=IconButton(content=Text("Sign Up",
+                                            content=IconButton(content=Text("Update Password",
                                                                             size=16,
                                                                             font_family="RobotoSlab",
                                                                             color="WHITE",
@@ -182,8 +153,7 @@ class SignUpPage:
                                                                style=ButtonStyle(bgcolor={"": "#3386C5"},
                                                                                  shape={"": RoundedRectangleBorder(
                                                                                      radius=7)}
-                                                                                 ),
-                                                               on_click=addToDatabase)
+                                                                                 ))
                                             )
 
                               ]

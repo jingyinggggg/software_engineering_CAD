@@ -1,12 +1,13 @@
 import flet
 from flet import *
-from flet_route import Params,Basket
+from flet_route import Params, Basket
+
 
 class LoginPage:
-    def __int__(self):
+    def __init__(self):
         pass
 
-    def view(self,page:Page, params:Params, basket:Basket):
+    def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
 
         page.title = "Call A Doctor"
@@ -38,7 +39,7 @@ class LoginPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _:page.go(f"/")),
+                                            on_click=lambda _: page.go(f"/")),
 
                                   Container(padding=padding.only(top=70, bottom=30),
                                             content=Image(src="pic/logo.png",
@@ -59,56 +60,29 @@ class LoginPage:
 
                                   Container(padding=padding.only(top=30),
                                             content=IconButton(content=Text("Login",
-                                                               size=16,
-                                                               font_family="RobotoSlab",
-                                                               color="WHITE",
-                                                               text_align=TextAlign.CENTER),
+                                                                            size=16,
+                                                                            font_family="RobotoSlab",
+                                                                            color="WHITE",
+                                                                            text_align=TextAlign.CENTER),
                                                                width=300,
                                                                height=45,
                                                                style=ButtonStyle(bgcolor={"": "#3386C5"},
-                                                                                 shape={"": RoundedRectangleBorder(radius=7)}
+                                                                                 shape={"": RoundedRectangleBorder(
+                                                                                     radius=7)}
                                                                                  ),
                                                                on_click=lambda _: page.go(f"/homepage")
                                                                )),
-                                  Text(
-                                      spans=[
-                                          TextSpan(
-                                              "forget password",
-                                              TextStyle(decoration=TextDecoration.UNDERLINE,
-                                                        decoration_thickness=1.5,
-                                                        decoration_style=TextDecorationStyle.SOLID,
-                                                        size=14,
-                                                        font_family="RobotoSlab",
-                                                        weight=FontWeight.W_500),
 
-                                          )
-                                      ]
-                                  ),
-
-                                  Container(padding=padding.only(top=120),
-                                            content=Row(
-                                                alignment=MainAxisAlignment.CENTER,
-                                                controls=[
-                                                    Text("Don't have an account?",
-                                                         weight=FontWeight.W_500,
-                                                         font_family="RobotoSlab",
-                                                         color="#3386C5",
-                                                         text_align=TextAlign.CENTER),
-
-                                                    TextButton(
-                                                        content=Text("Sign Up",
-                                                                     weight=FontWeight.W_500,
-                                                                     font_family="RobotoSlab",
-                                                                     color=colors.BLACK,
-                                                                     text_align=TextAlign.CENTER),
-                                                        on_click=lambda _:page.go("/signUp")
-                                                    )
-                                                ]
-                                            )
-                                  )
-
+                                  TextButton(content=Text("forget password?",
+                                                          size=14,
+                                                          italic=True,
+                                                          font_family="RobotoSlab",
+                                                          color=colors.BLACK,
+                                                          text_align=TextAlign.CENTER),
+                                             on_click=lambda _: page.go("/resetPassword")
+                                             ),
                               ]
                           )
-                )
+                          )
             ]
         )
