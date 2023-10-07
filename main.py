@@ -3,6 +3,7 @@ from flet import *
 from flet_route import Routing,path
 from welcome import WelcomePage
 from login import LoginPage
+from signUp import SignUpPage
 import sqlite3
 
 
@@ -19,6 +20,11 @@ def main(mainPage: Page):
             url="/login",
             clear=True,
             view=LoginPage().view
+        ),
+        path(
+            url="/signUp",
+            clear=True,
+            view=SignUpPage().view
         )
 
     ]

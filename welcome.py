@@ -10,7 +10,7 @@ class WelcomePage:
         # print(params)
 
         page.title = "Call A Doctor"
-        page.window_width = 380
+        page.window_width = 1000
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
