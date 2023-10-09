@@ -23,7 +23,7 @@ class WelcomePage:
         }
 
         return View(
-            "/",
+            "/welcomeUser",
             controls=[
                 Container(padding=padding.only(top=100),
                           width=350,

@@ -39,7 +39,7 @@ class LoginPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _: page.go(f"/")),
+                                            on_click=lambda _: page.go(f"/welcomeUser")),
 
                                   Container(padding=padding.only(top=70, bottom=30),
                                             content=Image(src="pic/logo.png",

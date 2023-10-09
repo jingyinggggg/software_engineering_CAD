@@ -46,7 +46,7 @@ class ResetPasswordPage:
             title=Text("Successful!", text_align=TextAlign.CENTER),
             content=Text("You have updated your password successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/"))],
+            actions=[TextButton("Done", on_click=lambda _: page.go(f"/welcomeUser"))],
             actions_alignment=MainAxisAlignment.CENTER
         )
 
