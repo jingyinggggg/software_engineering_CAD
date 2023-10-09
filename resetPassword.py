@@ -6,32 +6,6 @@ import sqlite3
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
-def CreateTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS users(
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 fullName TEXT NOT NULL,
-                 username TEXT NOT NULL,
-                 email TEXT NOT NULL,
-                 phoneNumber TEXT NOT NULL,
-                 password TEXT NOT NULL,
-                 userType TEXT NOT NULL)""")
-    db.commit()
-
-
-def ReadTable():
-    c = db.cursor()
-    c.execute('SELECT id,fullName,username,email,phoneNumber,password,userType FROM users ORDER BY id ASC')
-    record = c.fetchall()
-    return record
-
-
-def DeleteTable():
-    c = db.cursor()
-    c.execute('DELETE FROM users ')
-    db.commit()
-
-
 class ResetPasswordPage:
     def __init__(self):
         pass
@@ -50,15 +24,6 @@ class ResetPasswordPage:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        alert_dialog = AlertDialog(
-            modal=True,
-            title=Text("Successful!", text_align=TextAlign.CENTER),
-            content=Text("You have updated your password successfully!",
-                         text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/"))],
-            actions_alignment=MainAxisAlignment.CENTER
-        )
-
         paddingBottom = Container(padding=padding.only(bottom=5))
 
         email = TextField(
@@ -75,28 +40,30 @@ class ResetPasswordPage:
                                   size=14),
             height=50)
 
+
+        alert_dialog = AlertDialog(
+            modal=True,
+            title=Text("Successful!", text_align=TextAlign.CENTER),
+            content=Text("You have updated your password successfully!",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: page.go(f"/"))],
+            actions_alignment=MainAxisAlignment.CENTER
+        )
+
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
             page.update()
 
-        # def addToDatabase(e):
-        #     # DeleteTable()
-        #     # ConnectToTable()
-        #     # print(ReadTable())
-        #     try:
-        #         if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
-        #             c = db.cursor()
-        #             c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password, userType) '
-        #                       'VALUES (?, ?, ?, ?, ?, ?)',
-        #                       (fullName.value, username.value, email.value, phoneNumber.value, password.value, userType))
-        #             db.commit()
-        #             page.update()
-        #             open_dlg()
-        #             print("success")
-        #             print(ReadTable())
-        #     except Exception as e:
-        #         print(e)
+        def UpdateTable(e):
+            try:
+                c = db.cursor()
+                c.execute('UPDATE users SET password = ? WHERE email = ?', (password.value, email.value))
+                db.commit()
+                page.update()
+                open_dlg()
+            except Exception as e:
+                print(e)
 
         return View(
             "/resetPassword",
@@ -152,8 +119,8 @@ class ResetPasswordPage:
                                                                height=50,
                                                                style=ButtonStyle(bgcolor={"": "#3386C5"},
                                                                                  shape={"": RoundedRectangleBorder(
-                                                                                     radius=7)}
-                                                                                 ))
+                                                                                     radius=7)}),
+                                                               on_click=UpdateTable)
                                             )
 
                               ]

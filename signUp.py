@@ -21,7 +21,8 @@ def CreateTable():
 
 def ReadTable():
     c = db.cursor()
-    c.execute('SELECT id,fullName,username,email,phoneNumber,password,userType FROM users ORDER BY id ASC')
+    c.execute('SELECT * FROM users ORDER BY id ASC')
+    # c.execute('SELECT id,fullName,username,email,phoneNumber,password,userType FROM users ORDER BY id ASC')
     record = c.fetchall()
     return record
 
@@ -29,6 +30,12 @@ def ReadTable():
 def DeleteTable():
     c = db.cursor()
     c.execute('DELETE FROM users ')
+    db.commit()
+
+
+def DropTable():
+    c = db.cursor()
+    c.execute('DROP TABLE users')
     db.commit()
 
 
@@ -101,8 +108,9 @@ class SignUpPage:
             page.update()
 
         def addToDatabase(e):
+            # DropTable()
             # DeleteTable()
-            # ConnectToTable()
+            # CreateTable()
             # print(ReadTable())
             try:
                 if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
