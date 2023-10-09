@@ -2,9 +2,14 @@ import flet
 from flet import *
 from flet_route import Routing,path
 from welcome import WelcomePage
+from login import LoginPage
+from signUp import SignUpPage
+from homepage import Homepage
+from resetPassword import ResetPasswordPage
 from doctorLogin import DoctorLoginPage
 from doctorResetPassword import DoctorResetPassword
 from doctorHomepage import DoctorHomepage
+
 
 
 def main(mainPage: Page):
@@ -15,6 +20,26 @@ def main(mainPage: Page):
             url="/",
             clear=True,
             view=WelcomePage().view
+        ),
+        path(
+            url="/loginUser",
+            clear=True,
+            view=LoginPage().view
+        ),
+        path(
+            url="/signUp",
+            clear=True,
+            view=SignUpPage().view
+        ),
+        path(
+            url="/homepage",
+            clear=True,
+            view=Homepage().view
+        ),
+        path(
+            url="/resetPassword",
+            clear=True,
+            view=ResetPasswordPage().view
         ),
         path(
             url="/login",
@@ -36,6 +61,7 @@ def main(mainPage: Page):
 
     Routing(page=mainPage,app_routes=app_routes)
     mainPage.go(mainPage.route)
+
 
 
 if __name__ == "__main__":
