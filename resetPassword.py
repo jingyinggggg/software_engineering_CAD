@@ -46,7 +46,7 @@ class ResetPasswordPage:
             title=Text("Successful!", text_align=TextAlign.CENTER),
             content=Text("You have updated your password successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/welcomeUser"))],
+            actions=[TextButton("Done", on_click=lambda _: page.go(f"/loginUser"))],
             actions_alignment=MainAxisAlignment.CENTER
         )
 
@@ -83,7 +83,7 @@ class ResetPasswordPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _: page.go(f"/login")),
+                                            on_click=lambda _: page.go(f"/loginUser")),
 
                                   Container(padding=padding.only(top=120, bottom=20),
                                             content=Row(
