@@ -1,11 +1,12 @@
 import flet
 from flet import *
 from flet_route import Routing,path
-from welcomeUser import WelcomePage
 from login import LoginPage
 from signUp import SignUpPage
 from homepage import Homepage
 from resetPassword import ResetPasswordPage
+from welcome import WelcomePage
+from doctorHomepage import DoctorHomepage
 
 
 
@@ -14,7 +15,7 @@ def main(mainPage: Page):
     mainPage.theme_mode = "light"
     app_routes = [
         path(
-            url="/welcomeUser",
+            url="/",
             clear=True,
             view=WelcomePage().view
         ),
@@ -37,6 +38,11 @@ def main(mainPage: Page):
             url="/resetPassword",
             clear=True,
             view=ResetPasswordPage().view
+        ),
+        path(
+            url="/login/homepage",
+            clear=True,
+            view=DoctorHomepage().view
         )
 
     ]
