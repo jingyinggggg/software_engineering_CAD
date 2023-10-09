@@ -4,9 +4,9 @@ from flet_route import Routing,path
 from welcome import WelcomePage
 from login import LoginPage
 from signUp import SignUpPage
-from homePage import Homepage
+from homepage import Homepage
 from resetPassword import ResetPasswordPage
-import sqlite3
+
 
 
 def main(mainPage: Page):
@@ -19,7 +19,7 @@ def main(mainPage: Page):
             view=WelcomePage().view
         ),
         path(
-            url="/login",
+            url="/loginUser",
             clear=True,
             view=LoginPage().view
         ),

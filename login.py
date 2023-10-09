@@ -22,7 +22,7 @@ class LoginPage:
         }
 
         return View(
-            "/login",
+            "/loginUser",
             controls=[
                 Container(padding=padding.symmetric(horizontal=20, vertical=20),
                           width=350,
