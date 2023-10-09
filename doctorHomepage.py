@@ -88,16 +88,20 @@ class DoctorHomepage:
                                             ),
                                         ),
                                         
-                                        # Row(
-                                        #     vertical_alignment="top_right",  # Adjust this to your needs
-                                        #     controls=[
-                                        #         Image(
-                                        #             src="pic/doctor.png",
-                                        #             width=300,
-                                        #             height=300
-                                        #         )
-                                        #     ]
-                                        # ),
+                                        Container(bgcolor="WHITE",
+                                                  padding=padding.only(left=10, top=10),
+                                                  border_radius=40,
+                                                  content=Column(
+                                                      controls=[Text("Our Services",
+                                                                size=20,
+                                                                font_family="RobotoSlab",
+                                                                weight=FontWeight.W_600,
+                                                                color="BLACK")]
+                                                      
+                                                      
+                                                  )
+                                        )
+                                        
                                     ]
                                 )
                             )

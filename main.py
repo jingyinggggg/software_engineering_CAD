@@ -5,7 +5,6 @@ from welcome import WelcomePage
 from doctorLogin import DoctorLoginPage
 from doctorResetPassword import DoctorResetPassword
 from doctorHomepage import DoctorHomepage
-import sqlite3
 
 
 def main(mainPage: Page):
