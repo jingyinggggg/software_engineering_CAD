@@ -6,6 +6,9 @@ from login import LoginPage
 from signUp import SignUpPage
 from homepage import Homepage
 from resetPassword import ResetPasswordPage
+from doctorLogin import DoctorLoginPage
+from doctorResetPassword import DoctorResetPassword
+from doctorHomepage import DoctorHomepage
 
 
 
@@ -37,6 +40,21 @@ def main(mainPage: Page):
             url="/resetPassword",
             clear=True,
             view=ResetPasswordPage().view
+        ),
+        path(
+            url="/login",
+            clear=True,
+            view=DoctorLoginPage().view
+        ),
+        path(
+            url="/login/resetPassword",
+            clear=True,
+            view=DoctorResetPassword().view
+        ),
+        path(
+        url="/login/homepage",
+        clear=True,
+        view=DoctorHomepage().view
         )
 
     ]
