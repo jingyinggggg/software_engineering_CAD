@@ -18,7 +18,8 @@ class LoginPage:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
+        # page.theme_mode = "light"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -26,27 +27,36 @@ class LoginPage:
 
         email = TextField(label="Enter Email",
                           label_style=TextStyle(font_family="RobotoSlab",
-                                                size=14),
-                          height=50)
+                                                size=14,
+                                                color=colors.GREY_800),
+                          height=50,
+                          border_color=colors.BLACK,
+                          text_style=TextStyle(size=14,
+                                               color=colors.BLACK))
 
         password = TextField(label="Enter Password",
                              password=True,
                              can_reveal_password=True,
                              label_style=TextStyle(font_family="RobotoSlab",
-                                                   size=14),
-                             height=50)
+                                                   size=14,
+                                                   color=colors.GREY_800),
+                             height=50,
+                             border_color=colors.BLACK,
+                             text_style=TextStyle(size=14,
+                                                  color=colors.BLACK))
 
         def verifyUser(e):
             c = db.cursor()
-            c.execute("SELECT userType FROM users WHERE email = ? AND password = ?",(email.value, password.value))
+            c.execute("SELECT id,userType FROM users WHERE email = ? AND password = ?",(email.value, password.value))
             userType = c.fetchone()
 
-            print(userType[0])
+            # print(userType[0])
+            # print(userType[1])
 
-            if userType and userType[0] == "patient":
-                page.go("/homepage")
+            if userType and userType[1] == "patient":
+                page.go(f"/homepage/{userType[0]}")
 
-            elif userType and userType[0] == "doctor":
+            elif userType and userType[1] == "doctor":
                 page.go("/login/homepage")
 
         return View(
@@ -57,7 +67,7 @@ class LoginPage:
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          border=border.all(1, "black"),
+                          # border=border.all(1, "black"),
                           alignment=alignment.center,
                           # child control
                           content=Column(

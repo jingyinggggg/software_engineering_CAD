@@ -18,7 +18,8 @@ class ResetPasswordPage:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        # page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -29,17 +30,23 @@ class ResetPasswordPage:
         email = TextField(
             label="Enter Email",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
         password = TextField(
             label="Enter Password",
             password=True,
             can_reveal_password=True,
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         alert_dialog = AlertDialog(
             modal=True,
@@ -73,7 +80,7 @@ class ResetPasswordPage:
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          border=border.all(1, "black"),
+                          # border=border.all(1, "black"),
                           alignment=alignment.center,
                           # child control
                           content=Column(
