@@ -4,7 +4,38 @@ from flet_route import Params, Basket
 import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
+c = db.cursor()
 
+
+# def CreateTable():
+#     c = db.cursor()
+#     c.execute("""CREATE TABLE IF NOT EXISTS admin(
+#                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                  fullName TEXT NOT NULL,
+#                  username TEXT NOT NULL,
+#                  email TEXT NOT NULL,
+#                  phoneNumber TEXT NOT NULL,
+#                  password TEXT NOT NULL)""")
+#     db.commit()
+
+
+# def CreateTable():
+#     c = db.cursor()
+#     c.execute("""CREATE TABLE IF NOT EXISTS doctors(
+#                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                  fullName TEXT NOT NULL,
+#                  username TEXT NOT NULL,
+#                  email TEXT NOT NULL,
+#                  phoneNumber TEXT NOT NULL,
+#                  password TEXT NOT NULL,
+#                  experience INTEGER,
+#                  specialization TEXT,
+#                  description TEXT,
+#                  clinic TEXT,
+#                  workingStartTime TEXT,
+#                  workingEndTime TEXT,
+#                  workingDay TEXT)""")
+#     db.commit()
 
 def CreateTable():
     c = db.cursor()
@@ -15,9 +46,24 @@ def CreateTable():
                  email TEXT NOT NULL,
                  phoneNumber TEXT NOT NULL,
                  password TEXT NOT NULL,
-                 userType TEXT NOT NULL)""")
+                 dob TEXT,
+                 gender TEXT,
+                 address TEXT,
+                 emergencyContact TEXT)""")
     db.commit()
 
+
+#
+# def UpdateTable():
+#     c = db.cursor()
+#     c.execute("""ALTER TABLE users
+#                  ADD dob TEXT,
+#                  ADD gender TEXT,
+#                  ADD address TEXT,
+#                  ADD emergencyContact TEXT
+#                  """)
+#     db.commit()
+#
 
 def ReadTable():
     c = db.cursor()
@@ -121,8 +167,6 @@ class SignUpPage:
             text_style=TextStyle(size=14,
                                  color=colors.BLACK))
 
-        userType = "patient"
-
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
@@ -131,16 +175,15 @@ class SignUpPage:
         def addToDatabase(e):
             # DropTable()
             # DeleteTable()
-            # CreateTable()
+            CreateTable()
             # print(ReadTable())
             try:
                 if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
                     c = db.cursor()
-                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password, userType) '
-                              'VALUES (?, ?, ?, ?, ?, ?)',
+                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password) '
+                              'VALUES (?, ?, ?, ?, ?)',
                               (
-                                  fullName.value, username.value, email.value, phoneNumber.value, password.value,
-                                  userType))
+                                  fullName.value, username.value, email.value, phoneNumber.value, password.value))
                     db.commit()
                     page.update()
                     open_dlg()
@@ -148,6 +191,38 @@ class SignUpPage:
                     print(ReadTable())
             except Exception as e:
                 print(e)
+
+
+            # try:
+            #     if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
+            #         c = db.cursor()
+            #         c.execute('INSERT INTO admin (fullName, username, email, phoneNumber, password) '
+            #                   'VALUES (?, ?, ?, ?, ?)',
+            #                   (
+            #                       fullName.value, username.value, email.value, phoneNumber.value, password.value))
+            #         db.commit()
+            #         page.update()
+            #         open_dlg()
+            #         print("success")
+            #         print(ReadTable())
+            # except Exception as e:
+            #     print(e)
+
+            # try:
+            #     if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
+            #         c = db.cursor()
+            #         c.execute('INSERT INTO doctors (fullName, username, email, phoneNumber, password) '
+            #                   'VALUES (?, ?, ?, ?, ?)',
+            #                   (
+            #                       fullName.value, username.value, email.value, phoneNumber.value, password.value))
+            #         db.commit()
+            #         page.update()
+            #         open_dlg()
+            #         print("success")
+            #         print(ReadTable())
+            # except Exception as e:
+            #     print(e)
+
 
         return View(
             "/signUp",

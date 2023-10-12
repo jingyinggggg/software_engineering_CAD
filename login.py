@@ -45,19 +45,51 @@ class LoginPage:
                              text_style=TextStyle(size=14,
                                                   color=colors.BLACK))
 
+        alert_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed!", text_align=TextAlign.CENTER),
+            content=Text("Login failed! Please make sure that the email and password that you entered is correct...",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Try Again", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = False
+            page.update()
+
         def verifyUser(e):
             c = db.cursor()
-            c.execute("SELECT id,userType FROM users WHERE email = ? AND password = ?",(email.value, password.value))
-            userType = c.fetchone()
+            c.execute("SELECT id FROM users WHERE email = ? AND password = ?",(email.value, password.value))
+            user = c.fetchone()
 
-            # print(userType[0])
-            # print(userType[1])
+            if user:
+                page.go(f"/homepage/{user[0]}")
 
-            if userType and userType[1] == "patient":
-                page.go(f"/homepage/{userType[0]}")
+            elif email.value == "" or password.value == "":
+                open_dlg()
 
-            elif userType and userType[1] == "doctor":
-                page.go("/login/homepage")
+            else:
+                c.execute("SELECT id FROM doctors WHERE email = ? AND password = ?", (email.value, password.value))
+                doctor = c.fetchone()
+
+                if doctor is not None:
+                    page.go(f"/login/homepage")
+                else:
+                    c.execute("SELECT id FROM admin WHERE email = ? AND password = ?", (email.value, password.value))
+                    admin = c.fetchone()
+
+                    if admin is not None:
+                        page.go(f"/")
+                    else:
+                        open_dlg()
 
         return View(
             "/loginUser",
