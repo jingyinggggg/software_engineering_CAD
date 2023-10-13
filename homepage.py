@@ -47,7 +47,6 @@ class Homepage:
             phoneNumber = record[0][1]
 
             return username, phoneNumber
-            # return record
 
         username, phoneNumber = get_user_details()
 
@@ -340,7 +339,8 @@ class Homepage:
                                            icon_color="#858EA9"),
                                 IconButton(icon=icons.PERSON,
                                            icon_size=20,
-                                           icon_color="#858EA9")
+                                           icon_color="#858EA9",
+                                           on_click=lambda _:page.go(f"/profile/{user_id}"))
                             ]
                         )
                     )
