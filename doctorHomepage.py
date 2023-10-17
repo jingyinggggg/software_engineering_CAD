@@ -1,19 +1,39 @@
 from flet import *
 from flet_route import Params, Basket
+import sqlite3
+
+db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
 class DoctorHomepage:
+    def __init__(self):
+        pass
+
     def view(self, page: Page, params: Params, basket: Basket):
+        # user_id = int(params.user_id)
+
         page.title = "Call A Doctor"
         page.window_width = 380
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
+
+        # def get_doctor_details():
+        #     c = db.cursor()
+        #     c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        #     record = c.fetchall()
+        #
+        #     fullName = record[0][1]
+        #     username = record[0][2]
+        #
+        #     return fullName, username
+        # fullName, username = get_doctor_details()
+
         # phone container
         return View(
             "/login/homepage",
@@ -24,8 +44,8 @@ class DoctorHomepage:
                     height=700,
                     bgcolor="#FFFFFF",
                     border_radius=30,
-                    border=border.all(1, "black"),
                     alignment=alignment.center,
+
                     content=Column(
                         horizontal_alignment=CrossAxisAlignment.START,
                         controls=[
@@ -38,23 +58,26 @@ class DoctorHomepage:
                                 content=Column(
                                     controls=[
                                         Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                            controls=[Container(content=IconButton(icons.MENU,
-                                                                                   icon_color="WHITE",
-                                                                                   on_click=lambda _:page.go(f"/sideBar"))),
-                                                      Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
-                                                                               icon_color="WHITE",
-                                                                               on_click=lambda _:page.go(f"/notification"))])]),
+                                            controls=[
+                                                Container(
+                                                    content=IconButton(icons.MENU,
+                                                                       icon_color="WHITE",
+                                                                       on_click=lambda _: page.go(f"/sideBar"))),
+                                                Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
+                                                                         icon_color="WHITE",
+                                                                         on_click=lambda _: page.go(
+                                                                             f"/notification"))])]),
 
                                         Text(value="Welcome !",
                                              size=30,
                                              font_family="RobotoSlab",
-                                             weight=FontWeight.W_500,
+                                             weight=FontWeight.BOLD,
                                              color="WHITE"),
 
-                                        Text(value="Dr. Shariman",
+                                        Text(value="Dr.",
                                              size=30,
                                              font_family="RobotoSlab",
-                                             weight=FontWeight.W_500,
+                                             weight=FontWeight.BOLD,
                                              color="WHITE"),
 
                                         Container(
@@ -91,6 +114,7 @@ class DoctorHomepage:
                                     ])),
                             Container(
                                 alignment=alignment.center,
+                                margin=margin.only(top=10),
                                 content=Row(
                                     alignment=MainAxisAlignment.SPACE_EVENLY,
                                     controls=[
@@ -145,14 +169,17 @@ class DoctorHomepage:
                                                   controls=[Container(
                                                       content=Text("History",
                                                                    font_family="RobotoSlab",
-                                                                   size=14),
+                                                                   size=14,
+                                                                   color="BLACK"),
                                                   ),
                                                       Text("Schedule",
                                                            font_family="RobotoSlab",
-                                                           size=14),
+                                                           size=14,
+                                                           color="BLACK"),
                                                       Text("Chat",
                                                            font_family="RobotoSlab",
-                                                           size=14)])),
+                                                           size=14,
+                                                           color="BLACK")])),
 
                             Container(alignment=alignment.center,
                                       padding=padding.only(left=10, top=30, right=10),
@@ -160,16 +187,16 @@ class DoctorHomepage:
                                                   controls=[Container(
                                                       content=Text("Appointment",
                                                                    font_family="RobotoSlab",
+                                                                   color="BLACK",
                                                                    size=16,
                                                                    weight=FontWeight.W_500)),
-
                                                       Text(disabled=False,
                                                            spans=[TextSpan(
                                                                "see more",
                                                                TextStyle(
                                                                    decoration=TextDecoration.UNDERLINE,
                                                                    color="#3386C5"),
-                                                               on_click=lambda _: page.go(f"/viewAppointment"))])
+                                                               on_click=lambda _: page.go(f"/schedule"))])
 
                                                   ])),
 
@@ -180,7 +207,6 @@ class DoctorHomepage:
                                       border=border.all(color="BLACK"),
                                       width=320,
                                       height=180,
-                                      # BoxShadow(spread_radius=1),
                                       content=Column(controls=
                                                      [Row(alignment=MainAxisAlignment.START,
                                                           controls=[Container(
@@ -194,30 +220,40 @@ class DoctorHomepage:
                                                           ),
                                                       Container(content=Row(alignment=alignment.center,
                                                                             controls=[Container(
-                                                                                Icon(icons.WATCH_LATER_OUTLINED), ),
+                                                                                Icon(icons.WATCH_LATER_OUTLINED,
+                                                                                     color="BLACK"), ),
                                                                                 Text("Tue Oct 02 | 09:00AM - 10.00 AM",
                                                                                      weight=FontWeight.W_500,
-                                                                                     size=12)])),
+                                                                                     size=12,
+                                                                                     color="BLACK")])),
 
-                                                      Container(margin=margin.only(top=-10),
-                                                                content=Row(alignment=alignment.center,
-                                                                            controls=[Container(
-                                                                                Image(src="pic/patient.png",
-                                                                                      border_radius=20,
-                                                                                      width=65,
-                                                                                      height=65), ),
-                                                                                Text("Melody Wong Yi Yi",
-                                                                                     weight=FontWeight.W_500,
-                                                                                     size=14),
-                                                                            ])),
-                                                      Container(margin=margin.only(left=200),
+                                                      Container(
+                                                          content=Row(alignment=alignment.center,
+                                                                      controls=[Container(
+                                                                          Image(src="pic/patient.png",
+                                                                                border_radius=20,
+                                                                                width=65,
+                                                                                height=65), ),
+                                                                          Text("Melody Wong Yi Yi",
+                                                                               weight=FontWeight.W_500,
+                                                                               size=14,
+                                                                               color="BLACK"),
+                                                                      ])),
+                                                      Container(margin=margin.only(left=75, top=-35),
+                                                                content=Column(alignment=alignment.center,
+                                                                               controls=[Container(
+                                                                                   Text("Consultation",
+                                                                                        color="#979797"))])),
+
+                                                      Container(margin=margin.only(left=200, top=-20),
                                                                 content=Column(alignment=alignment.center,
                                                                                controls=[Container(
                                                                                    FilledButton("more...",
-                                                                                                on_click=lambda
-                                                                                                    _: page.go(
-                                                                                                    f"/login/viewAppointmentDetail"))
+                                                                                                on_click=lambda _: page.go(f"/appointmentDetail"))
 
                                                                                )]))
 
-                                                      ]))]))])
+                                                      ])),
+
+                            # ResponsiveRow([Container(Text())])
+                        ]))])

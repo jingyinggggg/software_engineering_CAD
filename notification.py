@@ -13,6 +13,7 @@ class Notification:
         pass
 
     def view(self, page: Page, params: Params, basket: Basket):
+        # user_id = int(params.user_id)
         page.title = "Call A Doctor"
         page.window_width = 380
         page.window_height = 900
@@ -23,6 +24,16 @@ class Notification:
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
+        #
+        # def get_doctor_details():
+        #     c = db.cursor()
+        #     c.execute("SELECT * FROM users WHERE id = ?", (user_id))
+        #     record = c.fetchall()
+        #
+        #     username = record[0][0]
+        #
+        #     return username
+        # username = get_doctor_details()
 
         return View(
             "/notification",
@@ -39,11 +50,13 @@ class Notification:
                             Row(alignment=MainAxisAlignment.CENTER,
                                 controls=[
                                     Container(
+                                        padding=padding.only(right=120),
                                         width=350,
                                         height=80,
                                         alignment=alignment.center,
                                         bgcolor="#3386C5",
-                                        content=Row(controls=[IconButton(icons.ARROW_BACK_ROUNDED,
+                                        content=Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                    controls=[IconButton(icons.ARROW_BACK_ROUNDED,
                                                                          icon_size=30,
                                                                          icon_color="WHITE",
                                                                          on_click=lambda _: page.go(
@@ -76,7 +89,7 @@ class Notification:
                                                      size=14,
                                                      font_family="RobotoSlab",
                                                      weight=FontWeight.BOLD),
-                                                Text("Hi, Dr. Shariman! Don't forget your appointment with patient "
+                                                Text("Hi, Dr. {userName}! Don't forget your appointment with patient "
                                                      "(Wong Yi Yi) on 9 am!",
                                                      size=12,
                                                      color="BLACK",
