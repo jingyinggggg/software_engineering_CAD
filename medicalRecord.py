@@ -32,8 +32,8 @@ class MedicalRecordPage:
         def get_user_medical_record():
             c = db.cursor()
             c.execute(
-                "SELECT id, allergies, pastMedicalCondition, currentMedicalCondition FROM medicalRecordHistory WHERE "
-                "id = ?",(user_id,))
+                "SELECT id, allergies, pastMedicalCondition, currentMedicalCondition, date FROM medicalRecordHistory "
+                "WHERE id = ?", (user_id,))
             record = c.fetchall()
             return record
 
@@ -44,38 +44,73 @@ class MedicalRecordPage:
                 record_containers = []
                 for record in records:
                     record_container = Container(
-                        padding=padding.only(left=20, right=20),
+                        margin=margin.only(left=15, right=15, top=20, bottom=20),
+                        border_radius=10,
+                        border=border.all(1, colors.BLACK),
+                        padding=padding.only(left=20, right=20, top=20, bottom=20),
                         content=Row(
                             controls=[
-                                Image(
-                                    src="pic/medicalRecord.png",
-                                    color=lightBlue,
-                                    width=30,
-                                    height=30
+                                Container(
+                                    padding=padding.only(top=-10),
+                                    content=Column(
+                                        horizontal_alignment="center",
+                                        controls=[
+                                            Image(
+                                                src="pic/medicalRecord.png",
+                                                color=grey,
+                                                width=40,
+                                                height=40,
+                                            ),
+                                            Text(
+                                                value=f"{record[4]}",
+                                                color=colors.BLACK,
+                                                size=10,
+                                                weight=FontWeight.W_700
+                                            )
+                                        ]
+                                    )
                                 ),
 
                                 Column(
                                     controls=[
                                         Container(
-                                            padding=padding.only(left=5),
                                             content=Text(
                                                 value=f"Past Medical Condition: {record[2]}",
                                                 color=colors.BLACK,
-                                                size=14
+                                                size=12,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500
                                             )
                                         ),
 
                                         Text(
                                             value=f"Current Medical Condition: {record[3]}",
                                             color=colors.BLACK,
-                                            size=14
+                                            size=12,
+                                            font_family="RobotoSlab",
+                                            weight=FontWeight.W_500
                                         ),
 
                                         Text(
                                             value=f"Allergies: {record[1]}",
                                             color=colors.BLACK,
-                                            size=14
-                                        )
+                                            size=12,
+                                            font_family="RobotoSlab",
+                                            weight=FontWeight.W_500
+                                        ),
+
+                                        Container(padding=padding.only(left=170, top=-20, bottom=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          italic=True,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=lambda _: page.go(f"/viewMedicalRecord/{record[0]}")
+                                                  )
+
+                                                  )
                                     ]
                                 )
                             ]

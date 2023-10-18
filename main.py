@@ -10,6 +10,7 @@ from doctorHomepage import DoctorHomepage
 from profile import ProfilePage
 from medicalRecord import MedicalRecordPage
 from addMedicalRecord import AddMedicalRecordPage
+from viewMedicalRecord import ViewMedicalRecordPage
 
 
 def main(mainPage: Page):
@@ -23,6 +24,7 @@ def main(mainPage: Page):
         path(url="/profile/:user_id", clear=False, view=ProfilePage().view),
         path(url="/medicalRecord/:user_id", clear=False, view=MedicalRecordPage().view),
         path(url="/addMedicalRecord/:user_id", clear=False, view=AddMedicalRecordPage().view),
+        path(url="/viewMedicalRecord/:medicalRecord_id", clear=False, view=ViewMedicalRecordPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
 
     ]

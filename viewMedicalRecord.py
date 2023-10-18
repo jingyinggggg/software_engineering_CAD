@@ -2,42 +2,17 @@ import flet
 from flet import *
 from flet_route import Params, Basket
 import sqlite3
-import datetime
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
-def CreateTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS medicalRecordHistory(
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 patientName TEXT NOT NULL,
-                 patientUserID INTEGER NOT NULL,
-                 bloodType TEXT NOT NULL,
-                 allergies TEXT NOT NULL,
-                 pastMedicalCondition TEXT NOT NULL,
-                 surgicalHistory TEXT,
-                 familyMedicalHistory TEXT,
-                 currentMedicalCondition TEXT,
-                 currentMedication TEXT,
-                 dosage TEXT,
-                 date TEXT)""")
-    db.commit()
-
-
-# def AddColumn():
-#     c = db.cursor()
-#     c.execute("ALTER TABLE medicalRecordHistory ADD COLUMN date TEXT")
-#     db.commit()
-
-
-class AddMedicalRecordPage:
+class ViewMedicalRecordPage:
     def __init__(self):
         self.show_sidebar = False
 
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
-        user_id = int(params.user_id)
+        medicalRecord_id = int(params.medicalRecord_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -54,25 +29,34 @@ class AddMedicalRecordPage:
         blue = "#3386C5"
         grey = "#71839B"
 
-        date = datetime.datetime.now()
-        current_date = date.strftime("%d %b %y")
-
         def get_user_details():
             c = db.cursor()
-            c.execute("SELECT fullName FROM users WHERE id = ?", (user_id,))
+            c.execute("SELECT * FROM medicalRecordHistory WHERE id = ?", (medicalRecord_id,))
             record = c.fetchall()
 
-            fullName = record[0][0]
+            user_id = record[0][2]
+            print(user_id)
+            bloodType = record[0][3]
+            allergies = record[0][4]
+            pastMedicalCondition = record[0][5]
+            surgicalHistory = record[0][6]
+            familyMedicalHistory = record[0][7]
+            currentMedicalCondition = record[0][8]
+            currentMedication = record[0][9]
+            dosage = record[0][10]
 
-            # return fullName, username, email, phoneNumber, password
-            return fullName
+            return user_id, bloodType, allergies, pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, currentMedication, dosage
 
-        fullName = get_user_details()
+        def setTextFieldValue(textField, value):
+            if value != "":
+                textField.value = value
+
+        user_id, bloodType, allergies, pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, currentMedication, dosage = get_user_details()
 
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
-            content=Text("You have added your medical record successfully!",
+            content=Text("You have updated your medical record successfully!",
                          text_align=TextAlign.CENTER),
             actions=[TextButton("Done", on_click=lambda _: close_dlg())],
             actions_alignment=MainAxisAlignment.CENTER,
@@ -105,6 +89,7 @@ class AddMedicalRecordPage:
                                  ),
             dense=True
         )
+        setTextFieldValue(bloodTypeTextField, bloodType)
 
         allergiesTextField = TextField(
             label="Allergies",
@@ -121,6 +106,8 @@ class AddMedicalRecordPage:
             dense=True
         )
 
+        setTextFieldValue(allergiesTextField, allergies)
+
         pastMedicalConditionTextField = TextField(
             label="Past Medical Condition and Diagnoses",
             label_style=TextStyle(font_family="RobotoSlab",
@@ -135,6 +122,8 @@ class AddMedicalRecordPage:
                                  ),
             dense=True
         )
+
+        setTextFieldValue(pastMedicalConditionTextField, pastMedicalCondition)
 
         surgicalHistoryTextField = TextField(
             label="Surgical History",
@@ -151,6 +140,8 @@ class AddMedicalRecordPage:
             dense=True
         )
 
+        setTextFieldValue(surgicalHistoryTextField, surgicalHistory)
+
         familyMedicalHistoryTextField = TextField(
             label="Family Medical History",
             label_style=TextStyle(font_family="RobotoSlab",
@@ -165,6 +156,8 @@ class AddMedicalRecordPage:
                                  ),
             dense=True
         )
+
+        setTextFieldValue(familyMedicalHistoryTextField, familyMedicalHistory)
 
         currentMedicalConditionTextField = TextField(
             label="Current Medical Condition",
@@ -181,6 +174,8 @@ class AddMedicalRecordPage:
             dense=True
         )
 
+        setTextFieldValue(currentMedicalConditionTextField, currentMedicalCondition)
+
         currentMedicationTextField = TextField(
             label="Current Medication",
             label_style=TextStyle(font_family="RobotoSlab",
@@ -195,6 +190,8 @@ class AddMedicalRecordPage:
                                  ),
             dense=True
         )
+
+        setTextFieldValue(currentMedicationTextField, currentMedication)
 
         dosageTextField = TextField(
             label="Dosage and Frequency",
@@ -211,33 +208,36 @@ class AddMedicalRecordPage:
             dense=True
         )
 
-        def addToDatabase(e):
-            CreateTable()
-            try:
-                if (
-                        bloodTypeTextField.value != "" and allergiesTextField.value != "" and pastMedicalConditionTextField.value != "" and
-                        surgicalHistoryTextField.value != "" and familyMedicalHistoryTextField.value != "" and currentMedicalConditionTextField.value != "" and
-                        currentMedicationTextField.value != "" and dosageTextField.value != ""):
-                    c = db.cursor()
-                    c.execute('INSERT INTO medicalRecordHistory (patientName, patientUserID, bloodType, allergies, '
-                              'pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, '
-                              'currentMedication, dosage, date)'
-                              'VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)',
-                              (
-                                  fullName, user_id, bloodTypeTextField.value, allergiesTextField.value,
-                                  pastMedicalConditionTextField.value,
-                                  surgicalHistoryTextField.value, familyMedicalHistoryTextField.value,
-                                  currentMedicalConditionTextField.value,
-                                  currentMedicationTextField.value, dosageTextField.value, current_date))
-                    db.commit()
-                    page.update()
-                    open_dlg()
-                    print("success")
-            except Exception as e:
-                print(e)
+        setTextFieldValue(dosageTextField, dosage)
+
+        def updateRecord(e):
+            if (
+                    bloodTypeTextField.value != "" and allergiesTextField.value != "" and pastMedicalConditionTextField.value != "" and
+                    surgicalHistoryTextField.value != "" and familyMedicalHistoryTextField.value != "" and currentMedicalConditionTextField.value != "" and
+                    currentMedicationTextField.value != "" and dosageTextField.value != ""):
+                c = db.cursor()
+                c.execute(f'UPDATE medicalRecordHistory SET bloodType = ?, allergies = ?, pastMedicalCondition = '
+                          f'?, surgicalHistory = ?, familyMedicalHistory = ?, currentMedicalCondition = ?, '
+                          f'currentMedication = ?, dosage = ? WHERE id = {medicalRecord_id}',
+                          (
+                              bloodTypeTextField.value, allergiesTextField.value, pastMedicalConditionTextField.value,
+                              surgicalHistoryTextField.value, familyMedicalHistoryTextField.value,
+                              currentMedicalConditionTextField.value,
+                              currentMedicationTextField.value, dosageTextField.value))
+                db.commit()
+                open_dlg()
+                user_id, bloodType, allergies, pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, currentMedication, dosage = get_user_details()
+                setTextFieldValue(bloodTypeTextField, bloodType)
+                setTextFieldValue(allergiesTextField, allergies)
+                setTextFieldValue(pastMedicalConditionTextField, pastMedicalCondition)
+                setTextFieldValue(surgicalHistoryTextField, surgicalHistory)
+                setTextFieldValue(familyMedicalHistoryTextField, familyMedicalHistory)
+                setTextFieldValue(currentMedicalConditionTextField, currentMedicalCondition)
+                setTextFieldValue(currentMedicationTextField, currentMedication)
+                setTextFieldValue(dosageTextField, dosage)
 
         return View(
-            "/addMedicalRecord/:user_id",
+            "/viewMedicalRecord/:medicalRecord_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -260,7 +260,7 @@ class AddMedicalRecordPage:
                                                             width=20,
                                                             height=20
                                                         ),
-                                                        on_click=lambda _: page.go(f"/medicalRecord/{user_id}")
+                                                        on_click=lambda _: page.go(f"/medicalRecord/{int(user_id)}")
                                                     ),
 
                                                     Container(
@@ -315,7 +315,7 @@ class AddMedicalRecordPage:
                                               paddingContainer,
 
                                               Container(
-                                                  content=TextButton(content=Text("Add",
+                                                  content=TextButton(content=Text("Update",
                                                                                   size=16,
                                                                                   font_family="RobotoSlab",
                                                                                   color="WHITE",
@@ -328,7 +328,7 @@ class AddMedicalRecordPage:
                                                                                                radius=7)}
                                                                                        ),
                                                                      ),
-                                                  on_click=addToDatabase
+                                                  on_click=updateRecord
                                               ),
 
                                           ]
