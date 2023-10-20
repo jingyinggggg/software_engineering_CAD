@@ -188,7 +188,7 @@ class LoginPage:
                                                                              italic=True,
                                                                              size=13,
                                                                              text_align=TextAlign.CENTER),
-                                                                # on_click=lambda _: page.go("/clinicSignUp")
+                                                                on_click=lambda _: page.go("/clinicSignUp")
                                                             )
                                                         ]
                                                     )
