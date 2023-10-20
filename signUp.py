@@ -4,7 +4,38 @@ from flet_route import Params, Basket
 import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
+c = db.cursor()
 
+
+# def CreateTable():
+#     c = db.cursor()
+#     c.execute("""CREATE TABLE IF NOT EXISTS admin(
+#                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                  fullName TEXT NOT NULL,
+#                  username TEXT NOT NULL,
+#                  email TEXT NOT NULL,
+#                  phoneNumber TEXT NOT NULL,
+#                  password TEXT NOT NULL)""")
+#     db.commit()
+
+
+# def CreateTable():
+#     c = db.cursor()
+#     c.execute("""CREATE TABLE IF NOT EXISTS doctors(
+#                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                  fullName TEXT NOT NULL,
+#                  username TEXT NOT NULL,
+#                  email TEXT NOT NULL,
+#                  phoneNumber TEXT NOT NULL,
+#                  password TEXT NOT NULL,
+#                  experience INTEGER,
+#                  specialization TEXT,
+#                  description TEXT,
+#                  clinic TEXT,
+#                  workingStartTime TEXT,
+#                  workingEndTime TEXT,
+#                  workingDay TEXT)""")
+#     db.commit()
 
 def CreateTable():
     c = db.cursor()
@@ -15,9 +46,24 @@ def CreateTable():
                  email TEXT NOT NULL,
                  phoneNumber TEXT NOT NULL,
                  password TEXT NOT NULL,
-                 userType TEXT NOT NULL)""")
+                 dob TEXT,
+                 gender TEXT,
+                 address TEXT,
+                 emergencyContact TEXT)""")
     db.commit()
 
+
+#
+# def UpdateTable():
+#     c = db.cursor()
+#     c.execute("""ALTER TABLE users
+#                  ADD dob TEXT,
+#                  ADD gender TEXT,
+#                  ADD address TEXT,
+#                  ADD emergencyContact TEXT
+#                  """)
+#     db.commit()
+#
 
 def ReadTable():
     c = db.cursor()
@@ -51,7 +97,8 @@ class SignUpPage:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        # page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -71,36 +118,54 @@ class SignUpPage:
         fullName = TextField(
             label="Enter Full Name",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         username = TextField(
             label="Enter Username",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         email = TextField(
             label="Enter Email",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         phoneNumber = TextField(
             label="Enter Phone Number",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         password = TextField(
             label="Enter Password",
             password=True,
             can_reveal_password=True,
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=14),
-            height=50)
-
-        userType = "patient"
+                                  size=14,
+                                  color=colors.GREY_800),
+            height=50,
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK))
 
         def open_dlg():
             page.dialog = alert_dialog
@@ -110,14 +175,15 @@ class SignUpPage:
         def addToDatabase(e):
             # DropTable()
             # DeleteTable()
-            # CreateTable()
+            CreateTable()
             # print(ReadTable())
             try:
                 if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
                     c = db.cursor()
-                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password, userType) '
-                              'VALUES (?, ?, ?, ?, ?, ?)',
-                              (fullName.value, username.value, email.value, phoneNumber.value, password.value, userType))
+                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password) '
+                              'VALUES (?, ?, ?, ?, ?)',
+                              (
+                                  fullName.value, username.value, email.value, phoneNumber.value, password.value))
                     db.commit()
                     page.update()
                     open_dlg()
@@ -125,6 +191,38 @@ class SignUpPage:
                     print(ReadTable())
             except Exception as e:
                 print(e)
+
+
+            # try:
+            #     if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
+            #         c = db.cursor()
+            #         c.execute('INSERT INTO admin (fullName, username, email, phoneNumber, password) '
+            #                   'VALUES (?, ?, ?, ?, ?)',
+            #                   (
+            #                       fullName.value, username.value, email.value, phoneNumber.value, password.value))
+            #         db.commit()
+            #         page.update()
+            #         open_dlg()
+            #         print("success")
+            #         print(ReadTable())
+            # except Exception as e:
+            #     print(e)
+
+            # try:
+            #     if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
+            #         c = db.cursor()
+            #         c.execute('INSERT INTO doctors (fullName, username, email, phoneNumber, password) '
+            #                   'VALUES (?, ?, ?, ?, ?)',
+            #                   (
+            #                       fullName.value, username.value, email.value, phoneNumber.value, password.value))
+            #         db.commit()
+            #         page.update()
+            #         open_dlg()
+            #         print("success")
+            #         print(ReadTable())
+            # except Exception as e:
+            #     print(e)
+
 
         return View(
             "/signUp",
@@ -134,7 +232,7 @@ class SignUpPage:
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          border=border.all(1, "black"),
+                          # border=border.all(1, "black"),
                           alignment=alignment.center,
                           # child control
                           content=Column(
@@ -144,7 +242,7 @@ class SignUpPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _: page.go(f"/")),
+                                            on_click=lambda _: page.go(f"/loginUser")),
 
                                   Container(padding=padding.only(top=20, bottom=20),
                                             content=Row(

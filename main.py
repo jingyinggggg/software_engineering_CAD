@@ -7,6 +7,13 @@ from homepage import Homepage
 from resetPassword import ResetPasswordPage
 from welcome import WelcomePage
 from doctorHomepage import DoctorHomepage
+from profile import ProfilePage
+from medicalRecord import MedicalRecordPage
+from addMedicalRecord import AddMedicalRecordPage
+from viewMedicalRecord import ViewMedicalRecordPage
+from clinic import ClinicPage
+from viewClinic import ViewClinicPage
+from clinicSignUp import ClinicSignUpPage
 from notification import Notification
 from history import HistoryPage
 from schedule import Schedule
@@ -18,71 +25,25 @@ from prescription import Prescription
 def main(mainPage: Page):
     mainPage.theme_mode = "light"
     app_routes = [
-        path(
-            url="/",
-            clear=True,
-            view=WelcomePage().view
-        ),
-        path(
-            url="/loginUser",
-            clear=True,
-            view=LoginPage().view
-        ),
-        path(
-            url="/signUp",
-            clear=True,
-            view=SignUpPage().view
-        ),
-        path(
-            url="/homepage",
-            clear=True,
-            view=Homepage().view
-        ),
-        path(
-            url="/resetPassword",
-            clear=True,
-            view=ResetPasswordPage().view
-        ),
-        path(
-            url="/login/homepage",
-            clear=True,
-            view=DoctorHomepage().view
-        ),
-        # path(
-        #     url="/sidebar",
-        #     clear=True,
-        #     view=DoctorHomepage().view
-        # ),
-        path(
-            url="/notification",
-            clear=True,
-            view=Notification().view
-        ),
-        path(
-            url="/history",
-            clear=True,
-            view=HistoryPage().view
-        ),
-        path(
-            url="/schedule",
-            clear=True,
-            view=Schedule().view
-        ),
-        path(
-            url="/appointmentDetail",
-            clear=True,
-            view=AppointmentDetail().view
-        ),
-        path(
-            url="/chat",
-            clear=True,
-            view=Chat().view
-        ),
-        path(
-            url="/prescription",
-            clear=True,
-            view=Prescription().view
-        ),
+        path(url="/", clear=True, view=WelcomePage().view),
+        path(url="/loginUser", clear=False, view=LoginPage().view),
+        path(url="/signUp", clear=False, view=SignUpPage().view),
+        path(url="/homepage/:user_id", clear=False, view=Homepage().view),
+        path(url="/resetPassword", clear=False, view=ResetPasswordPage().view),
+        path(url="/profile/:user_id", clear=False, view=ProfilePage().view),
+        path(url="/medicalRecord/:user_id", clear=False, view=MedicalRecordPage().view),
+        path(url="/addMedicalRecord/:user_id", clear=False, view=AddMedicalRecordPage().view),
+        path(url="/viewMedicalRecord/:medicalRecord_id", clear=False, view=ViewMedicalRecordPage().view),
+        path(url="/clinic/:user_id", clear=False, view=ClinicPage().view),
+        path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
+        path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
+        path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
+        path(url="/notification",clear=False,view=Notification().view),
+        path(url="/history",clear=False,view=HistoryPage().view),
+        path(url="/schedule",clear=False,view=Schedule().view),
+        path(url="/appointmentDetail",clear=False,view=AppointmentDetail().view),
+        path(url="/chat",clear=False,view=Chat().view),
+        path(url="/prescription",clear=False,view=Prescription().view),
     ]
 
     Routing(page=mainPage, app_routes=app_routes)
@@ -90,4 +51,4 @@ def main(mainPage: Page):
 
 
 if __name__ == "__main__":
-    flet.app(target=main)
+    flet.app(target=main, upload_dir="pic")

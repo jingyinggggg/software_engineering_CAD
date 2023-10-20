@@ -19,6 +19,7 @@ class LoginPage:
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
         page.theme_mode = "dark"
+        # page.theme_mode = "light"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -26,28 +27,69 @@ class LoginPage:
 
         email = TextField(label="Enter Email",
                           label_style=TextStyle(font_family="RobotoSlab",
-                                                size=14),
-                          height=50)
+                                                size=14,
+                                                color=colors.GREY_800),
+                          height=50,
+                          border_color=colors.BLACK,
+                          text_style=TextStyle(size=14,
+                                               color=colors.BLACK))
 
         password = TextField(label="Enter Password",
                              password=True,
                              can_reveal_password=True,
                              label_style=TextStyle(font_family="RobotoSlab",
-                                                   size=14),
-                             height=50)
+                                                   size=14,
+                                                   color=colors.GREY_800),
+                             height=50,
+                             border_color=colors.BLACK,
+                             text_style=TextStyle(size=14,
+                                                  color=colors.BLACK))
+
+        alert_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed!", text_align=TextAlign.CENTER),
+            content=Text("Login failed! Please make sure that the email and password that you entered is correct...",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Try Again", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = False
+            page.update()
 
         def verifyUser(e):
             c = db.cursor()
-            c.execute("SELECT userType FROM users WHERE email = ? AND password = ?",(email.value, password.value))
-            userType = c.fetchone()
+            c.execute("SELECT id FROM users WHERE email = ? AND password = ?",(email.value, password.value))
+            user = c.fetchone()
 
-            print(userType[0])
+            if user:
+                page.go(f"/homepage/{user[0]}")
 
-            if userType and userType[0] == "patient":
-                page.go("/homepage")
+            elif email.value == "" or password.value == "":
+                open_dlg()
 
-            elif userType and userType[0] == "doctor":
-                page.go("/login/homepage")
+            else:
+                c.execute("SELECT id FROM doctors WHERE email = ? AND password = ?", (email.value, password.value))
+                doctor = c.fetchone()
+
+                if doctor is not None:
+                    page.go(f"/login/homepage")
+                else:
+                    c.execute("SELECT id FROM admin WHERE email = ? AND password = ?", (email.value, password.value))
+                    admin = c.fetchone()
+
+                    if admin is not None:
+                        page.go(f"/")
+                    else:
+                        open_dlg()
 
         return View(
             "/loginUser",
@@ -57,7 +99,7 @@ class LoginPage:
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          border=border.all(1, "black"),
+                          # border=border.all(1, "black"),
                           alignment=alignment.center,
                           # child control
                           content=Column(
