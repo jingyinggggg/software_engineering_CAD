@@ -2,8 +2,8 @@ import flet
 from flet import *
 from flet_route import Routing, path
 from login import LoginPage
-from SignUp import SignUpPage
-from Homepage import Homepage
+from signUp import SignUpPage
+from homepage import Homepage
 from resetPassword import ResetPasswordPage
 from welcome import WelcomePage
 from doctorHomepage import DoctorHomepage
@@ -13,7 +13,7 @@ from addMedicalRecord import AddMedicalRecordPage
 from viewMedicalRecord import ViewMedicalRecordPage
 from clinic import ClinicPage
 from viewClinic import ViewClinicPage
-from clinicSignUp import ClinicSignUpPage
+# from clinicSignUp import ClinicSignUpPage
 from notification import Notification
 from history import HistoryPage
 from schedule import Schedule
@@ -37,7 +37,7 @@ def main(mainPage: Page):
         path(url="/clinic/:user_id", clear=False, view=ClinicPage().view),
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
-        path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
+        # path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/notification",clear=False,view=Notification().view),
         path(url="/history",clear=False,view=HistoryPage().view),
         path(url="/schedule",clear=False,view=Schedule().view),
