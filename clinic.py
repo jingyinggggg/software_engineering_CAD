@@ -53,8 +53,8 @@ class ClinicPage:
 
         def get_clinic_details():
             c = db.cursor()
-            c.execute("SELECT id, name, location, area, workingTime, workingDay, clinicDescription, "
-                      "phoneNumber, clinicImage FROM clinic WHERE approvalStatus = ?", (1,))
+            c.execute("SELECT id, name, location, area, workingDay, phoneNumber, clinicImage FROM clinic WHERE "
+                      "approvalStatus = ?", (1,))
             record = c.fetchall()
             return record
 
@@ -77,7 +77,7 @@ class ClinicPage:
                                 Container(
                                     padding=padding.only(top=10, bottom=10),
                                     content=Image(
-                                        src=f"{record[8]}",
+                                        src=f"{record[6]}",
                                         width=50,
                                         height=50
                                     )
@@ -126,7 +126,7 @@ class ClinicPage:
 
                                                     Container(
                                                         content=Text(
-                                                            value=f"{record[5]}",
+                                                            value=f"{record[4]}",
                                                             size=10,
                                                             font_family="RobotoSlab",
                                                             color=grey,
@@ -147,7 +147,7 @@ class ClinicPage:
                                                     Container(
                                                         margin=margin.only(right=90),
                                                         content=Text(
-                                                            value=f"{record[7]}",
+                                                            value=f"{record[5]}",
                                                             size=10,
                                                             font_family="RobotoSlab",
                                                             color=grey,
@@ -206,7 +206,7 @@ class ClinicPage:
                                                               on_click=lambda _: page.go(f"/homepage/{user_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=100, top=25),
+                                                    Container(padding=padding.only(left=110, top=25),
                                                               content=Text(
                                                                   value="Clinic",
                                                                   size=20,

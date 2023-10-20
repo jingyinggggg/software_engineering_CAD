@@ -282,7 +282,7 @@ class ViewClinicPage:
                                                               on_click=lambda _: page.go(f"/clinic/{user_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=100, top=25),
+                                                    Container(padding=padding.only(left=110, top=25),
                                                               content=Text(
                                                                   value="Clinic",
                                                                   size=20,
