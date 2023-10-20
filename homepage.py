@@ -135,7 +135,8 @@ class Homepage:
                                                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
                                                             size=14,
                                                             color=grey
-                                                        )
+                                                        ),
+                                                        on_click=lambda _:page.go(f"/medicalRecord/{user_id}")
                                                     )
                                                 ]
                                             )
@@ -420,7 +421,8 @@ class Homepage:
                                         Container(padding=padding.only(left=8),
                                                   content=Image(src="pic/clinicButton.png",
                                                                 width=75,
-                                                                height=75)
+                                                                height=75),
+                                                  on_click=lambda _:page.go(f"/clinic/{user_id}"),
                                                   ),
 
                                         Container(
@@ -711,4 +713,3 @@ class Homepage:
                           )
             ]
         )
-

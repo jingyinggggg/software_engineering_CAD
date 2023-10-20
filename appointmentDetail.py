@@ -15,7 +15,9 @@ class AppointmentDetail:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
+
+        grey = "#71839B"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -145,18 +147,30 @@ class AppointmentDetail:
                                       # get from database
                                       Dropdown(label="Update status",
                                                hint_text="e.g. scheduled/checked-in/completed",
+                                               hint_style=TextStyle(color=grey,
+                                                                    size=14,
+                                                                    italic=True),
                                                options=[
                                                    dropdown.Option("Scheduled"),
                                                    dropdown.Option("Checked-in"),
                                                    dropdown.Option("Completed")],
                                                on_change=handle_dropdown_change,
                                                width=190,
-                                               height=50,
+                                               # height=50,
                                                content_padding=10,
                                                color='BLACK',
                                                autofocus=True,
-                                               text_size=12
+                                               text_size=12,
+                                               border_color="#3386C5",
+                                               label_style=TextStyle(size=14,
+                                                                     weight=FontWeight.W_500,
+                                                                     color="#3386C5"),
+                                               dense=True,
+                                               text_style=TextStyle(size=14,
+                                                                    weight=FontWeight.W_500),
+                                               focused_color=grey,
                                                )
+
                                   ])),
                         Container(margin=margin.only(left=10),
                                   content=Row(controls=[
