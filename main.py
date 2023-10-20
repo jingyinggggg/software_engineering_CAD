@@ -14,6 +14,12 @@ from viewMedicalRecord import ViewMedicalRecordPage
 from clinic import ClinicPage
 from viewClinic import ViewClinicPage
 from clinicSignUp import ClinicSignUpPage
+from notification import Notification
+from history import HistoryPage
+from schedule import Schedule
+from appointmentDetail import AppointmentDetail
+from chat import Chat
+from prescription import Prescription
 
 
 def main(mainPage: Page):
@@ -32,7 +38,12 @@ def main(mainPage: Page):
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
-
+        path(url="/notification",clear=False,view=Notification().view),
+        path(url="/history",clear=False,view=HistoryPage().view),
+        path(url="/schedule",clear=False,view=Schedule().view),
+        path(url="/appointmentDetail",clear=False,view=AppointmentDetail().view),
+        path(url="/chat",clear=False,view=Chat().view),
+        path(url="/prescription",clear=False,view=Prescription().view),
     ]
 
     Routing(page=mainPage, app_routes=app_routes)

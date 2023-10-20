@@ -16,7 +16,7 @@ class WelcomePage:
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
 
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
@@ -30,7 +30,6 @@ class WelcomePage:
                           height=700,
                           bgcolor="#D0DCEE",
                           border_radius=30,
-                          border=border.all(1, "black"),
                           alignment=alignment.center,
                           # child control
                           content=Column(

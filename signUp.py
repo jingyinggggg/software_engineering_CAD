@@ -242,7 +242,7 @@ class SignUpPage:
                                                   width=20,
                                                   height=20),
                                             alignment=alignment.top_left,
-                                            on_click=lambda _: page.go(f"/")),
+                                            on_click=lambda _: page.go(f"/loginUser")),
 
                                   Container(padding=padding.only(top=20, bottom=20),
                                             content=Row(
