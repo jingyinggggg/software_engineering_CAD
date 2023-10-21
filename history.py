@@ -33,7 +33,7 @@ class HistoryPage:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"

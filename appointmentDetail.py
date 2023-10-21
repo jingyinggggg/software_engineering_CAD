@@ -15,11 +15,14 @@ class AppointmentDetail:
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
+
+        blue = "#3386C5"
+        grey = "#71839B"
 
         def handle_dropdown_change(value):
             if value == "Completed":
@@ -153,9 +156,18 @@ class AppointmentDetail:
                                                width=190,
                                                height=50,
                                                content_padding=10,
-                                               color='BLACK',
                                                autofocus=True,
-                                               text_size=12
+                                               dense=True,
+                                               border_color=blue,
+                                               label_style=TextStyle(size=14,
+                                                                     weight=FontWeight.W_500,
+                                                                     color=blue),
+                                               hint_style=TextStyle(color=grey,
+                                                                    size=14,
+                                                                    italic=True),
+                                               text_style=TextStyle(size=14,
+                                                                    weight=FontWeight.W_500),
+                                               focused_color=grey,
                                                )
                                   ])),
                         Container(margin=margin.only(left=10),
