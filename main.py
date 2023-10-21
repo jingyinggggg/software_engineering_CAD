@@ -24,6 +24,7 @@ from prescription import Prescription
 from addDoctorDetails import AddDoctorDetailsPage
 from doctor import DoctorPage
 from viewDoctor import ViewDoctorPage
+from healthTips import HealthTipsPage
 
 
 def main(mainPage: Page):
@@ -42,6 +43,7 @@ def main(mainPage: Page):
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
         path(url="/doctor/:user_id", clear=False, view=DoctorPage().view),
         path(url="/viewDoctor/:user_id:doctor_id", clear=False, view=ViewDoctorPage().view),
+        path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/notification",clear=False,view=Notification().view),

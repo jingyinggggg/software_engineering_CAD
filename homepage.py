@@ -223,44 +223,44 @@ class Homepage:
                                     )
                                 ),
 
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Icon(
-                                                                icons.SETTINGS,
-                                                                size=20,
-                                                                color=grey
-                                                            ),
-
-                                                            Text(
-                                                                value="Settings",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey
-                                                        )
-                                                    )
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
+                                # Container(
+                                #     padding=padding.only(top=20, left=10, right=10),
+                                #     content=Column(
+                                #         controls=[
+                                #             Row(
+                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                #                 controls=[
+                                #                     Row(
+                                #                         controls=[
+                                #                             Icon(
+                                #                                 icons.SETTINGS,
+                                #                                 size=20,
+                                #                                 color=grey
+                                #                             ),
+                                #
+                                #                             Text(
+                                #                                 value="Settings",
+                                #                                 size=12,
+                                #                                 color=colors.BLACK,
+                                #                                 text_align=TextAlign.LEFT,
+                                #                                 font_family="RobotoSlab",
+                                #                             )
+                                #                         ]
+                                #                     ),
+                                #
+                                #                     Container(
+                                #                         content=Icon(
+                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                #                             size=14,
+                                #                             color=grey
+                                #                         )
+                                #                     )
+                                #                 ]
+                                #             )
+                                #
+                                #         ]
+                                #     )
+                                # ),
 
                                 Container(
                                     padding=padding.only(top=20, left=10, right=10),
@@ -440,7 +440,8 @@ class Homepage:
                                         Container(
                                             content=Image(src="pic/healthTipsButton.png",
                                                           width=75,
-                                                          height=75)
+                                                          height=75),
+                                            on_click=lambda _:page.go(f"/healthTips/{user_id}")
                                         ),
                                     ]
                                 )
