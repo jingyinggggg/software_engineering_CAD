@@ -41,151 +41,151 @@ class DoctorHomepage:
             page.update()
 
         def hide_side_bar(e):
-            sidebar.offset = transform.Offset(-5, 0)
-            page.update()
+                sidebar.offset = transform.Offset(-5, 0)
+                page.update()
 
         sidebar = Container(
-            padding=10,
-            width=200,
-            height=700,
-            bgcolor=colors.WHITE,
-            content=Column(
-                controls=[
-                    Container(
-                        padding=padding.only(top=60, left=10),
-                        content=Column(
-                            controls=[
-                                # Row(
-                                #     controls=[
-                                #         Image(
-                                #             src="pic/avatar.png",
-                                #             width=50,
-                                #             height=50
-                                #         ),
-                                #
-                                #         Column(
-                                #             controls=[
-                                #                 Container(
-                                #                     padding=padding.only(top=5, bottom=-5),
-                                #                     content=Text(
-                                #                         value=username,
-                                #                         size=14,
-                                #                         font_family="RobotoSlab",
-                                #                         color=colors.BLACK
-                                #                     )
-                                #                 ),
-                                #                 Row(
-                                #                     controls=[
-                                #                         Icon(
-                                #                             icons.PHONE,
-                                #                             color=colors.BLACK,
-                                #                             size=10
-                                #                         ),
-                                #                         Container(
-                                #                             padding=padding.only(left=-8),
-                                #                             content=Text(
-                                #                                 value=phoneNumber,
-                                #                                 size=10,
-                                #                                 font_family="RobotoSlab",
-                                #                                 color=colors.BLACK
-                                #                             )
-                                #                         )
-                                #
-                                #                     ]
-                                #                 )
-                                #
-                                #             ]
-                                #         ),
-                                #     ]
-                                # ),
+                padding=10,
+                width=200,
+                height=700,
+                bgcolor=colors.WHITE,
+                content=Column(
+                    controls=[
+                        Container(
+                            padding=padding.only(top=60, left=10),
+                            content=Column(
+                                controls=[
+                                    # Row(
+                                    #     controls=[
+                                    #         Image(
+                                    #             src="pic/avatar.png",
+                                    #             width=50,
+                                    #             height=50
+                                    #         ),
+                                    #
+                                    #         Column(
+                                    #             controls=[
+                                    #                 Container(
+                                    #                     padding=padding.only(top=5, bottom=-5),
+                                    #                     content=Text(
+                                    #                         value=username,
+                                    #                         size=14,
+                                    #                         font_family="RobotoSlab",
+                                    #                         color=colors.BLACK
+                                    #                     )
+                                    #                 ),
+                                    #                 Row(
+                                    #                     controls=[
+                                    #                         Icon(
+                                    #                             icons.PHONE,
+                                    #                             color=colors.BLACK,
+                                    #                             size=10
+                                    #                         ),
+                                    #                         Container(
+                                    #                             padding=padding.only(left=-8),
+                                    #                             content=Text(
+                                    #                                 value=phoneNumber,
+                                    #                                 size=10,
+                                    #                                 font_family="RobotoSlab",
+                                    #                                 color=colors.BLACK
+                                    #                             )
+                                    #                         )
+                                    #
+                                    #                     ]
+                                    #                 )
+                                    #
+                                    #             ]
+                                    #         ),
+                                    #     ]
+                                    # ),
 
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Icon(
-                                                                icons.SETTINGS,
-                                                                size=20,
-                                                                color=grey
-                                                            ),
+                                    Container(
+                                        padding=padding.only(top=20, left=10, right=10),
+                                        content=Column(
+                                            controls=[
+                                                Row(
+                                                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                    controls=[
+                                                        Row(
+                                                            controls=[
+                                                                Icon(
+                                                                    icons.SETTINGS,
+                                                                    size=20,
+                                                                    color=grey
+                                                                ),
 
-                                                            Text(
-                                                                value="Settings",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey
-                                                        )
-                                                    )
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
-
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Icon(
-                                                                icons.LOGOUT,
-                                                                size=20,
-                                                                color=grey
-                                                            ),
-
-                                                            Text(
-                                                                value="Log Out",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey,
+                                                                Text(
+                                                                    value="Settings",
+                                                                    size=12,
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.LEFT,
+                                                                    font_family="RobotoSlab",
+                                                                )
+                                                            ]
                                                         ),
-                                                        on_click=lambda _: page.go("/")
-                                                    )
-                                                ]
-                                            )
 
-                                        ]
-                                    )
-                                ),
+                                                        Container(
+                                                            content=Icon(
+                                                                icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                                size=14,
+                                                                color=grey
+                                                            )
+                                                        )
+                                                    ]
+                                                )
 
-                            ]
+                                            ]
+                                        )
+                                    ),
+
+                                    Container(
+                                        padding=padding.only(top=20, left=10, right=10),
+                                        content=Column(
+                                            controls=[
+                                                Row(
+                                                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                    controls=[
+                                                        Row(
+                                                            controls=[
+                                                                Icon(
+                                                                    icons.LOGOUT,
+                                                                    size=20,
+                                                                    color=grey
+                                                                ),
+
+                                                                Text(
+                                                                    value="Log Out",
+                                                                    size=12,
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.LEFT,
+                                                                    font_family="RobotoSlab",
+                                                                )
+                                                            ]
+                                                        ),
+
+                                                        Container(
+                                                            content=Icon(
+                                                                icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                                size=14,
+                                                                color=grey,
+                                                            ),
+                                                            on_click=lambda _: page.go("/")
+                                                        )
+                                                    ]
+                                                )
+
+                                            ]
+                                        )
+                                    ),
+
+                                ]
+                            )
                         )
-                    )
-                ]
-            ),
-            offset=transform.Offset(-5, 0),
-            animate_offset=animation.Animation(400)
-        )
+                    ]
+                ),
+                offset=transform.Offset(-5, 0),
+                animate_offset=animation.Animation(400)
+            )
 
         nav = Container(
             margin=margin.only(top=20),
@@ -463,5 +463,4 @@ class DoctorHomepage:
 
 
                             # ResponsiveRow([Container(Text())])
-                        ])
-                )])
+                        ]))])

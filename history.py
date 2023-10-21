@@ -53,7 +53,6 @@ class HistoryPage:
                     border_radius=30,
                     alignment=alignment.center,
                     content=Column(
-                        scroll=True,
                         controls=[
                             Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
