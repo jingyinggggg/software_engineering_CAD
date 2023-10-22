@@ -7,30 +7,54 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 class AppointmentDetail:
     def __init__(self):
-        self.show_navigation_button = False
+        self.show_button = False
+
+    def toggle_button(self):
+        self.show_button = not self.show_button
+
+    def showButton(self):
+        self.toggle_button()
 
     def view(self, page: Page, params: Params, basket: Basket):
+        user_id = int(params.user_id)
+
         page.title = "Call A Doctor"
         page.window_width = 380
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        def handle_dropdown_change(value):
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchall()
+
+            fullName = record[0][1]
+            username = record[0][2]
+
+            return fullName, username
+
+        fullName, username = get_doctor_details()
+
+        self.show_button = [Container(margin=margin.only(left=80, top=50),
+                                      content=Row(controls=[
+                                          FilledTonalButton("Write Prescription",
+                                                            on_click=lambda _: page.go("/prescription"))
+                                      ]))]
+
+        def display_button(value):
             if value == "Completed":
-                # Show the navigation button when "Completed" is selected
-                self.show_navigation_button = True
+                self.show_button = True
             else:
-                # Hide the navigation button for other options
-                self.show_navigation_button = False
+                pass
 
         return View(
-            "/appointmentDetail",
+            "/appointmentDetail/:user_id",
             controls=[Container(
                 width=350,
                 height=700,
@@ -52,7 +76,8 @@ class AppointmentDetail:
                                                     IconButton(icons.ARROW_BACK_ROUNDED,
                                                                icon_size=30,
                                                                icon_color="WHITE",
-                                                               on_click=lambda _: page.go(f"/login/homepage")),
+                                                               on_click=lambda _: page.go(
+                                                                   f"/login/homepage/{user_id}")),
                                                     Text("Appointment",
                                                          color="WHITE",
                                                          text_align=TextAlign.CENTER,
@@ -115,28 +140,28 @@ class AppointmentDetail:
                                       Text("Appointment Date: ", color="BLACK", font_family="RobotoSlab",
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
-                                      Text()
+                                      Text("")
                                   ])),
                         Container(margin=margin.only(left=10),
                                   content=Row(controls=[
                                       Text("Appointment Time: ", color="BLACK", font_family="RobotoSlab",
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
-                                      Text()
+                                      Text("")
                                   ])),
                         Container(margin=margin.only(left=10),
                                   content=Row(controls=[
                                       Text("Type of appointment: ", color="BLACK", font_family="RobotoSlab",
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
-                                      Text()
+                                      Text("")
                                   ])),
                         Container(margin=margin.only(left=10),
                                   content=Row(controls=[
                                       Text("Appointment Location: ", color="BLACK", font_family="RobotoSlab",
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
-                                      Text()
+                                      Text("")
                                   ])),
                         Container(margin=margin.only(left=10),
                                   content=Row(controls=[
@@ -144,17 +169,27 @@ class AppointmentDetail:
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
                                       Dropdown(label="Update status",
+                                               dense=True,
+                                               border_color="#3386C5",
+                                               label_style=TextStyle(size=14,
+                                                                     weight=FontWeight.W_500,
+                                                                     color="#3386C5"),
                                                hint_text="e.g. scheduled/checked-in/completed",
+                                               hint_style=TextStyle(color="#71839B",
+                                                                    size=14,
+                                                                    italic=True),
+                                               text_style=TextStyle(size=14,
+                                                                    weight=FontWeight.W_500),
                                                options=[
                                                    dropdown.Option("Scheduled"),
                                                    dropdown.Option("Checked-in"),
                                                    dropdown.Option("Completed")],
-                                               on_change=handle_dropdown_change,
+                                               on_change=self.show_button,  # Set the on_change property here
                                                width=190,
                                                height=50,
                                                content_padding=10,
-                                               color='BLACK',
                                                autofocus=True,
+                                               focused_color="#71839B",
                                                text_size=12
                                                )
                                   ])),
@@ -163,24 +198,16 @@ class AppointmentDetail:
                                       Text("Reason for visit: ", color="BLACK", font_family="RobotoSlab",
                                            weight=FontWeight.BOLD, size=12),
                                       # get from database
-                                      Text()
+                                      Text("")
                                   ])),
-
                         Container(margin=margin.only(left=80, top=50),
-                                  content=Row(controls=[
-                                      FilledTonalButton("Write Prescription",
-                                                        on_click=lambda _: page.go("/prescription"),
-                                                        visible=self.show_navigation_button),
-                                      # get from database
-                                      Text()
-                                  ])),
-
-                        # Show the button only when self.show_navigation_button is True
-                        # FilledTonalButton("Write Prescription",
-                        #                   on_click=lambda _: page.go("/prescription"),
-                        #                   visible=self.show_navigation_button),
+                          content=Row(controls=[
+                              FilledTonalButton("Write Prescription",
+                                                on_click=lambda _: page.go(f"/prescription/{user_id}"))
+                          ])),
 
                     ]
-                ))
+                )),
+
             ]
         )

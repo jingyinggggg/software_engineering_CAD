@@ -67,7 +67,7 @@ class LoginPage:
 
         def verifyUser(e):
             c = db.cursor()
-            c.execute("SELECT id FROM users WHERE email = ? AND password = ?",(email.value, password.value))
+            c.execute("SELECT id FROM users WHERE email = ? AND password = ?", (email.value, password.value))
             user = c.fetchone()
 
             if user:
@@ -81,7 +81,7 @@ class LoginPage:
                 doctor = c.fetchone()
 
                 if doctor is not None:
-                    page.go(f"/login/homepage")
+                    page.go(f"/login/homepage/{doctor[0]}")
                 else:
                     c.execute("SELECT id FROM admin WHERE email = ? AND password = ?", (email.value, password.value))
                     admin = c.fetchone()
@@ -151,30 +151,58 @@ class LoginPage:
                                              on_click=lambda _: page.go("/resetPassword")
                                              ),
 
-                                  Container(padding=padding.only(top=50),
-                                            content=Row(
-                                                alignment=MainAxisAlignment.CENTER,
+                                  Container(padding=padding.only(top=40),
+                                            content=Column(
+                                                horizontal_alignment="center",
                                                 controls=[
-                                                    Text("Don't have an account?",
-                                                         weight=FontWeight.W_500,
-                                                         font_family="RobotoSlab",
-                                                         color="#3386C5",
-                                                         text_align=TextAlign.CENTER),
 
-                                                    TextButton(
-                                                        content=Text("Sign Up",
+                                                    Container(
+                                                        padding=padding.only(bottom=-10),
+                                                        content=Text("Don't have an account?",
                                                                      weight=FontWeight.W_500,
                                                                      font_family="RobotoSlab",
-                                                                     color=colors.BLACK,
-                                                                     text_align=TextAlign.CENTER),
-                                                        on_click=lambda _: page.go("/signUp")
+                                                                     color="#3386C5",
+                                                                     text_align=TextAlign.CENTER)
+                                                    ),
+
+                                                    Row(
+                                                        alignment=MainAxisAlignment.CENTER,
+                                                        controls=[
+
+                                                            TextButton(
+                                                                content=Text("Sign up for user",
+                                                                             weight=FontWeight.W_500,
+                                                                             font_family="RobotoSlab",
+                                                                             color=colors.BLACK,
+                                                                             italic=True,
+                                                                             size=13,
+                                                                             text_align=TextAlign.CENTER),
+                                                                on_click=lambda _: page.go("/signUp")
+                                                            ),
+
+                                                            TextButton(
+                                                                content=Text("Sign up for clinic",
+                                                                             weight=FontWeight.W_500,
+                                                                             font_family="RobotoSlab",
+                                                                             color=colors.BLACK,
+                                                                             italic=True,
+                                                                             size=13,
+                                                                             text_align=TextAlign.CENTER),
+                                                                # on_click=lambda _: page.go("/addDoctorDetails"),
+                                                                on_click=lambda _: page.go("/clinicSignUp"),
+                                                            )
+                                                        ]
                                                     )
                                                 ]
-                                            )
-                                            )
+                                            ))
+
+                                  # Container(padding=padding.only(top=50),
+                                  #           content=
+                                  #               ]
+                                  #           )
+                                  #           )
                               ]
                           )
                           )
             ]
         )
-

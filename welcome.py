@@ -38,6 +38,7 @@ class WelcomePage:
                                   Text("Welcome",
                                        size=24,
                                        font_family="RobotoSlab",
+                                       color="#3386C5",
                                        text_align=TextAlign.CENTER),
 
                                   Text("Call A Doctor",

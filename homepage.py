@@ -135,7 +135,8 @@ class Homepage:
                                                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
                                                             size=14,
                                                             color=grey
-                                                        )
+                                                        ),
+                                                        on_click=lambda _:page.go(f"/medicalRecord/{user_id}")
                                                     )
                                                 ]
                                             )
@@ -348,7 +349,6 @@ class Homepage:
                 ]
             )
         )
-
         mainPageContent = Row(
             controls=[
                 Container(
@@ -420,13 +420,15 @@ class Homepage:
                                         Container(padding=padding.only(left=8),
                                                   content=Image(src="pic/clinicButton.png",
                                                                 width=75,
-                                                                height=75)
+                                                                height=75),
+                                                  on_click=lambda _:page.go(f"/clinic/{user_id}"),
                                                   ),
 
                                         Container(
                                             content=Image(src="pic/doctorButton.png",
                                                           width=75,
-                                                          height=75)
+                                                          height=75),
+                                            on_click=lambda _:page.go(f"/doctor/{user_id}")
                                         ),
 
                                         Container(
@@ -460,7 +462,8 @@ class Homepage:
                                                                               size=10,
                                                                               italic=True,
                                                                               font_family="RobotoSlab",
-                                                                              color=blue))
+                                                                              color=blue)),
+                                              on_click=lambda _:page.go(f"/clinic/{user_id}")
 
                                               ),
                                 ]
@@ -572,8 +575,8 @@ class Homepage:
                                                                               size=10,
                                                                               italic=True,
                                                                               font_family="RobotoSlab",
-                                                                              color=blue))
-
+                                                                              color=blue)),
+                                              on_click=lambda _: page.go(f"/doctor/{user_id}")
                                               ),
                                 ]
                             ),
@@ -694,6 +697,7 @@ class Homepage:
             ]
         )
 
+
         return View(
             "/homepage/:user_id",
             controls=[
@@ -711,4 +715,3 @@ class Homepage:
                           )
             ]
         )
-

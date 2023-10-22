@@ -26,25 +26,37 @@ class HistoryPage:
 
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
-        filter_option = None
+        user_id = int(params.user_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
         page.window_height = 900
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
-        page.theme_mode = "light"
+        page.theme_mode = "dark"
 
         page.fonts = {
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        def on_filter_selected(option):
-            nonlocal filter_option
-            filter_option = option
+        # def on_filter_selected(option):
+        #     nonlocal filter_option
+        #     filter_option = option
+
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchall()
+
+            fullName = record[0][1]
+            username = record[0][2]
+
+            return fullName, username
+
+        fullName, username = get_doctor_details()
 
         return View(
-            "/history",
+            "/history/:user_id",
             controls=[
                 Container(
                     width=350,
@@ -68,7 +80,7 @@ class HistoryPage:
                                                         IconButton(icons.ARROW_BACK_ROUNDED,
                                                                    icon_size=30,
                                                                    icon_color="WHITE",
-                                                                   on_click=lambda _: page.go(f"/login/homepage")),
+                                                                   on_click=lambda _: page.go(f"/login/homepage/{user_id}")),
                                                         Text("History",
                                                              color="WHITE",
                                                              text_align=TextAlign.CENTER,
@@ -85,8 +97,17 @@ class HistoryPage:
                                 content=Column(
                                     controls=[
                                         Dropdown(
+                                            dense=True,
+                                            label_style=TextStyle(size=14,
+                                                                  weight=FontWeight.W_500,
+                                                                  color="#3386C5"),
                                             label="Filter by category",
                                             hint_text="Select a category",
+                                            hint_style=TextStyle(color="#71839B",
+                                                                 size=14,
+                                                                 italic=True),
+                                            text_style=TextStyle(size=14,
+                                                                 weight=FontWeight.W_500),
                                             options=[
                                                 dropdown.Option("All"),
                                                 dropdown.Option("Consultation"),
@@ -98,9 +119,9 @@ class HistoryPage:
                                             autofocus=True,
                                             width=320,
                                             height=80,
-                                            # on_select=on_filter_selected,
+                                            focused_color="#71839B",
+                                            text_size=12,
                                             content_padding=10,
-                                            # suffix_icon=icons.ARROW_DROP_DOWN_SHARP
                                         )
                                     ]
                                 )
@@ -109,7 +130,7 @@ class HistoryPage:
                             Container(alignment=alignment.center,
                                       border_radius=8,
                                       padding=padding.only(left=10),
-                                      margin=margin.only(left=10, top=-20),
+                                      margin=margin.only(left=10, top=-30),
                                       border=border.all(color="BLACK"),
                                       width=320,
                                       height=180,
@@ -155,10 +176,8 @@ class HistoryPage:
                                                       Container(margin=margin.only(left=200, top=-20),
                                                                 content=Column(alignment=alignment.center,
                                                                                controls=[Container(
-                                                                                   FilledButton("more...",
-                                                                                                on_click=lambda
-                                                                                                    _: page.go(
-                                                                                                    f"/appointmentDetail"))
+                                                                                   TextButton("more >>",
+                                                                                              on_click=lambda _: page.go(f"/appointmentDetail/{user_id}"))
 
                                                                                )]))
 
@@ -213,10 +232,8 @@ class HistoryPage:
                                                       Container(margin=margin.only(left=200, top=-20),
                                                                 content=Column(alignment=alignment.center,
                                                                                controls=[Container(
-                                                                                   FilledButton("more...",
-                                                                                                on_click=lambda
-                                                                                                    _: page.go(
-                                                                                                    f"/login/viewAppointmentDetail"))
+                                                                                   TextButton("more >>",
+                                                                                              on_click=lambda _: page.go(f"/appointmentDetail/{user_id}"))
 
                                                                                )]))
 
@@ -270,10 +287,8 @@ class HistoryPage:
                                                       Container(margin=margin.only(left=200, top=-20),
                                                                 content=Column(alignment=alignment.center,
                                                                                controls=[Container(
-                                                                                   FilledButton("more...",
-                                                                                                on_click=lambda
-                                                                                                    _: page.go(
-                                                                                                    f"/login/viewAppointmentDetail"))
+                                                                                   TextButton("more >>",
+                                                                                              on_click=lambda _: page.go(f"/appointmentDetail/{user_id}"))
 
                                                                                )]))
 

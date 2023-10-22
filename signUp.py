@@ -18,25 +18,6 @@ c = db.cursor()
 #                  password TEXT NOT NULL)""")
 #     db.commit()
 
-
-# def CreateTable():
-#     c = db.cursor()
-#     c.execute("""CREATE TABLE IF NOT EXISTS doctors(
-#                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                  fullName TEXT NOT NULL,
-#                  username TEXT NOT NULL,
-#                  email TEXT NOT NULL,
-#                  phoneNumber TEXT NOT NULL,
-#                  password TEXT NOT NULL,
-#                  experience INTEGER,
-#                  specialization TEXT,
-#                  description TEXT,
-#                  clinic TEXT,
-#                  workingStartTime TEXT,
-#                  workingEndTime TEXT,
-#                  workingDay TEXT)""")
-#     db.commit()
-
 def CreateTable():
     c = db.cursor()
     c.execute("""CREATE TABLE IF NOT EXISTS users(
@@ -73,16 +54,16 @@ def ReadTable():
     return record
 
 
-def DeleteTable():
-    c = db.cursor()
-    c.execute('DELETE FROM users ')
-    db.commit()
-
-
-def DropTable():
-    c = db.cursor()
-    c.execute('DROP TABLE users')
-    db.commit()
+# def DeleteTable():
+#     c = db.cursor()
+#     c.execute('DELETE FROM users ')
+#     db.commit()
+#
+#
+# def DropTable():
+#     c = db.cursor()
+#     c.execute('DROP TABLE users')
+#     db.commit()
 
 
 class SignUpPage:

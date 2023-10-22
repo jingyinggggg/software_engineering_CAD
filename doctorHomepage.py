@@ -10,7 +10,7 @@ class DoctorHomepage:
         pass
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # user_id = int(params.user_id)
+        user_id = int(params.user_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -23,20 +23,21 @@ class DoctorHomepage:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        # def get_doctor_details():
-        #     c = db.cursor()
-        #     c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-        #     record = c.fetchall()
-        #
-        #     fullName = record[0][1]
-        #     username = record[0][2]
-        #
-        #     return fullName, username
-        # fullName, username = get_doctor_details()
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchall()
+
+            fullName = record[0][1]
+            username = record[0][2]
+
+            return fullName, username
+
+        fullName, username = get_doctor_details()
 
         # phone container
         return View(
-            "/login/homepage",
+            "/login/homepage/:user_id",
             controls=[
                 Container(
                     # padding=padding.symmetric(horizontal=20, vertical=100),
@@ -66,7 +67,7 @@ class DoctorHomepage:
                                                 Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
                                                                          icon_color="WHITE",
                                                                          on_click=lambda _: page.go(
-                                                                             f"/notification"))])]),
+                                                                             f"/notification/{user_id}"))])]),
 
                                         Text(value="Welcome !",
                                              size=30,
@@ -74,7 +75,7 @@ class DoctorHomepage:
                                              weight=FontWeight.BOLD,
                                              color="WHITE"),
 
-                                        Text(value="Dr.",
+                                        Text(value=f"Dr. {fullName}",
                                              size=30,
                                              font_family="RobotoSlab",
                                              weight=FontWeight.BOLD,
@@ -124,7 +125,7 @@ class DoctorHomepage:
                                                 icon_color="#3D3F99",
                                                 icon_size=45,
                                                 tooltip="view history",
-                                                on_click=lambda _: page.go(f"/history")
+                                                on_click=lambda _: page.go(f"/history/{user_id}")
                                             ),
                                             border_radius=50,
                                             border=border.all(1, "#000000"),
@@ -139,7 +140,7 @@ class DoctorHomepage:
                                                 icon_color="#3D3F99",
                                                 icon_size=45,
                                                 tooltip="view schedule",
-                                                on_click=lambda _: page.go(f"/schedule")
+                                                on_click=lambda _: page.go(f"/schedule/{user_id}")
                                             ),
                                             border_radius=50,
                                             border=border.all(1, "#000000"),
@@ -153,7 +154,7 @@ class DoctorHomepage:
                                                 icon_color="#3D3F99",
                                                 icon_size=45,
                                                 tooltip="view chat",
-                                                on_click=lambda _: page.go(f"/chat")
+                                                on_click=lambda _: page.go(f"/chat/{user_id}")
                                             ),
                                             border_radius=50,
                                             border=border.all(1, "#000000"),
@@ -196,7 +197,7 @@ class DoctorHomepage:
                                                                TextStyle(
                                                                    decoration=TextDecoration.UNDERLINE,
                                                                    color="#3386C5"),
-                                                               on_click=lambda _: page.go(f"/schedule"))])
+                                                               on_click=lambda _: page.go(f"/schedule/{user_id}"))])
 
                                                   ])),
 
@@ -245,11 +246,11 @@ class DoctorHomepage:
                                                                                    Text("Consultation",
                                                                                         color="#979797"))])),
 
-                                                      Container(margin=margin.only(left=200, top=-20),
+                                                      Container(margin=margin.only(left=220, top=-20),
                                                                 content=Column(alignment=alignment.center,
                                                                                controls=[Container(
-                                                                                   FilledButton("more...",
-                                                                                                on_click=lambda _: page.go(f"/appointmentDetail"))
+                                                                                   TextButton("more >>",
+                                                                                              on_click=lambda _: page.go(f"/appointmentDetail/{user_id}"))
 
                                                                                )]))
 
