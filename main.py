@@ -25,10 +25,13 @@ from addDoctorDetails import AddDoctorDetailsPage
 from doctor import DoctorPage
 from viewDoctor import ViewDoctorPage
 from healthTips import HealthTipsPage
+from makeAppointment import MakeAppointmentPage
+from bookingPage import BookingPage
 
 
 def main(mainPage: Page):
-    mainPage.theme_mode = "light"
+    mainPage.theme_mode = "dark"
+
     app_routes = [
         path(url="/", clear=True, view=WelcomePage().view),
         path(url="/loginUser", clear=False, view=LoginPage().view),
@@ -44,6 +47,8 @@ def main(mainPage: Page):
         path(url="/doctor/:user_id", clear=False, view=DoctorPage().view),
         path(url="/viewDoctor/:user_id:doctor_id", clear=False, view=ViewDoctorPage().view),
         path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
+        path(url="/makeAppointment/:user_id:doctor_id", clear=True, view=MakeAppointmentPage().view),
+        path(url="/booking/:user_id", clear=True, view=BookingPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/notification",clear=False,view=Notification().view),
@@ -54,7 +59,6 @@ def main(mainPage: Page):
         path(url="/prescription",clear=False,view=Prescription().view),
         path(url="/addDoctorDetails", clear=False, view=AddDoctorDetailsPage().view),
     ]
-
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
 
