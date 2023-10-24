@@ -89,7 +89,13 @@ class LoginPage:
                     if admin is not None:
                         page.go(f"/")
                     else:
-                        open_dlg()
+                        c.execute("SELECT id FROM clinic WHERE email = ? AND password = ?", (email.value, password.value))
+                        clinic = c.fetchone()
+
+                        if clinic is not None:
+                            page.go(f"/clinicHomepage/{clinic[0]}")
+                        else:
+                            open_dlg()
 
         return View(
             "/loginUser",
