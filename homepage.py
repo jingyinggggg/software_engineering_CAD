@@ -136,7 +136,7 @@ class Homepage:
                                                             size=14,
                                                             color=grey
                                                         ),
-                                                        on_click=lambda _:page.go(f"/medicalRecord/{user_id}")
+                                                        on_click=lambda _: page.go(f"/medicalRecord/{user_id}")
                                                     )
                                                 ]
                                             )
@@ -145,83 +145,83 @@ class Homepage:
                                     )
                                 ),
 
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Image(
-                                                                src="pic/booking.png",
-                                                                width=20,
-                                                                height=20
-                                                            ),
+                                # Container(
+                                #     padding=padding.only(top=20, left=10, right=10),
+                                #     content=Column(
+                                #         controls=[
+                                #             Row(
+                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                #                 controls=[
+                                #                     Row(
+                                #                         controls=[
+                                #                             Image(
+                                #                                 src="pic/booking.png",
+                                #                                 width=20,
+                                #                                 height=20
+                                #                             ),
+                                #
+                                #                             Text(
+                                #                                 value="Bookings",
+                                #                                 size=12,
+                                #                                 color=colors.BLACK,
+                                #                                 text_align=TextAlign.LEFT,
+                                #                                 font_family="RobotoSlab",
+                                #                             )
+                                #                         ]
+                                #                     ),
+                                #
+                                #                     Container(
+                                #                         content=Icon(
+                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                #                             size=14,
+                                #                             color=grey
+                                #                         )
+                                #                     )
+                                #                 ]
+                                #             )
+                                #
+                                #         ]
+                                #     )
+                                # ),
 
-                                                            Text(
-                                                                value="Bookings",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey
-                                                        )
-                                                    )
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
-
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Image(
-                                                                src="pic/myDoctors.png",
-                                                                width=20,
-                                                                height=20
-                                                            ),
-
-                                                            Text(
-                                                                value="My Doctors",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey
-                                                        )
-                                                    )
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
+                                # Container(
+                                #     padding=padding.only(top=20, left=10, right=10),
+                                #     content=Column(
+                                #         controls=[
+                                #             Row(
+                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                #                 controls=[
+                                #                     Row(
+                                #                         controls=[
+                                #                             Image(
+                                #                                 src="pic/myDoctors.png",
+                                #                                 width=20,
+                                #                                 height=20
+                                #                             ),
+                                #
+                                #                             Text(
+                                #                                 value="My Doctors",
+                                #                                 size=12,
+                                #                                 color=colors.BLACK,
+                                #                                 text_align=TextAlign.LEFT,
+                                #                                 font_family="RobotoSlab",
+                                #                             )
+                                #                         ]
+                                #                     ),
+                                #
+                                #                     Container(
+                                #                         content=Icon(
+                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                #                             size=14,
+                                #                             color=grey
+                                #                         )
+                                #                     )
+                                #                 ]
+                                #             )
+                                #
+                                #         ]
+                                #     )
+                                # ),
 
                                 Container(
                                     padding=padding.only(top=20, left=10, right=10),
@@ -253,7 +253,8 @@ class Homepage:
                                                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
                                                             size=14,
                                                             color=grey
-                                                        )
+                                                        ),
+                                                        on_click=lambda _:page.go(f"/setting/{user_id}")
                                                     )
                                                 ]
                                             )
@@ -335,13 +336,14 @@ class Homepage:
                                 IconButton(icon=icons.CHAT_ROUNDED,
                                            icon_size=20,
                                            icon_color="#858EA9"),
-                                IconButton(icon=icons.NOTIFICATIONS,
+                                IconButton(icon=icons.CALENDAR_MONTH,
                                            icon_size=20,
-                                           icon_color="#858EA9"),
+                                           icon_color="#858EA9",
+                                           on_click=lambda _:page.go(f"/booking/{user_id}")),
                                 IconButton(icon=icons.PERSON,
                                            icon_size=20,
                                            icon_color="#858EA9",
-                                           on_click=lambda _:page.go(f"/profile/{user_id}"))
+                                           on_click=lambda _: page.go(f"/profile/{user_id}"))
                             ]
                         )
                     )
@@ -349,6 +351,7 @@ class Homepage:
                 ]
             )
         )
+
         mainPageContent = Row(
             controls=[
                 Container(
@@ -362,18 +365,19 @@ class Homepage:
                                               bgcolor=blue,
                                               alignment=alignment.top_center,
                                               content=Row(
+                                                  width=340,
+                                                  alignment="spaceBetween",
                                                   controls=[
-                                                      Container(padding=padding.only(left=10,
-                                                                                     top=25),
-                                                                content=IconButton(
-                                                                    icons.MENU,
-                                                                    icon_color=colors.WHITE,
-                                                                    on_click=show_side_bar
-                                                                ),
-                                                                ),
+                                                      Container(padding=padding.only(
+                                                          top=25),
+                                                          content=IconButton(
+                                                              icons.MENU,
+                                                              icon_color=colors.WHITE,
+                                                              on_click=show_side_bar
+                                                          ),
+                                                      ),
 
-                                                      Container(padding=padding.only(left=65,
-                                                                                     top=25),
+                                                      Container(padding=padding.only(top=25),
                                                                 content=Text(
                                                                     value="Call A Doctor",
                                                                     size=20,
@@ -381,6 +385,13 @@ class Homepage:
                                                                     color=colors.WHITE,
                                                                     text_align=TextAlign.CENTER)
                                                                 ),
+
+                                                      Container(
+                                                          padding=padding.only(top=25),
+                                                          content=IconButton(icon=icons.NOTIFICATIONS,
+                                                                             icon_size=20,
+                                                                             icon_color=colors.WHITE)
+                                                      ),
                                                   ]
                                               ))
                                 ]
@@ -421,14 +432,14 @@ class Homepage:
                                                   content=Image(src="pic/clinicButton.png",
                                                                 width=75,
                                                                 height=75),
-                                                  on_click=lambda _:page.go(f"/clinic/{user_id}"),
+                                                  on_click=lambda _: page.go(f"/clinic/{user_id}"),
                                                   ),
 
                                         Container(
                                             content=Image(src="pic/doctorButton.png",
                                                           width=75,
                                                           height=75),
-                                            on_click=lambda _:page.go(f"/doctor/{user_id}")
+                                            on_click=lambda _: page.go(f"/doctor/{user_id}")
                                         ),
 
                                         Container(
@@ -440,7 +451,8 @@ class Homepage:
                                         Container(
                                             content=Image(src="pic/healthTipsButton.png",
                                                           width=75,
-                                                          height=75)
+                                                          height=75),
+                                            on_click=lambda _: page.go(f"/healthTips/{user_id}")
                                         ),
                                     ]
                                 )
@@ -463,7 +475,7 @@ class Homepage:
                                                                               italic=True,
                                                                               font_family="RobotoSlab",
                                                                               color=blue)),
-                                              on_click=lambda _:page.go(f"/clinic/{user_id}")
+                                              on_click=lambda _: page.go(f"/clinic/{user_id}")
 
                                               ),
                                 ]
@@ -696,7 +708,6 @@ class Homepage:
                 )
             ]
         )
-
 
         return View(
             "/homepage/:user_id",

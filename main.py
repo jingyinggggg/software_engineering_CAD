@@ -24,10 +24,18 @@ from prescription import Prescription
 from addDoctorDetails import AddDoctorDetailsPage
 from doctor import DoctorPage
 from viewDoctor import ViewDoctorPage
+from healthTips import HealthTipsPage
+from makeAppointment import MakeAppointmentPage
+from bookingPage import BookingPage
+from viewBooking import ViewBookingPage
+from setting import SettingPage
+from password import PasswordPage
+from accountSetting import AccountSettingPage
 
 
 def main(mainPage: Page):
-    mainPage.theme_mode = "light"
+    mainPage.theme_mode = "dark"
+
     app_routes = [
         path(url="/", clear=True, view=WelcomePage().view),
         path(url="/loginUser", clear=False, view=LoginPage().view),
@@ -38,10 +46,17 @@ def main(mainPage: Page):
         path(url="/medicalRecord/:user_id", clear=False, view=MedicalRecordPage().view),
         path(url="/addMedicalRecord/:user_id", clear=False, view=AddMedicalRecordPage().view),
         path(url="/viewMedicalRecord/:medicalRecord_id", clear=False, view=ViewMedicalRecordPage().view),
+        path(url="/setting/:user_id", clear=False, view=SettingPage().view),
+        path(url="/accountSetting/:user_id", clear=False, view=AccountSettingPage().view),
+        path(url="/password/:user_id", clear=False, view=PasswordPage().view),
         path(url="/clinic/:user_id", clear=False, view=ClinicPage().view),
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
         path(url="/doctor/:user_id", clear=False, view=DoctorPage().view),
         path(url="/viewDoctor/:user_id:doctor_id", clear=False, view=ViewDoctorPage().view),
+        path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
+        path(url="/makeAppointment/:user_id:doctor_id", clear=False, view=MakeAppointmentPage().view),
+        path(url="/booking/:user_id", clear=False, view=BookingPage().view),
+        path(url="/viewBooking/:user_id:booking_id", clear=False, view=ViewBookingPage().view),
         path(url="/login/homepage", clear=False, view=DoctorHomepage().view),
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/notification",clear=False,view=Notification().view),
@@ -52,7 +67,6 @@ def main(mainPage: Page):
         path(url="/prescription",clear=False,view=Prescription().view),
         path(url="/addDoctorDetails", clear=False, view=AddDoctorDetailsPage().view),
     ]
-
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
 
