@@ -58,6 +58,5 @@ def main(mainPage: Page):
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
 
-
 if __name__ == "__main__":
     flet.app(target=main, upload_dir="pic")
