@@ -27,10 +27,13 @@ from healthTips import HealthTipsPage
 from bookingPage import BookingPage
 from viewBooking import ViewBookingPage
 from profile import ProfilePage
+from patientNotification import PatientNotificationPage
+from patientChatViewDoctor import PatientChatViewDoctorPage
+from patientChat import PatientChatPage
 
 # Doctor's interface
 from doctorHomepage import DoctorHomepage
-from notification import Notification
+from doctorNotification import DoctorNotification
 from history import HistoryPage
 from schedule import Schedule
 from appointmentDetail import AppointmentDetail
@@ -40,6 +43,7 @@ from prescription import Prescription
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
 from addDoctorDetails import AddDoctorDetailsPage
+from clinicHomepage import ClinicHomepage
 
 # Admin interface
 
@@ -57,6 +61,7 @@ def main(mainPage: Page):
 
         # Patient interface path
         path(url="/homepage/:user_id", clear=False, view=Homepage().view),
+        path(url="/patientNotification/:user_id", clear=False, view=PatientNotificationPage().view),
         path(url="/medicalRecord/:user_id", clear=False, view=MedicalRecordPage().view),
         path(url="/addMedicalRecord/:user_id", clear=False, view=AddMedicalRecordPage().view),
         path(url="/viewMedicalRecord/:medicalRecord_id", clear=False, view=ViewMedicalRecordPage().view),
@@ -72,14 +77,16 @@ def main(mainPage: Page):
         path(url="/viewPrescription/:user_id", clear=False, view=ViewPrescriptionPage().view),
         # path(url="/viewPrescription/:prescription_id", clear=False, view=PatientPrescriptionPage().view),
         path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
+        path(url="/patientChatViewDoctor/:user_id", clear=False, view=PatientChatViewDoctorPage().view),
+        path(url="/patientChat/:user_id:doctor_id", clear=False, view=PatientChatPage().view),
         path(url="/booking/:user_id", clear=False, view=BookingPage().view),
         path(url="/viewBooking/:user_id:booking_id", clear=False, view=ViewBookingPage().view),
         path(url="/profile/:user_id", clear=False, view=ProfilePage().view),
 
 
-        # Patient interface path
+        # Doctor interface path
         path(url="/login/homepage/:user_id", clear=False, view=DoctorHomepage().view),
-        path(url="/notification", clear=False, view=Notification().view),
+        path(url="/doctorNotification/:user_id", clear=False, view=DoctorNotification().view),
         path(url="/history", clear=False, view=HistoryPage().view),
         path(url="/schedule", clear=False, view=Schedule().view),
         path(url="/appointmentDetail/:user_id", clear=False, view=AppointmentDetail().view),
@@ -90,6 +97,7 @@ def main(mainPage: Page):
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/addDoctorDetails", clear=False, view=AddDoctorDetailsPage().view),
+        path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
 
 
         # Admin interface path

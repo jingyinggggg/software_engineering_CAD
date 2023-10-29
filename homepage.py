@@ -335,7 +335,8 @@ class Homepage:
                                            icon_color="#858EA9"),
                                 IconButton(icon=icons.CHAT_ROUNDED,
                                            icon_size=20,
-                                           icon_color="#858EA9"),
+                                           icon_color="#858EA9",
+                                           on_click=lambda _:page.go(f"/patientChatViewDoctor/{user_id}")),
                                 IconButton(icon=icons.CALENDAR_MONTH,
                                            icon_size=20,
                                            icon_color="#858EA9",
@@ -390,7 +391,8 @@ class Homepage:
                                                           padding=padding.only(top=25),
                                                           content=IconButton(icon=icons.NOTIFICATIONS,
                                                                              icon_size=20,
-                                                                             icon_color=colors.WHITE)
+                                                                             icon_color=colors.WHITE,
+                                                                             on_click=lambda _:page.go(f"/patientNotification/{user_id}"))
                                                       ),
                                                   ]
                                               ))
@@ -445,7 +447,8 @@ class Homepage:
                                         Container(
                                             content=Image(src="pic/prescriptionButton.png",
                                                           width=75,
-                                                          height=75)
+                                                          height=75),
+                                            on_click=lambda _: page.go(f"/patientPrescription/{user_id}")
                                         ),
 
                                         Container(
