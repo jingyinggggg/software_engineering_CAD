@@ -18,6 +18,7 @@ from password import PasswordPage
 from accountSetting import AccountSettingPage
 from clinic import ClinicPage
 from viewClinic import ViewClinicPage
+from doctorListClinic import DoctorListBasedOnClinic
 from doctor import DoctorPage
 from viewDoctor import ViewDoctorPage
 from makeAppointment import MakeAppointmentPage
@@ -70,6 +71,7 @@ def main(mainPage: Page):
         path(url="/password/:user_id", clear=False, view=PasswordPage().view),
         path(url="/clinic/:user_id", clear=False, view=ClinicPage().view),
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
+        path(url="/doctorListBasedOnClinic/:user_id:clinic_id", clear=False, view=DoctorListBasedOnClinic().view),
         path(url="/doctor/:user_id", clear=False, view=DoctorPage().view),
         path(url="/viewDoctor/:user_id:doctor_id", clear=False, view=ViewDoctorPage().view),
         path(url="/makeAppointment/:user_id:doctor_id", clear=False, view=MakeAppointmentPage().view),

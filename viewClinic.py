@@ -191,7 +191,7 @@ class ViewClinicPage:
                                                                                    "": RoundedRectangleBorder(
                                                                                        radius=7)}
                                                                            ),
-                                                                           # on_click=lambda _:page.go(f"/doctorList")
+                                                                           on_click=lambda _:page.go(f"/doctorListBasedOnClinic/{user_id}{clinic_id}")
                                                                            )
                                                     )
                                                 ]
