@@ -7,11 +7,10 @@ from flet_route import Params, Basket
 import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
-
+cursor = db.cursor()
 
 def CreateTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS doctors(
+    cursor.execute("""CREATE TABLE IF NOT EXISTS doctors(
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  fullName TEXT NOT NULL,
                  username TEXT ,
@@ -29,10 +28,11 @@ def CreateTable():
     db.commit()
 
 
-# def DeleteColumn():
+# def DeleteRow():
 #     c = db.cursor()
-#     c.execute("ALTER TABLE doctors ADD COLUMN image TEXT")
+#     c.execute("DELETE FROM doctors WHERE id = ?", (3,))
 #     db.commit()
+
 
 
 class AddDoctorDetailsPage:
@@ -40,6 +40,8 @@ class AddDoctorDetailsPage:
         self.show_sidebar = False
 
     def view(self, page: Page, params: Params, basket: Basket):
+
+        clinic_name = str(params.clinicName)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -157,6 +159,8 @@ class AddDoctorDetailsPage:
                                  color=grey,
                                  font_family="RobotoSlab"
                                  ),
+            read_only=True,
+            value=clinic_name,
             dense=True
         )
 
@@ -265,20 +269,37 @@ class AddDoctorDetailsPage:
             page.update()
 
         def addToDatabase(e):
-            CreateTable()
+            # CreateTable()
+            # if (name.value != "" and email.value != "" and phoneNumber.value != "" and experience.value != ""
+            #         and specialization.value != "" and description.value != "" and working_clinic.value != ""
+            #         and working_time.value != "" and working_day.value != "" ):
+            #     # and image_file.value != ""
+            print("1")
+            cursor.execute(
+                "INSERT INTO doctors (fullName, username, email, phoneNumber, password, experience, specialization, "
+                "description, clinic, workingTime, workingDay, image, status)"
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                # (name.value, email.value, phoneNumber.value, experience.value, specialization.value,
+                #  description.value, working_clinic.value, working_time.value, working_day.value, image_file.value,
+                #  1)
+                ('John Doe', 'johndoe123', 'johndoe@example.com',
+                             '1234567890', '123', '3 years experience', 'Cardiologists',
+                             'Providing medical services', 'Bwell Clinic', '9:00 am - 5:00 pm',
+                             'Monday - Friday (except Thursday)', 'pic/doctor.png', 1)
+            )
+            print("2")
+            db.commit()
+            open_dlg()
+
+        def get_clinic_details():
             c = db.cursor()
-            if (name.value != "" and email.value != "" and phoneNumber.value != "" and experience.value != ""
-                    and specialization.value != "" and description.value != "" and working_clinic.value != ""
-                    and working_time.value != "" and working_day.value != "" and image_file.value != ""):
-                c.execute(
-                    "INSERT INTO doctors (fullName, email, phoneNumber, experience, specialization, "
-                    "description, clinic, workingTime, workingDay, image, status)"
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                    (name.value, email.value, phoneNumber.value, experience.value, specialization.value,
-                     description.value, working_clinic.value, working_time.value, working_day.value, image_file.value,
-                     1))
-                db.commit()
-                open_dlg()
+            c.execute("SELECT id FROM clinic WHERE name = ?", (clinic_name,))
+            record = c.fetchall()
+
+            clinic_id = record[0][0]
+            return clinic_id
+
+        clinic_id = get_clinic_details()
 
         return View(
             "/addDoctorDetails",
@@ -305,7 +326,7 @@ class AddDoctorDetailsPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/loginUser")
+                                                              on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
                                                               ),
 
                                                     Container(padding=padding.only(left=80, top=25),
