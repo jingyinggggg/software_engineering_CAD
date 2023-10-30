@@ -10,6 +10,22 @@ class ClinicPage:
     def __init__(self):
         self.show_sidebar = False
 
+    def get_clinic_details(self, selected_area):
+        c = db.cursor()
+        if selected_area:
+            c.execute(
+                "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
+                "clinicImage FROM clinic WHERE approvalStatus = ? AND area = ?",
+                (1, selected_area,))
+        else:
+            c.execute(
+                "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
+                "clinicImage FROM clinic WHERE approvalStatus = ?",
+                (1,))
+        record = c.fetchall()
+        return record
+
+
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
         user_id = int(params.user_id)
@@ -28,6 +44,16 @@ class ClinicPage:
         lightBlue = "#D0DCEE"
         blue = "#3386C5"
         grey = "#71839B"
+
+        def refresh_clinic_list(e):
+            updated_clinic_list = self.get_clinic_details(area_dropdown.value)
+
+            # Update the clinic_list control with the updated data
+            clinic_list.controls.clear()
+            clinic_list.controls.append(displayClinic(updated_clinic_list))
+
+            # Update the page to reflect the changes
+            page.update()
 
         area_dropdown = Dropdown(
             dense=True,
@@ -49,16 +75,10 @@ class ClinicPage:
                                  weight=FontWeight.W_500),
             autofocus=True,
             focused_color=grey,
+            on_change=refresh_clinic_list
         )
 
-        def get_clinic_details():
-            c = db.cursor()
-            c.execute("SELECT id, name, location, area, workingTime, workingDay, clinicDescription, "
-                      "phoneNumber, clinicImage FROM clinic WHERE approvalStatus = ?", (1,))
-            record = c.fetchall()
-            return record
-
-        clinic = get_clinic_details()
+        clinic = self.get_clinic_details(area_dropdown.value)
 
         def displayClinic(records):
             if records:
@@ -178,6 +198,11 @@ class ClinicPage:
 
                 return Column(controls=record_containers)
 
+            else:
+                return Container()
+
+        clinic_list = displayClinic(clinic)
+
         return View(
             "/clinic/:user_id",
             controls=[
@@ -188,6 +213,7 @@ class ClinicPage:
                           # child control
                           content=Column(
                               horizontal_alignment="center",
+                              scroll=True,
                               controls=[
                                   Container(width=350,
                                             height=70,
@@ -206,7 +232,7 @@ class ClinicPage:
                                                               on_click=lambda _: page.go(f"/homepage/{user_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=100, top=25),
+                                                    Container(padding=padding.only(left=110, top=25),
                                                               content=Text(
                                                                   value="Clinic",
                                                                   size=20,
@@ -224,7 +250,7 @@ class ClinicPage:
                                       content=area_dropdown
                                   ),
 
-                                  displayClinic(clinic),
+                                  clinic_list
 
                                   # Container(
                                   #     margin=margin.only(left=10, right=10, top=10),
