@@ -61,12 +61,15 @@ class DoctorPage:
 
         doctor = get_doctor_details()
 
+        split_current_route = page.route.split("/")
+        previous_route = split_current_route[1]
+
         def displayDoctor(records):
             if records:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewDoctor/{user_id}{record_id}")
+                        return lambda _: page.go(f"/viewDoctor/{user_id}{record_id}{previous_route}")
 
                     record_container = Container(
                         margin=margin.only(left=10, right=10, top=10),
