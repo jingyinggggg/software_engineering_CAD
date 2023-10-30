@@ -50,6 +50,144 @@ class Homepage:
 
         username, phoneNumber = get_user_details()
 
+        def get_clinic_details():
+            c = db.cursor()
+            c.execute("SELECT id, name, location FROM clinic")
+            record = c.fetchall()
+            return record
+
+        clinic = get_clinic_details()
+
+        def displayRecord(records):
+            if records:
+                record_containers = []
+                for record in records[:2]:
+                    record_container = Container(
+                        padding=padding.only(left=15),
+                        content=Container(
+                            bgcolor=lightBlue,
+                            width=315,
+                            padding=padding.only(top=5, bottom=10),
+                            border_radius=7,
+                            content=Row(
+                                controls=[
+                                    Container(padding=padding.only(left=10),
+                                              content=Icon(icons.LOCATION_PIN,
+                                                           color=blue,
+                                                           size=25
+                                                           )
+                                              ),
+
+                                    Column(
+                                        controls=[
+                                            Container(
+                                                padding=padding.only(top=5),
+                                                content=Text(value=f"{record[1]}",
+                                                             size=12,
+                                                             color=colors.BLACK,
+                                                             font_family="RobotoSlab",
+                                                             weight=FontWeight.W_500
+                                                             )
+                                            ),
+
+                                            Container(padding=padding.only(top=-8),
+                                                      width=260,
+                                                      content=Text(
+                                                          value=f"{record[2]}",
+                                                          size=9,
+                                                          color=colors.BLACK,
+                                                          font_family="RobotoSlab",
+                                                          weight=FontWeight.W_500,
+                                                          text_align=TextAlign.JUSTIFY
+                                                      )
+                                                      )
+
+                                        ]
+                                    )
+
+                                ]
+                            )
+                        ),
+
+                    )
+                    record_containers.append(record_container)
+
+                return Column(controls=record_containers)
+
+            else:
+                return Container()
+
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT id, fullName, specialization, image FROM doctors")
+            record = c.fetchall()
+            return record
+
+        doctor = get_doctor_details()
+
+        def displayDoctorRecord(records):
+            if records:
+                record_containers = []
+                for record in records[:2]:
+                    record_container = Container(
+                        bgcolor=lightBlue,
+                        width=155,
+                        height=195,
+                        border_radius=7,
+                        content=Column(
+                            horizontal_alignment="center",
+                            controls=[
+                                Container(padding=padding.only(top=-10, bottom=-8),
+                                          border_radius=border_radius.only(top_left=7, top_right=7),
+                                          gradient=LinearGradient(begin=alignment.top_center,
+                                                                  end=alignment.bottom_center,
+                                                                  colors=["#BFD1DA", "#688D9D"]),
+                                          content=Image(
+                                              src=f"{record[3]}",
+                                              width=155,
+                                              height=160,
+                                              fit=ImageFit,
+                                              color_blend_mode=blue,
+                                          )
+                                          ),
+
+                                Container(padding=padding.only(top=-8),
+                                          content=Text(value=f"Dr. {record[1]}",
+                                                       size=13,
+                                                       color=colors.BLACK,
+                                                       text_align=TextAlign.CENTER,
+                                                       font_family="RobotoSlab",
+                                                       weight=FontWeight.W_500)
+                                          ),
+
+                                Container(padding=padding.only(top=-10),
+                                          content=Text(
+                                              value=f"{record[2]}",
+                                              size=8,
+                                              color=colors.BLACK,
+                                              text_align=TextAlign.CENTER,
+                                              font_family="RobotoSlab",
+                                              weight=FontWeight.W_500)
+                                          ),
+
+                                Container(padding=padding.only(top=-12),
+                                          content=Image(
+                                              src="pic/star.png",
+                                              width=60,
+                                              height=20)
+                                          )
+
+                            ]
+                        )
+                    )
+
+                    record_containers.append(record_container)
+
+                return Row(controls=record_containers)
+
+            else:
+                return Container()
+
         sidebar = Container(
             padding=10,
             width=200,
@@ -145,84 +283,6 @@ class Homepage:
                                     )
                                 ),
 
-                                # Container(
-                                #     padding=padding.only(top=20, left=10, right=10),
-                                #     content=Column(
-                                #         controls=[
-                                #             Row(
-                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                #                 controls=[
-                                #                     Row(
-                                #                         controls=[
-                                #                             Image(
-                                #                                 src="pic/booking.png",
-                                #                                 width=20,
-                                #                                 height=20
-                                #                             ),
-                                #
-                                #                             Text(
-                                #                                 value="Bookings",
-                                #                                 size=12,
-                                #                                 color=colors.BLACK,
-                                #                                 text_align=TextAlign.LEFT,
-                                #                                 font_family="RobotoSlab",
-                                #                             )
-                                #                         ]
-                                #                     ),
-                                #
-                                #                     Container(
-                                #                         content=Icon(
-                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                #                             size=14,
-                                #                             color=grey
-                                #                         )
-                                #                     )
-                                #                 ]
-                                #             )
-                                #
-                                #         ]
-                                #     )
-                                # ),
-
-                                # Container(
-                                #     padding=padding.only(top=20, left=10, right=10),
-                                #     content=Column(
-                                #         controls=[
-                                #             Row(
-                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                #                 controls=[
-                                #                     Row(
-                                #                         controls=[
-                                #                             Image(
-                                #                                 src="pic/myDoctors.png",
-                                #                                 width=20,
-                                #                                 height=20
-                                #                             ),
-                                #
-                                #                             Text(
-                                #                                 value="My Doctors",
-                                #                                 size=12,
-                                #                                 color=colors.BLACK,
-                                #                                 text_align=TextAlign.LEFT,
-                                #                                 font_family="RobotoSlab",
-                                #                             )
-                                #                         ]
-                                #                     ),
-                                #
-                                #                     Container(
-                                #                         content=Icon(
-                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                #                             size=14,
-                                #                             color=grey
-                                #                         )
-                                #                     )
-                                #                 ]
-                                #             )
-                                #
-                                #         ]
-                                #     )
-                                # ),
-
                                 Container(
                                     padding=padding.only(top=20, left=10, right=10),
                                     content=Column(
@@ -254,7 +314,7 @@ class Homepage:
                                                             size=14,
                                                             color=grey
                                                         ),
-                                                        on_click=lambda _:page.go(f"/setting/{user_id}")
+                                                        on_click=lambda _: page.go(f"/setting/{user_id}")
                                                     )
                                                 ]
                                             )
@@ -336,11 +396,11 @@ class Homepage:
                                 IconButton(icon=icons.CHAT_ROUNDED,
                                            icon_size=20,
                                            icon_color="#858EA9",
-                                           on_click=lambda _:page.go(f"/patientChatViewDoctor/{user_id}")),
+                                           on_click=lambda _: page.go(f"/patientChatViewDoctor/{user_id}")),
                                 IconButton(icon=icons.CALENDAR_MONTH,
                                            icon_size=20,
                                            icon_color="#858EA9",
-                                           on_click=lambda _:page.go(f"/booking/{user_id}")),
+                                           on_click=lambda _: page.go(f"/booking/{user_id}")),
                                 IconButton(icon=icons.PERSON,
                                            icon_size=20,
                                            icon_color="#858EA9",
@@ -392,39 +452,13 @@ class Homepage:
                                                           content=IconButton(icon=icons.NOTIFICATIONS,
                                                                              icon_size=20,
                                                                              icon_color=colors.WHITE,
-                                                                             on_click=lambda _:page.go(f"/patientNotification/{user_id}"))
+                                                                             on_click=lambda _: page.go(
+                                                                                 f"/patientNotification/{user_id}"))
                                                       ),
                                                   ]
                                               ))
                                 ]
                             ),
-
-                            # Container(
-                            #     padding=padding.only(left=10, right=10, top=10, bottom=5),
-                            #     content=Row(
-                            #         controls=[
-                            #             TextField(
-                            #                 bgcolor=lightBlue,
-                            #                 height=40,
-                            #                 width=300,
-                            #                 border_color=blue,
-                            #                 label="Search",
-                            #                 label_style=TextStyle(color=colors.BLACK,
-                            #                                       size=14,
-                            #                                       italic=True,
-                            #                                       weight=FontWeight.W_400),
-                            #                 text_style=TextStyle(color=colors.BLACK,
-                            #                                      size=12,
-                            #                                      weight=FontWeight.W_400)
-                            #             ),
-                            #
-                            #             Icon(icons.SEARCH,
-                            #                  color=blue,
-                            #                  size=20)
-                            #
-                            #         ]
-                            #     )
-                            # ),
 
                             Container(
                                 padding=padding.only(top=15, bottom=10),
@@ -484,95 +518,7 @@ class Homepage:
                                 ]
                             ),
 
-                            Container(
-                                padding=padding.only(left=15),
-                                content=Container(
-                                    bgcolor=lightBlue,
-                                    width=315,
-                                    height=55,
-                                    border_radius=7,
-                                    content=Row(
-                                        controls=[
-                                            Container(padding=padding.only(left=10),
-                                                      content=Icon(icons.LOCATION_PIN,
-                                                                   color=blue,
-                                                                   size=25
-                                                                   )
-                                                      ),
-
-                                            Column(
-                                                controls=[
-                                                    Container(
-                                                        padding=padding.only(top=5),
-                                                        content=Text(value="Bwell Clinic",
-                                                                     size=12,
-                                                                     color=colors.BLACK,
-                                                                     font_family="RobotoSlab",
-                                                                     weight=FontWeight.W_500
-                                                                     )
-                                                    ),
-
-                                                    Container(padding=padding.only(top=-5),
-                                                              content=Text(
-                                                                  value="1-G-16, Imperial Grande, Persiaran Relau, Sungai Ara, 11900\nBayan Lepas, Pulau Pinang",
-                                                                  size=8,
-                                                                  color=colors.BLACK,
-                                                                  font_family="RobotoSlab")
-                                                              )
-
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
-
-                            ),
-
-                            Container(
-                                padding=padding.only(left=15, top=5, bottom=15),
-                                content=Container(
-                                    bgcolor=lightBlue,
-                                    width=315,
-                                    height=55,
-                                    border_radius=7,
-                                    content=Row(
-                                        controls=[
-                                            Container(padding=padding.only(left=10),
-                                                      content=Icon(icons.LOCATION_PIN,
-                                                                   color=blue,
-                                                                   size=25
-                                                                   )
-                                                      ),
-
-                                            Column(
-                                                controls=[
-                                                    Container(
-                                                        padding=padding.only(top=5),
-                                                        content=Text(value="Dr Ng Clinic",
-                                                                     size=12,
-                                                                     color=colors.BLACK,
-                                                                     font_family="RobotoSlab",
-                                                                     weight=FontWeight.W_500
-                                                                     )
-                                                    ),
-
-                                                    Container(padding=padding.only(top=-5),
-                                                              content=Text(
-                                                                  value="29-1-32, GOLDEN TRIANGLE, Jln Paya Terubung, Sungai Ara,\n11900 Bayan Lepas, Pulau Pinang",
-                                                                  size=8,
-                                                                  color=colors.BLACK,
-                                                                  font_family="RobotoSlab")
-                                                              )
-
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
-
-                            ),
+                            displayRecord(clinic),
 
                             Row(
                                 controls=[
@@ -598,111 +544,7 @@ class Homepage:
 
                             Container(
                                 padding=padding.only(left=13, right=10),
-                                content=Row(
-                                    controls=[
-                                        Container(
-                                            bgcolor=lightBlue,
-                                            width=155,
-                                            height=195,
-                                            border_radius=7,
-                                            content=Column(
-                                                horizontal_alignment="center",
-                                                controls=[
-                                                    Container(padding=padding.only(top=-10),
-                                                              content=Image(
-                                                                  src="pic/doctor1.png",
-                                                                  width=155,
-                                                                  height=160,
-                                                                  fit=ImageFit,
-
-                                                              )
-                                                              ),
-
-                                                    Container(padding=padding.only(top=-13),
-                                                              content=Text(value="Dr. Jenny",
-                                                                           size=13,
-                                                                           color=colors.BLACK,
-                                                                           text_align=TextAlign.CENTER,
-                                                                           font_family="RobotoSlab",
-                                                                           weight=FontWeight.W_500)
-                                                              ),
-
-                                                    Container(padding=padding.only(top=-10),
-                                                              content=Text(
-                                                                  value="Radiologists",
-                                                                  size=8,
-                                                                  color=colors.BLACK,
-                                                                  text_align=TextAlign.CENTER,
-                                                                  font_family="RobotoSlab",
-                                                                  weight=FontWeight.W_500)
-                                                              ),
-
-                                                    Container(padding=padding.only(top=-12),
-                                                              content=Image(
-                                                                  src="pic/star.png",
-                                                                  width=60,
-                                                                  height=20)
-                                                              )
-
-                                                ]
-                                            )
-                                        ),
-
-                                        Container(
-                                            bgcolor=lightBlue,
-                                            width=155,
-                                            height=195,
-                                            border_radius=7,
-                                            content=Column(
-                                                horizontal_alignment="center",
-                                                controls=[
-                                                    Container(
-                                                        padding=padding.only(top=-10),
-                                                        content=Image(
-                                                            src="pic/doctor2.png",
-                                                            width=155,
-                                                            height=160,
-                                                            fit=ImageFit,
-
-                                                        )
-                                                    ),
-
-                                                    Container(
-                                                        padding=padding.only(top=-13),
-                                                        content=Text(value="Dr. Johnson",
-                                                                     size=13,
-                                                                     color=colors.BLACK,
-                                                                     text_align=TextAlign.CENTER,
-                                                                     font_family="RobotoSlab",
-                                                                     weight=FontWeight.W_500)
-                                                    ),
-
-                                                    Container(
-                                                        padding=padding.only(top=-10),
-                                                        content=Text(
-                                                            value="Cardiologists",
-                                                            size=8,
-                                                            color=colors.BLACK,
-                                                            text_align=TextAlign.CENTER,
-                                                            font_family="RobotoSlab",
-                                                            weight=FontWeight.W_500)
-                                                    ),
-
-                                                    Container(
-                                                        padding=padding.only(top=-12),
-                                                        content=Image(
-                                                            src="pic/star.png",
-                                                            width=60,
-                                                            height=20)
-                                                    )
-
-                                                ]
-                                            )
-                                        ),
-
-                                    ]
-                                )
-
+                                content=displayDoctorRecord(doctor)
                             ),
 
                             nav
