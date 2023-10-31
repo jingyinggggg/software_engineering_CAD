@@ -42,7 +42,7 @@ class BookingPage:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewMedicalRecord/{record_id}")
+                        return lambda _: page.go(f"/viewBooking/{user_id}{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -120,22 +120,36 @@ class BookingPage:
                                                         margin=margin.only(left=-8),
                                                         content=Text(
                                                             value=record[8],
-                                                            color=colors.RED,  # Set the text color to red
+                                                            color=colors.INDIGO_700,
                                                             size=11,
                                                             font_family="RobotoSlab",
-                                                            weight=FontWeight.W_600,  # Set the text to bold
+                                                            weight=FontWeight.W_600,
                                                             text_align=TextAlign.JUSTIFY,
-                                                            italic=True
                                                         )
                                                     )
 
                                                 ]
                                             )
-                                        )
+                                        ),
+
+                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          # italic=True,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=on_more_button_click()
+                                                  )
+
+                                                  ),
                                     ]
                                 )
                             ]
-                        )
+                        ),
+                        on_click=on_more_button_click,
+
                     )
                     record_containers.append(record_container)
 
@@ -182,7 +196,7 @@ class BookingPage:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewBooking/{record_id}")
+                        return lambda _: page.go(f"/viewBooking/{user_id}{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -264,13 +278,24 @@ class BookingPage:
                                                             font_family="RobotoSlab",
                                                             weight=FontWeight.W_600,  # Set the text to bold
                                                             text_align=TextAlign.JUSTIFY,
-                                                            italic=True
                                                         )
-                                                    )
+                                                    ),
 
                                                 ]
                                             )
-                                        )
+                                        ),
+
+                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=on_more_button_click()
+                                                  )
+
+                                                  ),
                                     ]
                                 )
                             ]
@@ -321,7 +346,7 @@ class BookingPage:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewMedicalRecord/{record_id}")
+                        return lambda _: page.go(f"/viewBooking/{user_id}{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -403,13 +428,24 @@ class BookingPage:
                                                             font_family="RobotoSlab",
                                                             weight=FontWeight.W_600,  # Set the text to bold
                                                             text_align=TextAlign.JUSTIFY,
-                                                            italic=True
                                                         )
-                                                    )
+                                                    ),
 
                                                 ]
                                             )
-                                        )
+                                        ),
+
+                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=on_more_button_click()
+                                                  )
+
+                                                  ),
                                     ]
                                 )
                             ]
@@ -447,6 +483,156 @@ class BookingPage:
                     )
                 )
 
+        def get_rejected_booking():
+            c = db.cursor()
+            c.execute("SELECT * FROM booking WHERE patientID = ? AND bookingStatus = ? ORDER BY bookingID DESC", (user_id,-1,))
+            record = c.fetchall()
+            return record
+
+        rejected_booking = get_rejected_booking()
+
+        def displayRejectedBooking(records):
+            if records:
+                record_containers = []
+                for record in records:
+                    def on_more_button_click(record_id=record[0]):
+                        return lambda _: page.go(f"/viewBooking/{user_id}{record_id}")
+
+                    record_container = Container(
+                        margin=margin.only(left=15, right=15, top=20),
+                        border_radius=10,
+                        border=border.all(1, colors.BLACK),
+                        padding=padding.only(left=20, right=20, top=20, bottom=20),
+                        content=Row(
+                            controls=[
+                                Container(
+                                    padding=padding.only(top=-10),
+                                    content=Image(
+                                        src="pic/appointment_icon.png",
+                                        width=50,
+                                        height=50,
+                                    )
+
+                                ),
+
+                                Column(
+                                    controls=[
+                                        Container(
+                                            margin=margin.only(bottom=-3),
+                                            width=220,
+                                            content=Text(
+                                                value=f"Appointment Date: {record[3]}",
+                                                color=colors.BLACK,
+                                                size=11,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500,
+                                                text_align=TextAlign.JUSTIFY
+                                            )
+                                        ),
+
+                                        Container(
+                                            width=220,
+                                            margin=margin.only(bottom=-3),
+                                            content=Text(
+                                                value=f"Appointment Time: {record[4]}",
+                                                color=colors.BLACK,
+                                                size=11,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500,
+                                                text_align=TextAlign.JUSTIFY
+                                            )
+                                        ),
+
+                                        Container(
+                                            width=220,
+                                            margin=margin.only(bottom=-3),
+                                            content=Text(
+                                                value=f"Clinic Name: {record[6]}",
+                                                color=colors.BLACK,
+                                                size=11,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500,
+                                                text_align=TextAlign.JUSTIFY
+                                            )
+                                        ),
+
+                                        Container(
+                                            width=235,
+                                            content=Row(
+                                                controls=[
+                                                    Text(
+                                                        value="Appointment Status: ",
+                                                        color=colors.BLACK,
+                                                        size=11,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                    ),
+
+                                                    Container(
+                                                        margin=margin.only(left=-8),
+                                                        content=Text(
+                                                            value=record[8],
+                                                            color=colors.RED,
+                                                            size=11,
+                                                            font_family="RobotoSlab",
+                                                            weight=FontWeight.W_600,  # Set the text to bold
+                                                            text_align=TextAlign.JUSTIFY,
+                                                        )
+                                                    ),
+
+                                                ]
+                                            )
+                                        ),
+
+                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=on_more_button_click()
+                                                  )
+
+                                                  ),
+                                    ]
+                                )
+                            ]
+                        )
+                    )
+                    record_containers.append(record_container)
+
+                return Column(controls=record_containers)
+
+            else:
+                return Container(
+                    padding=padding.only(top=140),
+                    content=Column(
+                        horizontal_alignment="center",
+                        controls=[
+                            Image(
+                                src="pic/appointment_icon.png",
+                                width=120,
+                                height=120
+                            ),
+
+                            Container(
+                                padding=padding.only(top=10, left=30, right=30),
+                                content=Text(
+                                    value="You do not have any rejected appointment yet.",
+                                    text_align=TextAlign.CENTER,
+                                    size=12,
+                                    color=colors.BLACK,
+                                    font_family="RobotoSlab",
+                                    weight=FontWeight.W_500
+                                )
+                            ),
+
+                        ]
+                    )
+                )
+
         tab = Tabs(
             width=350,
             selected_index=0,
@@ -458,24 +644,31 @@ class BookingPage:
             divider_color=grey,
             tabs=[
                 Tab(
-                    text="\t Requested \t",
+                    text="Requested",
                     content=Container(
                         width=340,
                         content=displayRequestBooking(requested_booking)
                     ),
                 ),
                 Tab(
-                    text="\t Scheduled \t",
+                    text="Scheduled",
                     content=Container(
                         width=340,
                         content=displayScheduleBooking(schedule_booking)
                     ),
                 ),
                 Tab(
-                    text="\t Completed\t",
+                    text="Completed",
                     content=Container(
                         width=340,
                         content=displayCompletedBooking(completed_booking)
+                    ),
+                ),
+                Tab(
+                    text="Rejected",
+                    content=Container(
+                        width=340,
+                        content=displayRejectedBooking(rejected_booking)
                     ),
                 ),
             ],
