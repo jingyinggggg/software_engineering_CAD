@@ -91,7 +91,7 @@ def main(mainPage: Page):
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
-        path(url="/addDoctorDetails/:clinicName", clear=False, view=AddDoctorDetailsPage().view),
+        path(url="/addDoctorDetails/:clinic_id", clear=False, view=AddDoctorDetailsPage().view),
 
 
         # Admin interface path

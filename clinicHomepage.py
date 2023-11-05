@@ -5,39 +5,47 @@ import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
-def addRow():
 
+
+def addRow():
     try:
         cursor.execute(
             "INSERT INTO doctors (fullName, username, email, phoneNumber, password, experience, specialization, "
-                  "description, clinic, workingTime, workingDay, image, status)"
-                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "description, clinic, workingTime, workingDay, image, status)"
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 
-                  ("Johnson", "Johnson", "johnson@gmail.com", "0157778709", "123", "3 years experience",
-                   "Cardiologists",
-                   "Treat the patient this and that", "Bwell Clinic", "12:00pm - 5:00pm", "Tuesday to Saturday (except Thursday)",
-                   "pic/doctor.png",
-                   1)
-                  ),
+            ("Johnson", "Johnson", "johnson@gmail.com", "0157778709", "123", "3 years experience",
+             "Cardiologists",
+             "Treat the patient this and that", "Bwell Clinic", "12:00pm - 5:00pm",
+             "Tuesday to Saturday (except Thursday)",
+             "pic/doctor.png",
+             1)
+        ),
         db.commit()
         print("1")
     except sqlite3.Error as e:
         print("SQLite error:", e)
 
 
-def UpdateRow():
-    c = db.cursor()
-    c.execute("UPDATE doctors SET id = '1' WHERE id = ?", (5,))
-    db.commit()
-
-
+# def UpdateRow():
+#     c = db.cursor()
+#     c.execute("UPDATE doctors SET id = '1' WHERE id = ?", (5,))
+#     db.commit()
+#
+#
+# def DeleteRow():
+#     cursor.execute("DELETE FROM doctors WHERE id = ?", (6,))
+#     db.commit()
+#
+#
+# DeleteRow()
 
 class ClinicHomepage:
 
     def __init__(self):
         self.show_sidebar = False
 
-    def view (self, page: Page, params: Params, basket: Basket):
+    def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
 
         page.title = "Call A Doctor"
@@ -66,32 +74,26 @@ class ClinicHomepage:
 
         def get_clinic_details():
             c = db.cursor()
-            c.execute("SELECT name, phoneNumber , approvalStatus FROM clinic WHERE id = ?", (user_id,))
+            c.execute("SELECT id,name, phoneNumber , approvalStatus FROM clinic WHERE id = ?", (user_id,))
             record = c.fetchall()
 
-            clinicName = record[0][0]
-            phoneNumber = record[0][1]
-            approvalStatus = record[0][2]
+            clinic_id = record[0][0]
+            clinicName = record[0][1]
+            phoneNumber = record[0][2]
+            approvalStatus = record[0][3]
 
-            return clinicName, phoneNumber, approvalStatus
+            return clinic_id, clinicName, phoneNumber, approvalStatus
 
-        clinicName, phoneNumber ,approvalStatus = get_clinic_details()
+        clinic_id, clinicName, phoneNumber, approvalStatus = get_clinic_details()
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT fullName, specialization FROM doctors WHERE clinic = ? LIMIT 10", (clinicName,))
-            record = c.fetchall()
+            c.execute("SELECT fullName, specialization, id FROM doctors WHERE clinicID = ? LIMIT 10", (clinic_id,))
+            doctor_records = c.fetchall()
 
-            doctor_name = record[0][0]
-            doctor_spec = record[0][1]
+            return doctor_records
 
-            return doctor_name, doctor_spec
-
-        doctor_name, doctor_spec = get_doctor_details()
-
-        def remove_doctor():
-            c = db.cursor()
-            c.execute("DELETE FROM doctors WHERE name = ?", (doctor_name,))
+        doctor_records = get_doctor_details()
 
         def approval_status():
             if approvalStatus == 0:
@@ -123,131 +125,38 @@ class ClinicHomepage:
                                   ),
                     border_radius=10
                 )
-
             elif approvalStatus == 1:
-                return (
-                    Container(
-                        content=Column(
-                            controls=[
-                                Container(
-                                    margin=margin.only(left=10),
-                                    width=250,
-                                    height=68,
-                                    content=Row(
-                                        controls=[
-                                            Container(
-                                                padding=padding.only(left=20),
-                                                content=Image(
-                                                    src=f"pic/approved_request.png"
-                                                )
-                                            ),
+                return Container(
+                    width=300,
+                    height=60,
+                    content=Row(
+                        controls=[
+                            Container(
+                                padding=padding.only(left=20),
+                                content=Image(
+                                    src=f"pic/approved_request.png"
+                                )
+                            ),
 
-                                            Container(
-                                                padding=padding.only(left=25),
-                                                content=Text(
-                                                    value="Approved",
-                                                    size=20,
-                                                    color=colors.GREEN,
-                                                    weight=FontWeight.BOLD,
-                                                    font_family="RobotoSlab",
-
-                                                )
-                                            )
-
-                                        ]
-                                    ),
-
-                                    border=Border(top=BorderSide(2, colors.BLACK),
-                                                  left=BorderSide(2, colors.BLACK),
-                                                  bottom=BorderSide(2, colors.BLACK),
-                                                  right=BorderSide(2, colors.BLACK)
-                                                  ),
-                                    border_radius=10,
-
-
-                                ),
-
-                                Container(
-                                    content=Column(
-                                        controls=[
-                                            Container(
-                                                content=Text(
-                                                    value="Doctor :",
-                                                    size=15,
-                                                    font_family="RobotoSlab",
-                                                    color=dark_blue,
-                                                    weight=FontWeight.BOLD,
-                                                    text_align=TextAlign.LEFT,
-                                                ),
-                                            ),
-
-                                            Container(
-                                                content=Row(
-                                                    controls=[
-                                                        Container(
-                                                            content=IconButton(
-                                                                icons.PERSON_REMOVE_ROUNDED,
-                                                                icon_color=colors.RED,
-                                                                on_click=remove_doctor,
-                                                            )
-                                                        ),
-                                                        Container(
-                                                            content=Text(
-                                                                value="Doctor " + doctor_name +
-                                                                      " (" + doctor_spec + ")",
-                                                                size=14,
-                                                                color=colors.BLACK,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ),
-                                                    ]
-                                                )
-                                            ),
-                                            Container(
-                                                on_click=lambda _: (
-                                                    page.go(f"/addDoctorDetails/{clinicName}")
-                                                ),
-                                                width=150,
-                                                height=40,
-                                                content=Row(
-                                                    controls=[
-                                                        Container(
-                                                            content=IconButton(
-                                                                icons.PERSON_ADD_ROUNDED,
-                                                                icon_color=blue,
-                                                                style=ButtonStyle(elevation={}),
-
-                                                            ),
-
-                                                        ),
-                                                        Container(
-                                                            content=Text(
-                                                                value="Add A Doctor",
-                                                                size=13,
-                                                                color=colors.BLACK,
-                                                                font_family="RobotoSlab",
-                                                            ),
-
-                                                        ),
-                                                    ]
-                                                ),
-                                                border=Border(top=BorderSide(2, colors.BLACK),
-                                                              left=BorderSide(2, colors.BLACK),
-                                                              bottom=BorderSide(2,
-                                                                                colors.BLACK),
-                                                              right=BorderSide(2, colors.BLACK)
-                                                              ),
-                                                border_radius=10,
-                                            ),
-
-                                        ]
-                                    )
+                            Container(
+                                padding=padding.only(left=25),
+                                content=Text(
+                                    value="Approved",
+                                    size=20,
+                                    color=colors.GREEN,
+                                    weight=FontWeight.BOLD,
+                                    font_family="RobotoSlab",
 
                                 )
-
-                            ]
-                        )
-                    )
+                            )
+                        ]
+                    ),
+                    border=Border(top=BorderSide(2, colors.BLACK),
+                                  left=BorderSide(2, colors.BLACK),
+                                  bottom=BorderSide(2, colors.BLACK),
+                                  right=BorderSide(2, colors.BLACK)
+                                  ),
+                    border_radius=10
                 )
 
             else:
@@ -281,6 +190,60 @@ class ClinicHomepage:
 
                 )
 
+        def display_doctor_list(records):
+            if records:
+                record_containers = []
+                for record in records:
+                    def remove_doctor(doctor_id=record[2]):
+                        c = db.cursor()
+                        c.execute("DELETE FROM doctors WHERE id = ?", (doctor_id,))
+                        db.commit()
+
+                    record_container = Container(
+                        margin=margin.only(left=25),
+                        content=Column(
+                            controls=[
+                                Container(
+                                    content=Text(
+                                        value="Doctor :",
+                                        size=15,
+                                        font_family="RobotoSlab",
+                                        color=dark_blue,
+                                        weight=FontWeight.BOLD,
+                                        text_align=TextAlign.LEFT,
+                                    ),
+                                ),
+
+                                Container(
+                                    content=Row(
+                                        controls=[
+                                            Container(
+                                                content=IconButton(
+                                                    icons.PERSON_REMOVE_ROUNDED,
+                                                    icon_color=colors.RED,
+                                                    on_click=remove_doctor,
+                                                )
+                                            ),
+                                            Container(
+                                                content=Text(
+                                                    value=f"Doctor {record[0]} ({record[1]})",
+                                                    size=14,
+                                                    color=colors.BLACK,
+                                                    font_family="RobotoSlab",
+                                                )
+                                            ),
+                                        ]
+                                    )
+                                ),
+
+                            ]
+                        )
+
+                    )
+                    record_containers.append(record_container)
+                return Column(controls=record_containers)
+            else:
+                return Container()
 
         sidebar = Container(
             padding=10,
@@ -483,7 +446,7 @@ class ClinicHomepage:
                                                                     icons.MENU,
                                                                     icon_color=colors.WHITE,
                                                                     on_click=show_side_bar
-                                                                    ),
+                                                                ),
                                                                 ),
 
                                                       Container(padding=padding.only(left=65, top=25),
@@ -495,8 +458,8 @@ class ClinicHomepage:
                                                                     text_align=TextAlign.CENTER)
                                                                 ),
                                                   ]
-                                             )
-                                    )
+                                              )
+                                              )
                                 ]
                             ),
 
@@ -512,22 +475,22 @@ class ClinicHomepage:
                                               content=Column(
                                                   controls=[
                                                       Container(
-                                                            content=Text(
-                                                                  value="Hello ",
-                                                                  size=18,
-                                                                  font_family="RobotoSlab",
-                                                                  color=colors.BLACK,
-                                                                  text_align=TextAlign.LEFT,
-                                                                  spans=[
-                                                                      TextSpan(
-                                                                          clinicName,
-                                                                          TextStyle(size=18,
-                                                                                    font_family="RobotoSlab",
-                                                                                    color=dark_blue,
-                                                                                    weight=FontWeight.BOLD)
-                                                                      )
-                                                                  ]
-                                                            )
+                                                          content=Text(
+                                                              value="Hello ",
+                                                              size=18,
+                                                              font_family="RobotoSlab",
+                                                              color=colors.BLACK,
+                                                              text_align=TextAlign.LEFT,
+                                                              spans=[
+                                                                  TextSpan(
+                                                                      clinicName,
+                                                                      TextStyle(size=18,
+                                                                                font_family="RobotoSlab",
+                                                                                color=dark_blue,
+                                                                                weight=FontWeight.BOLD)
+                                                                  )
+                                                              ]
+                                                          )
                                                       ),
 
                                                       Container(
@@ -563,19 +526,17 @@ class ClinicHomepage:
                                             controls=[
                                                 Container(
                                                     content=Text(
-                                                      value="Approval Status :",
-                                                      size=15,
-                                                      font_family="RobotoSlab",
-                                                      color=dark_blue,
-                                                      weight=FontWeight.BOLD,
-                                                      text_align=TextAlign.LEFT
+                                                        value="Approval Status :",
+                                                        size=15,
+                                                        font_family="RobotoSlab",
+                                                        color=dark_blue,
+                                                        weight=FontWeight.BOLD,
+                                                        text_align=TextAlign.LEFT
                                                     ),
 
                                                 ),
 
                                                 approval_status(),
-
-
 
                                             ]
                                         )
@@ -583,7 +544,45 @@ class ClinicHomepage:
                                 ]
                             ),
 
+                            display_doctor_list(doctor_records),
 
+                            Container(
+                                width=150,
+                                height=40,
+                                margin=margin.only(left=25),
+                                content=Row(
+                                    controls=[
+                                        Container(
+                                            content=IconButton(
+                                                icons.PERSON_ADD_ROUNDED,
+                                                icon_color=blue,
+                                                style=ButtonStyle(elevation={}),
+
+                                            ),
+
+                                        ),
+                                        Container(
+                                            content=Text(
+                                                value="Add A Doctor",
+                                                size=13,
+                                                color=colors.BLACK,
+                                                font_family="RobotoSlab",
+                                            ),
+
+                                        ),
+                                    ]
+                                ),
+                                border=Border(top=BorderSide(2, colors.BLACK),
+                                              left=BorderSide(2, colors.BLACK),
+                                              bottom=BorderSide(2,
+                                                                colors.BLACK),
+                                              right=BorderSide(2, colors.BLACK)
+                                              ),
+                                border_radius=10,
+                                on_click=lambda _: (
+                                    page.go(f"/addDoctorDetails/{clinic_id}")
+                                ),
+                            ),
 
                         ]
                     )
