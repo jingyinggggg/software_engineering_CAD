@@ -29,6 +29,13 @@ class BookingPage:
         blue = "#3386C5"
         grey = "#71839B"
 
+        def get_clinic_name(clinic_id):
+            c = db.cursor()
+            c.execute(f"SELECT name FROM clinic WHERE id = {clinic_id}")
+            record = c.fetchone()
+            clinic_name = record[0]
+            return clinic_name
+
         def get_request_booking():
             c = db.cursor()
             c.execute("SELECT * FROM booking WHERE patientID = ? AND bookingStatus = ? ORDER BY bookingID DESC", (user_id,0,))
@@ -94,7 +101,8 @@ class BookingPage:
                                             width=220,
                                             margin=margin.only(bottom=-3),
                                             content=Text(
-                                                value=f"Clinic Name: {record[6]}",
+                                                # value=f"Clinic Name: {record[6]}",
+                                                value=f"Clinic Name: {get_clinic_name(record[6])}",
                                                 color=colors.BLACK,
                                                 size=11,
                                                 font_family="RobotoSlab",
@@ -130,25 +138,12 @@ class BookingPage:
 
                                                 ]
                                             )
-                                        ),
-
-                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          # italic=True,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
+                                        )
                                     ]
                                 )
                             ]
                         ),
-                        on_click=on_more_button_click,
+                        on_click=on_more_button_click()
 
                     )
                     record_containers.append(record_container)
@@ -247,7 +242,7 @@ class BookingPage:
                                             width=220,
                                             margin=margin.only(bottom=-3),
                                             content=Text(
-                                                value=f"Clinic Name: {record[6]}",
+                                                value=f"Clinic Name: {get_clinic_name(record[6])}",
                                                 color=colors.BLACK,
                                                 size=11,
                                                 font_family="RobotoSlab",
@@ -283,23 +278,13 @@ class BookingPage:
 
                                                 ]
                                             )
-                                        ),
-
-                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
+                                        )
                                     ]
                                 )
                             ]
-                        )
+                        ),
+
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
@@ -397,7 +382,7 @@ class BookingPage:
                                             width=220,
                                             margin=margin.only(bottom=-3),
                                             content=Text(
-                                                value=f"Clinic Name: {record[6]}",
+                                                value=f"Clinic Name: {get_clinic_name(record[6])}",
                                                 color=colors.BLACK,
                                                 size=11,
                                                 font_family="RobotoSlab",
@@ -433,23 +418,13 @@ class BookingPage:
 
                                                 ]
                                             )
-                                        ),
-
-                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
+                                        )
                                     ]
                                 )
                             ]
-                        )
+                        ),
+
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
@@ -547,7 +522,7 @@ class BookingPage:
                                             width=220,
                                             margin=margin.only(bottom=-3),
                                             content=Text(
-                                                value=f"Clinic Name: {record[6]}",
+                                                value=f"Clinic Name: {get_clinic_name(record[6])}",
                                                 color=colors.BLACK,
                                                 size=11,
                                                 font_family="RobotoSlab",
@@ -583,23 +558,13 @@ class BookingPage:
 
                                                 ]
                                             )
-                                        ),
-
-                                        Container(padding=padding.only(left=170, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
+                                        )
                                     ]
                                 )
                             ]
-                        )
+                        ),
+
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
@@ -646,14 +611,12 @@ class BookingPage:
                 Tab(
                     text="Requested",
                     content=Container(
-                        width=340,
                         content=displayRequestBooking(requested_booking)
                     ),
                 ),
                 Tab(
                     text="Scheduled",
                     content=Container(
-                        width=340,
                         content=displayScheduleBooking(schedule_booking)
                     ),
                 ),
