@@ -46,8 +46,11 @@ from clinicSignUp import ClinicSignUpPage
 from addDoctorDetails import AddDoctorDetailsPage
 from clinicHomepage import ClinicHomepage
 
-# Admin interface
-
+# Clinic admin interface
+from clinicAdminHomepage import AdminHomepage
+from clinicAdminPatientRequestList import AdminPatientRequestList
+from clinicAdminUpdateAppointment import ClinicAdminUpdateAppointmentPage
+from clinicAdminUpdateAppointmentDetails import ClinicAdminUpdateAppointmentDetailsPage
 
 def main(mainPage: Page):
     mainPage.theme_mode = "dark"
@@ -59,6 +62,7 @@ def main(mainPage: Page):
         path(url="/loginUser", clear=False, view=LoginPage().view),
         path(url="/signUp", clear=False, view=SignUpPage().view),
         path(url="/resetPassword", clear=False, view=ResetPasswordPage().view),
+
 
         # Patient interface path
         path(url="/homepage/:user_id", clear=False, view=Homepage().view),
@@ -98,11 +102,16 @@ def main(mainPage: Page):
 
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
-        path(url="/addDoctorDetails", clear=False, view=AddDoctorDetailsPage().view),
+        path(url="/addDoctorDetails/:clinic_id", clear=False, view=AddDoctorDetailsPage().view),
         path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
 
 
-        # Admin interface path
+        # Clinic admin interface path
+        path(url="/login/adminHomepage/:user_id", clear=False, view=AdminHomepage().view),
+        path(url="/admin/adminPatientRequestList", clear=False, view=AdminPatientRequestList().view),
+        path(url="/admin/clinicAdminUpdateAppointment/:user_id", clear=False, view=ClinicAdminUpdateAppointmentPage().view),
+        path(url="/admin/clinicAdminUpdateAppointmentDetails/:user_id:booking_id", clear=False, view=ClinicAdminUpdateAppointmentDetailsPage().view),
+
     ]
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
