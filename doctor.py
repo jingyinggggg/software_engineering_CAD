@@ -196,23 +196,14 @@ class DoctorPage:
 
                                                     ]
                                                 )
-                                            ),
-
-                                            Container(
-                                                margin=margin.only(left=160, top=-15, bottom=-5),
-                                                content=TextButton(
-                                                    content=Text(value="More >>",
-                                                                 size=9,
-                                                                 font_family="RobotoSlab",
-                                                                 color=blue),
-                                                    on_click=on_more_button_click()
-                                                )
                                             )
                                         ]
                                     )
                                 )
                             ]
-                        )
+                        ),
+
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 

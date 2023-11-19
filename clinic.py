@@ -13,10 +13,16 @@ class ClinicPage:
     def get_clinic_details(self, selected_area):
         c = db.cursor()
         if selected_area:
-            c.execute(
-                "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
-                "clinicImage FROM clinic WHERE approvalStatus = ? AND area = ?",
-                (1, selected_area,))
+            if selected_area == "All":
+                c.execute(
+                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
+                    "clinicImage FROM clinic WHERE approvalStatus = ?",
+                    (1,))
+            else:
+                c.execute(
+                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
+                    "clinicImage FROM clinic WHERE approvalStatus = ? AND area = ?",
+                    (1, selected_area,))
         else:
             c.execute(
                 "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
@@ -67,9 +73,12 @@ class ClinicPage:
                                  size=14,
                                  italic=True),
             options=[
+                dropdown.Option("All"),
                 dropdown.Option("Bayan Lepas"),
                 dropdown.Option("Sungai Ara"),
                 dropdown.Option("Relau"),
+                dropdown.Option("Jelutong"),
+                dropdown.Option("Georgetown"),
             ],
             text_style=TextStyle(size=14,
                                  weight=FontWeight.W_500),
@@ -88,7 +97,7 @@ class ClinicPage:
                         return lambda _: page.go(f"/viewClinic/{user_id}{record_id}")
 
                     record_container = Container(
-                        margin=margin.only(left=10, right=10, top=10),
+                        margin=margin.only(left=10, right=10, bottom=20),
                         padding=padding.only(left=10, right=10, top=10, bottom=10),
                         border_radius=10,
                         border=border.all(1, blue),
@@ -174,32 +183,28 @@ class ClinicPage:
                                                             text_align=TextAlign.JUSTIFY
 
                                                         )
-                                                    ),
-
-                                                    Container(
-                                                        content=TextButton(
-                                                            content=Text(value="More >>",
-                                                                         size=9,
-                                                                         font_family="RobotoSlab",
-                                                                         color=blue),
-                                                            on_click=on_more_button_click()
-                                                        )
                                                     )
-
                                                 ]
                                             ),
                                         ]
                                     )
                                 )
                             ]
-                        )
+                        ),
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
                 return Column(controls=record_containers)
 
             else:
-                return Container()
+                return Container(
+                    content=Text(
+                        value="There are no clinic in the selected area.",
+                        color=colors.BLACK,
+                        font_family="RobotoSlab"
+                    )
+                )
 
         clinic_list = displayClinic(clinic)
 
@@ -246,38 +251,11 @@ class ClinicPage:
                                             ),
 
                                   Container(
-                                      padding=padding.only(left=10, right=10, top=10),
+                                      padding=padding.only(left=10, right=10, top=10, bottom=10),
                                       content=area_dropdown
                                   ),
 
                                   clinic_list
-
-                                  # Container(
-                                  #     margin=margin.only(left=10, right=10, top=10),
-                                  #     # padding=padding.only(left=10, right=10, top=10, bottom=5),
-                                  #     content=Row(
-                                  #         controls=[
-                                  #             TextField(
-                                  #                 bgcolor=lightBlue,
-                                  #                 height=40,
-                                  #                 width=325,
-                                  #                 dense=True,
-                                  #                 border_color=blue,
-                                  #                 border_radius=10,
-                                  #                 label="Search Clinic",
-                                  #                 label_style=TextStyle(color=colors.BLACK,
-                                  #                                       size=14,
-                                  #                                       italic=True,
-                                  #                                       weight=FontWeight.W_400),
-                                  #                 text_style=TextStyle(color=colors.BLACK,
-                                  #                                      size=12,
-                                  #                                      weight=FontWeight.W_400)
-                                  #             ),
-                                  #
-                                  #         ]
-                                  #     )
-                                  # ),
-
                               ]
                           )
                           )

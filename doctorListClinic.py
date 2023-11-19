@@ -33,7 +33,7 @@ class DoctorListBasedOnClinic:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT doctors.*, clinic.* FROM doctors INNER JOIN clinic ON doctors.clinic = clinic.name"
+            c.execute("SELECT doctors.*, clinic.* FROM doctors INNER JOIN clinic ON doctors.clinicID = clinic.id"
                       " WHERE clinic.id = ?", (clinic_id,))
             record = c.fetchall()
             return record
@@ -152,23 +152,13 @@ class DoctorListBasedOnClinic:
 
                                                     ]
                                                 )
-                                            ),
-
-                                            Container(
-                                                margin=margin.only(left=160, top=-15, bottom=-5),
-                                                content=TextButton(
-                                                    content=Text(value="More >>",
-                                                                 size=9,
-                                                                 font_family="RobotoSlab",
-                                                                 color=blue),
-                                                    on_click=on_more_button_click()
-                                                )
                                             )
                                         ]
                                     )
                                 )
                             ]
-                        )
+                        ),
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
