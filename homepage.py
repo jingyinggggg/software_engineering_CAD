@@ -2,6 +2,7 @@ import flet
 from flet import *
 from flet_route import Params, Basket
 import sqlite3
+from datetime import datetime
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
@@ -30,6 +31,9 @@ class Homepage:
         blue = "#3386C5"
         grey = "#71839B"
 
+        current_date = datetime.now()
+        formatted_date = current_date.strftime("%d %B %Y")
+
         def show_side_bar(e):
             sidebar.offset = transform.Offset(0, 0)
             page.update()
@@ -37,6 +41,24 @@ class Homepage:
         def hide_side_bar(e):
             sidebar.offset = transform.Offset(-5, 0)
             page.update()
+
+        def get_notification_count():
+            c = db.cursor()
+            c.execute("SELECT COUNT(*) FROM booking WHERE patientID = ? AND bookingStatus = ? AND appointmentDate >= ?",(user_id,1, formatted_date))
+            record = c.fetchone()
+
+            count = record[0]
+            print(f"count: {count}")
+            print(f"formatted_date: {formatted_date}")
+
+            return count
+
+        notification_count = get_notification_count()
+
+        if notification_count > 0:
+            notification_icon = "pic/notification_with_content.png"
+        else:
+            notification_icon = "pic/notification_without_content.png"
 
         def get_user_details():
             c = db.cursor()
@@ -448,12 +470,11 @@ class Homepage:
                                                                 ),
 
                                                       Container(
-                                                          padding=padding.only(top=25),
-                                                          content=IconButton(icon=icons.NOTIFICATIONS,
-                                                                             icon_size=20,
-                                                                             icon_color=colors.WHITE,
-                                                                             on_click=lambda _: page.go(
-                                                                                 f"/patientNotification/{user_id}"))
+                                                          padding=padding.only(top=25, right=10),
+                                                          content=Image(src=notification_icon,
+                                                                        width=22,
+                                                                        height=22),
+                                                          on_click=lambda _: page.go(f"/patientNotification/{user_id}")
                                                       ),
                                                   ]
                                               ))
