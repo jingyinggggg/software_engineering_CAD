@@ -227,7 +227,8 @@ class AdminHomepage:
                                                                 weight=FontWeight.BOLD,
                                                             )
                                                         )
-                                                    ])
+                                                    ]),
+                                                    on_click=lambda _:page.go(f"/admin/clinicAdminUpdateAppointment/{user_id}")
                                                 )
                                             ])
                                         ),
@@ -310,7 +311,8 @@ class AdminHomepage:
                                                                 weight=FontWeight.BOLD,
                                                             )
                                                         )
-                                                    ])
+                                                    ]),
+                                                    on_click=lambda _:page.go(f"/admin/setting/{user_id}")
                                                 )
                                             ])
                                         ),
