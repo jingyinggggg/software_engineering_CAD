@@ -35,7 +35,6 @@ class ViewMedicalRecordPage:
             record = c.fetchall()
 
             user_id = record[0][2]
-            print(medicalRecord_id)
             bloodType = record[0][3]
             allergies = record[0][4]
             pastMedicalCondition = record[0][5]

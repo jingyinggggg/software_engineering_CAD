@@ -144,7 +144,7 @@ class PatientPrescriptionPage:
                                 padding=padding.only(left=30, right=30),
                                 content=Text(
                                     width=250,
-                                    value="You does not have any prescription yet.",
+                                    value="You do not have any prescription yet.",
                                     text_align=TextAlign.CENTER,
                                     size=12,
                                     color=grey,

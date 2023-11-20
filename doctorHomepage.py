@@ -10,7 +10,7 @@ class DoctorHomepage:
         self.show_sidebar = False
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # user_id = int(params.user_id)
+        user_id = int(params.user_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -225,9 +225,22 @@ class DoctorHomepage:
             )
         )
 
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchall()
+
+            fullName = record[0][1]
+            username = record[0][2]
+            image = record[0][12]
+
+            return fullName, username, image
+
+        fullName, username, image = get_doctor_details()
+
         # phone container
         return View(
-            "/login/homepage",
+            "/login/homepage/:user_id",
             controls=[
                 Container(
                     # padding=padding.symmetric(horizontal=20, vertical=100),
@@ -261,7 +274,7 @@ class DoctorHomepage:
                                                             Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
                                                                                      icon_color="WHITE",
                                                                                      on_click=lambda _: page.go(
-                                                                                         f"/notification"))])]),
+                                                                                         f"/doctorNotification/{user_id}"))])]),
 
                                                     Text(value="Welcome !",
                                                          size=30,
@@ -269,7 +282,7 @@ class DoctorHomepage:
                                                          weight=FontWeight.BOLD,
                                                          color="WHITE"),
 
-                                                    Text(value="Dr.",
+                                                    Text(value=f"Dr. {fullName}",
                                                          size=30,
                                                          font_family="RobotoSlab",
                                                          weight=FontWeight.BOLD,
@@ -279,10 +292,9 @@ class DoctorHomepage:
                                                         padding=padding.only(left=100, top=-140),
 
                                                         content=Row(
-                                                            # horizontal_alignment="top_left",
                                                             controls=[
                                                                 Image(
-                                                                    src="pic/doctor.png",
+                                                                    src=f"{image}",
                                                                     width=280,
                                                                     height=280
                                                                 )
@@ -448,7 +460,7 @@ class DoctorHomepage:
                                                                                                FilledButton("more...",
                                                                                                             on_click=lambda
                                                                                                                 _: page.go(
-                                                                                                                f"/appointmentDetail"))
+                                                                                                                f"/appointmentDetail/{user_id}"))
 
                                                                                            )]))
 

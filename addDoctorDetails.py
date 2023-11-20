@@ -7,39 +7,44 @@ from flet_route import Params, Basket
 import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
-
+cursor = db.cursor()
 
 def CreateTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS doctors(
+    cursor.execute("""CREATE TABLE IF NOT EXISTS doctors(
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  fullName TEXT NOT NULL,
                  username TEXT ,
                  email TEXT NOT NULL,
-                 phoneNumber TEXT NOT NULL,
+                 clinicPhoneNumber TEXT NOT NULL,
                  password TEXT ,
                  experience TEXT NOT NULL,
                  specialization TEXT NOT NULL,
                  description TEXT NOT NULL,
-                 clinic TEXT NOT NULL,
+                 clinicID INTEGER NOT NULL,
                  workingTime TEXT NOT NULL,
                  workingDay TEXT NOT NULL,
                  image TEXT NOT NULL,
                  STATUS INTEGER NOT NULL)""")
     db.commit()
 
-
-# def DeleteColumn():
+# def UpdateRow():
 #     c = db.cursor()
-#     c.execute("ALTER TABLE doctors ADD COLUMN image TEXT")
+#     c.execute("UPDATE doctors SET id = '1' WHERE id = ?", (5,))
 #     db.commit()
-
+#
+#
+# def DeleteRow():
+#     cursor.execute("DELETE FROM doctors WHERE id = ?", (6,))
+#     db.commit()
 
 class AddDoctorDetailsPage:
     def __init__(self):
         self.show_sidebar = False
 
+
     def view(self, page: Page, params: Params, basket: Basket):
+
+        clinic_id = int(params.clinic_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -58,6 +63,47 @@ class AddDoctorDetailsPage:
 
         # CreateTable()
 
+        def open_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = False
+            page.update()
+
+        def addToDatabase(e):
+            CreateTable()
+            if (name.value != "" and email.value != "" and phoneNumber.value != "" and experience.value != ""
+                    and specialization.value != "" and description.value != "" and working_clinic.value != ""
+                    and working_time.value != "" and working_day.value != "" and image_file.value != ""):
+                cursor.execute(
+                    "INSERT INTO doctors (fullName, email, clinicPhoneNumber, experience, specialization, "
+                    "description, clinicID, workingTime, workingDay, image, status)"
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    (name.value, email.value, phoneNumber.value, experience.value + " years working experience", specialization.value,
+                     description.value, clinic_id, working_time.value, working_day.value, image_file.value,
+                     0)
+                    # ('John Doe', 'johndoe123', 'johndoe@example.com',
+                    #              '1234567890', '123', '3 years experience', 'Cardiologists',
+                    #              'Providing medical services', 'Bwell Clinic', '9:00 am - 5:00 pm',
+                    #              'Monday - Friday (except Thursday)', 'pic/doctor.png', 1)
+                )
+            db.commit()
+            open_dlg()
+
+        def get_clinic_details():
+            c = db.cursor()
+            c.execute("SELECT name, phoneNumber FROM clinic WHERE id = ?", (clinic_id,))
+            record = c.fetchall()
+
+            clinic_name = record[0][0]
+            clinic_phone_number = record[0][1]
+            return clinic_name, clinic_phone_number
+
+        clinic_name, clinic_phone_number = get_clinic_details()
+
         def setTextFieldValue(textField, value):
             if value != "":
                 textField.value = value
@@ -69,8 +115,9 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
@@ -82,23 +129,27 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
 
         phoneNumber = TextField(
-            label="Phone Number",
+            label="Clinic Phone Number",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
-            dense=True
+            dense=True,
+            value=clinic_phone_number,
+            read_only=True
         )
 
         experience = TextField(
@@ -108,27 +159,35 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
-            hint_text="Example: 3 years working experience",
-            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            dense=True
+            # hint_text="Example: 3 years working experience",
+            hint_style=TextStyle(size=12, color=colors.BLACK),
+            dense=True,
+            suffix_text="years working experience"
+
         )
 
-        specialization = TextField(
-            label="Speciality",
+        specialization = Dropdown(
+            dense=True,
+            label="Specialization",
+            border_color=blue,
+            height=40,
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            border_color=blue,
-            text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
-                                 ),
-            hint_text="Example: Cardiologists",
-            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            dense=True
+            options=[
+                dropdown.Option("General Practitioner"),
+                dropdown.Option("Cardiologists"),
+                dropdown.Option("Pediatrician"),
+                dropdown.Option("Obstetrician and Gynecologist"),
+            ],
+            text_style=TextStyle(color=grey,
+                                 size=12,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
         )
 
         description = TextField(
@@ -138,8 +197,9 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Please describe that what services can doctor provided...",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -154,9 +214,12 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
+            read_only=True,
+            value=clinic_name,
             dense=True
         )
 
@@ -167,8 +230,9 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Example: 12:00 pm - 8:00 pm",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -182,8 +246,9 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Example: Monday - Sunday (except Wednesday)",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -200,8 +265,9 @@ class AddDoctorDetailsPage:
             value="Filename: clinic_name_doctor_name",
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True,
             read_only=True
@@ -254,34 +320,10 @@ class AddDoctorDetailsPage:
             open=False
         )
 
-        def open_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = True
-            page.update()
 
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
-            page.update()
-
-        def addToDatabase(e):
-            CreateTable()
-            c = db.cursor()
-            if (name.value != "" and email.value != "" and phoneNumber.value != "" and experience.value != ""
-                    and specialization.value != "" and description.value != "" and working_clinic.value != ""
-                    and working_time.value != "" and working_day.value != "" and image_file.value != ""):
-                c.execute(
-                    "INSERT INTO doctors (fullName, email, phoneNumber, experience, specialization, "
-                    "description, clinic, workingTime, workingDay, image, status)"
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                    (name.value, email.value, phoneNumber.value, experience.value, specialization.value,
-                     description.value, working_clinic.value, working_time.value, working_day.value, image_file.value,
-                     1))
-                db.commit()
-                open_dlg()
 
         return View(
-            "/addDoctorDetails",
+            "/addDoctorDetails/:clinic_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -305,7 +347,7 @@ class AddDoctorDetailsPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/loginUser")
+                                                              on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
                                                               ),
 
                                                     Container(padding=padding.only(left=80, top=25),
@@ -381,3 +423,4 @@ class AddDoctorDetailsPage:
                           )
             ]
         )
+
