@@ -30,7 +30,7 @@ class ClinicAdminUpdateAppointmentPage:
             c = db.cursor()
             c.execute("SELECT * FROM booking INNER JOIN clinicAdmin "
                       "ON booking.clinicID = clinicAdmin.clinicID WHERE booking.proof != '' "
-                      "AND booking.bookingStatus = 1")
+                      "AND booking.bookingStatus = 1 AND booking.proofStatus = 0")
             record = c.fetchall()
 
             return record

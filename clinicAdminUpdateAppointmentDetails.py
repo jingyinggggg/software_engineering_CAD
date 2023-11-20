@@ -74,6 +74,25 @@ class ClinicAdminUpdateAppointmentDetailsPage:
             actions_alignment=MainAxisAlignment.CENTER
         )
 
+        reject_dialog = AlertDialog(
+            modal=True,
+            title=Text("Successful!", text_align=TextAlign.CENTER),
+            content=Text("You have rejected current booking successfully.",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: page.go(f"/admin/clinicAdminUpdateAppointment/{user_id}"))],
+            actions_alignment=MainAxisAlignment.CENTER
+        )
+
+        def open_reject_dialog():
+            page.dialog = reject_dialog
+            reject_dialog.open = True
+            page.update()
+
+        def close_reject_dlg():
+            page.dialog = reject_dialog
+            reject_dialog.open = False
+            page.update()
+
         def open_dlg():
             page.dialog = success_dialog
             success_dialog.open = True
@@ -96,28 +115,87 @@ class ClinicAdminUpdateAppointmentDetailsPage:
                 ("Completed", 2, 1))
             db.commit()
             updated = True
-            open_dlg()
             if updated:
                 open_dlg()
             else:
                 open_error_dlg()
 
+        def update_appointment_status_to_reject(e):
+            c = db.cursor()
+            if reject_reason.value != "":
+                c.execute(
+                    f"UPDATE booking SET proofStatus = ? AND proofRejectReason = ? WHERE bookingID = {booking_id}",
+                    (2,reject_reason.value))
+                db.commit()
+                updated = True
+                if updated:
+                    open_reject_dialog()
+                else:
+                    open_error_dlg()
+            else:
+                open_error_dlg()
+
+
         reject_reason = TextField(
-                label="Enter the reject reason",
-                label_style=TextStyle(size=14,
-                                      color=colors.WHITE),
-                height=50,
-                border_color=colors.BLACK,
-                text_style=TextStyle(size=14,
-                                     color=colors.WHITE))
-        reject_dialog = AlertDialog(
-            modal=True,
-            title=Text("Reject Reason", text_align=TextAlign.CENTER),
-            content=reject_reason,
-            actions=[TextButton("Done", on_click=lambda _: close_error_dlg())],
-            actions_alignment=MainAxisAlignment.CENTER
+            label="Enter the reject reason",
+            label_style=TextStyle(size=14,
+                                  color=colors.BLACK),
+            border_color=colors.BLACK,
+            text_style=TextStyle(size=14,
+                                 color=colors.BLACK),
+            autofocus=True,
+            multiline=True
         )
 
+        reject_reason_container = Container(
+            margin=margin.only(left=10, right=10, bottom=20),
+            visible=False,
+            content=Column(
+                controls=[
+                    Container(
+                        margin=margin.only(left=10, bottom=10),
+                        alignment=alignment.top_left,
+                        content=
+                        Text(
+                            "Reject Reason",
+                            weight=FontWeight.BOLD,
+                            size=14,
+                            color=colors.BLACK)
+                    ),
+
+                    Container(
+                        margin=margin.only(bottom=20),
+                        content=reject_reason
+                    ),
+
+                    Container(
+                        alignment=alignment.bottom_right,
+                        content=IconButton(content=Text("Submit",
+                                                        size=12,
+                                                        color=colors.BLACK,
+                                                        text_align=TextAlign.CENTER,
+                                                        weight=FontWeight.W_700),
+                                           width=100,
+                                           height=40,
+                                           style=ButtonStyle(bgcolor={"": colors.BLUE_400},
+                                                             shape={
+                                                                 "": RoundedRectangleBorder(
+                                                                     radius=7)}
+                                                             ),
+                                           on_click=update_appointment_status_to_reject
+                                           )
+                    )
+                ]
+            )
+        )
+
+        def show_reject_reason_field(e):
+            if not reject_reason_container.visible:
+                reject_reason_container.visible = True
+            else:
+                reject_reason_container.visible = False
+
+            page.update()
 
         return View(
             "/admin/clinicAdminUpdateAppointmentDetails/:user_id:booking_id",
@@ -439,12 +517,15 @@ class ClinicAdminUpdateAppointmentDetailsPage:
                                                                                        shape={
                                                                                            "": RoundedRectangleBorder(
                                                                                                radius=7)}
-                                                                                       )
+                                                                                       ),
+                                                                     on_click=show_reject_reason_field
                                                                      )
                                                   )
                                     ]
                                 )
-                            )
+                            ),
+
+                            reject_reason_container
 
                         ]
                     )
