@@ -300,45 +300,6 @@ class ClinicHomepage:
                                     ]
                                 ),
 
-                                # Container(
-                                #     padding=padding.only(top=20, left=10, right=10),
-                                #     content=Column(
-                                #         controls=[
-                                #             Row(
-                                #                 alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                #                 controls=[
-                                #                     Row(
-                                #                         controls=[
-                                #                             Image(
-                                #                                 src="pic/myDoctors.png",
-                                #                                 width=20,
-                                #                                 height=20
-                                #                             ),
-                                #
-                                #                             Text(
-                                #                                 value="My Doctors",
-                                #                                 size=12,
-                                #                                 color=colors.BLACK,
-                                #                                 text_align=TextAlign.LEFT,
-                                #                                 font_family="RobotoSlab",
-                                #                             )
-                                #                         ]
-                                #                     ),
-                                #
-                                #                     Container(
-                                #                         content=Icon(
-                                #                             icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                #                             size=14,
-                                #                             color=grey
-                                #                         )
-                                #                     )
-                                #                 ]
-                                #             )
-                                #
-                                #         ]
-                                #     )
-                                # ),
-
                                 Container(
                                     padding=padding.only(top=20, left=10, right=10),
                                     content=Column(

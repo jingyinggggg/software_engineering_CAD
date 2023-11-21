@@ -26,8 +26,7 @@ def CreateTable():
                  image TEXT NOT NULL,
                  STATUS INTEGER NOT NULL)""")
     db.commit()
-#
-#
+
 # def UpdateRow():
 #     c = db.cursor()
 #     c.execute("UPDATE doctors SET id = '1' WHERE id = ?", (5,))

@@ -111,24 +111,12 @@ class MedicalRecordPage:
                                                 weight=FontWeight.W_500,
                                                 text_align=TextAlign.JUSTIFY
                                             )
-                                        ),
-
-                                        Container(padding=padding.only(left=160, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          italic=True,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
+                                        )
                                     ]
                                 )
                             ]
-                        )
+                        ),
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 

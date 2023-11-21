@@ -86,8 +86,9 @@ class ViewClinicPage:
                                                                     value=f"{record[2]}",
                                                                     size=10,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
-                                                                    text_align=TextAlign.JUSTIFY
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.JUSTIFY,
+                                                                    weight=FontWeight.W_500
 
                                                                 )
                                                             )
@@ -108,8 +109,9 @@ class ViewClinicPage:
                                                                     value=f"{record[5]}",
                                                                     size=10,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
-                                                                    text_align=TextAlign.JUSTIFY
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.JUSTIFY,
+                                                                    weight=FontWeight.W_500
 
                                                                 )
                                                             )
@@ -128,8 +130,9 @@ class ViewClinicPage:
                                                                     value=f"{record[4]}",
                                                                     size=10,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
-                                                                    text_align=TextAlign.JUSTIFY
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.JUSTIFY,
+                                                                    weight=FontWeight.W_500
 
                                                                 )
                                                             )
@@ -148,8 +151,9 @@ class ViewClinicPage:
                                                                     value=f"{record[7]}",
                                                                     size=10,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
-                                                                    text_align=TextAlign.JUSTIFY
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.JUSTIFY,
+                                                                    weight=FontWeight.W_500
 
                                                                 )
                                                             ),
@@ -169,8 +173,9 @@ class ViewClinicPage:
                                                                     value=f"{record[6]}",
                                                                     size=10,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
-                                                                    text_align=TextAlign.JUSTIFY
+                                                                    color=colors.BLACK,
+                                                                    text_align=TextAlign.JUSTIFY,
+                                                                    weight=FontWeight.W_500
 
                                                                 )
                                                             )
@@ -191,7 +196,7 @@ class ViewClinicPage:
                                                                                    "": RoundedRectangleBorder(
                                                                                        radius=7)}
                                                                            ),
-                                                                           # on_click=lambda _:page.go(f"/doctorList")
+                                                                           on_click=lambda _:page.go(f"/doctorListBasedOnClinic/{user_id}{clinic_id}")
                                                                            )
                                                     )
                                                 ]
@@ -282,7 +287,7 @@ class ViewClinicPage:
                                                               on_click=lambda _: page.go(f"/clinic/{user_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=100, top=25),
+                                                    Container(padding=padding.only(left=110, top=25),
                                                               content=Text(
                                                                   value="Clinic",
                                                                   size=20,

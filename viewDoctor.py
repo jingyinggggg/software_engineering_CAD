@@ -8,12 +8,12 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 class ViewDoctorPage:
     def __init__(self):
-        self.show_sidebar = False
+        self.previous_page_route = ""
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # print(params)
         user_id = int(params.user_id)
         doctor_id = int(params.doctor_id)
+        previous_page_route = params.previous_page
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -32,12 +32,23 @@ class ViewDoctorPage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT fullName, email, phoneNumber, experience, specialization, description, clinic, "
+            c.execute("SELECT fullName, email, clinicPhoneNumber, experience, specialization, description, clinicID, "
                       "workingTime, workingDay, image  FROM doctors WHERE id = ?", (doctor_id,))
             record = c.fetchall()
             return record
 
         doctor = get_doctor_details()
+
+        def get_clinic_id():
+            c = db.cursor()
+            c.execute("SELECT name FROM clinic WHERE id = ?", (doctor[0][6],))
+            record = c.fetchone()
+
+            clinic_name = record[0]
+
+            return clinic_name
+
+        clinic_name = get_clinic_id()
 
         def displayDoctor(records):
             if records:
@@ -97,10 +108,10 @@ class ViewDoctorPage:
                                                             Container(
                                                                 width=230,
                                                                 content=Text(
-                                                                    value=f"{record[6]}",
+                                                                    value=clinic_name,
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -123,7 +134,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[4]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -145,7 +156,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[3]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -166,7 +177,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[5]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -186,7 +197,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[8]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -207,7 +218,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[7]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -239,7 +250,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[1]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -260,7 +271,7 @@ class ViewDoctorPage:
                                                                     value=f"{record[2]}",
                                                                     size=12,
                                                                     font_family="RobotoSlab",
-                                                                    color=grey,
+                                                                    color=colors.BLACK,
                                                                     text_align=TextAlign.JUSTIFY
 
                                                                 )
@@ -278,12 +289,13 @@ class ViewDoctorPage:
                                                                                  height=50,
                                                                                  style=ButtonStyle(
                                                                                      bgcolor={"": colors.WHITE},
-                                                                                     side={"":BorderSide(1,blue)},
+                                                                                     side={"": BorderSide(1, blue)},
                                                                                      shape={"": RoundedRectangleBorder(
                                                                                          radius=7)}
-                                                                                     ),
+                                                                                 ),
 
-                                                                                 # on_click=addToDatabase
+                                                                                 on_click=lambda _: page.go(
+                                                                                     f"/makeAppointment/{user_id}{doctor_id}{previous_page_route}")
                                                                                  )
                                                               )
 
@@ -301,14 +313,19 @@ class ViewDoctorPage:
 
                 return Column(controls=record_containers)
 
+        def back_previous_page(e):
+            if previous_page_route == "doctorListBasedOnClinic":
+                page.go(f"/{previous_page_route}/{user_id}{doctor[0][6]}")
+            elif previous_page_route == "doctor":
+                page.go(f"/{previous_page_route}/{user_id}")
+
         return View(
-            "/viewDoctor/:user_id:doctor_id",
+            "/viewDoctor/:user_id:doctor_id:previous_page",
             controls=[
                 Container(width=350,
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          # child control
                           content=Column(
                               horizontal_alignment="center",
                               scroll=True,
@@ -327,7 +344,7 @@ class ViewDoctorPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/doctor/{user_id}")
+                                                              on_click=back_previous_page
                                                               ),
 
                                                     Container(padding=padding.only(left=110, top=25),
