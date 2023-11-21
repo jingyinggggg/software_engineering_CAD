@@ -48,8 +48,6 @@ class Homepage:
             record = c.fetchone()
 
             count = record[0]
-            print(f"count: {count}")
-            print(f"formatted_date: {formatted_date}")
 
             return count
 
@@ -74,7 +72,7 @@ class Homepage:
 
         def get_clinic_details():
             c = db.cursor()
-            c.execute("SELECT id, name, location FROM clinic")
+            c.execute("SELECT id, name, location FROM clinic WHERE approvalStatus = 1")
             record = c.fetchall()
             return record
 
@@ -141,7 +139,7 @@ class Homepage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName, specialization, image FROM doctors")
+            c.execute("SELECT id, fullName, specialization, image FROM doctors WHERE STATUS = 1")
             record = c.fetchall()
             return record
 
