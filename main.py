@@ -39,7 +39,9 @@ from history import HistoryPage
 from schedule import Schedule
 from appointmentDetail import AppointmentDetail
 from chat import Chat
+from chat_info import ChatInfo
 from prescription import Prescription
+
 
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
@@ -52,8 +54,13 @@ from clinicAdminPatientRequestList import AdminPatientRequestList
 from clinicAdminUpdateAppointment import ClinicAdminUpdateAppointmentPage
 from clinicAdminUpdateAppointmentDetails import ClinicAdminUpdateAppointmentDetailsPage
 from clinicAdminSetting import ClinicAdminSettingPage
-from clinicAdminAccountPage import  ClinicAdminAccountPage
+from clinicAdminAccountPage import ClinicAdminAccountPage
 from clinicAdminPasswordPage import ClinicAdminPasswordPage
+from clinicAdminManageDoctor import ClinicAdminManageDoctorPage
+from clinicAdminAddNewDoctorList import ClinicAdminAddNewDoctorList
+from clinicAdminAddNewDoctorPage import ClinicAdminAddNewDoctorPage
+from clinicAdminEditDoctorPage import ClinicAdminEditDoctorPage
+from clinicAdminDeleteDoctorPage import ClinicAdminDeleteDoctorPage
 
 def main(mainPage: Page):
     mainPage.theme_mode = "dark"
@@ -99,7 +106,8 @@ def main(mainPage: Page):
         path(url="/history", clear=False, view=HistoryPage().view),
         path(url="/schedule", clear=False, view=Schedule().view),
         path(url="/appointmentDetail/:user_id", clear=False, view=AppointmentDetail().view),
-        path(url="/chat", clear=False, view=Chat().view),
+        path(url="/chat/:user_id", clear=False, view=Chat().view),
+        path(url="/chat_info/:user_id:patient_id", clear=False, view=ChatInfo().view),
         path(url="/prescription", clear=False, view=Prescription().view),
 
 
@@ -117,6 +125,11 @@ def main(mainPage: Page):
         path(url="/admin/setting/:user_id", clear=False, view=ClinicAdminSettingPage().view),
         path(url="/admin/account/:user_id", clear=False, view=ClinicAdminAccountPage().view),
         path(url="/admin/password/:user_id", clear=False, view=ClinicAdminPasswordPage().view),
+        path(url="/admin/clinicAdminManageDoctor/:user_id", clear=False, view=ClinicAdminManageDoctorPage().view),
+        path(url="/admin/clinicAdminAddNewDoctorList/:user_id", clear=False, view=ClinicAdminAddNewDoctorList().view),
+        path(url="/admin/clinicAdminAddNewDoctorPage/:user_id:doctor_id", clear=False, view=ClinicAdminAddNewDoctorPage().view),
+        path(url="/admin/clinicAdminEditDoctorPage/:user_id:doctor_id", clear=False, view=ClinicAdminEditDoctorPage().view),
+        path(url="/admin/clinicAdminDeleteDoctorPage/:user_id:doctor_id", clear=False, view=ClinicAdminDeleteDoctorPage().view),
 
     ]
     Routing(page=mainPage, app_routes=app_routes)
