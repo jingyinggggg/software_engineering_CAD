@@ -25,19 +25,20 @@ def createTable():
                      clinicImage TEXT NOT NULL,
                      mapImage TEXT NOT NULL,
                      environmentImage TEXT NOT NULL,
-                     approvalStatus INTEGER NOT NULL)""")
+                     approvalStatus INTEGER NOT NULL,
+                     closed TEXT NOT NULL)""")
     db.commit()
 
 
 # def AddColumn():
 #     c = db.cursor()
-#     c.execute("ALTER TABLE clinic ADD COLUMN email TEXT")
+#     c.execute("ALTER TABLE clinic ADD COLUMN closed TEXT")
 #     db.commit()
 
-def DropTable():
-    c = db.cursor()
-    c.execute('DROP TABLE clinic')
-    db.commit()
+# def DropTable():
+#     c = db.cursor()
+#     c.execute('DROP TABLE clinic')
+#     db.commit()
 
 
 class ClinicSignUpPage:
@@ -47,6 +48,8 @@ class ClinicSignUpPage:
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
         # user_id = int(params.user_id)
+
+        # AddColumn()
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -142,9 +145,35 @@ class ClinicSignUpPage:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
-            hint_text="Example: Monday - Sunday (Thursday closed)",
+            hint_text="E.g. Monday - Sunday",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            dense=True
+            dense=True,
+            width=158
+        )
+
+        clinic_closed = Dropdown(
+            dense=True,
+            label="Clinic Closed",
+            border_color=blue,
+            height=40,
+            label_style=TextStyle(font_family="RobotoSlab",
+                                  size=12,
+                                  color=colors.GREY_800),
+            options=[
+                dropdown.Option("None"),
+                dropdown.Option("Monday"),
+                dropdown.Option("Tuesday"),
+                dropdown.Option("Wednesday"),
+                dropdown.Option("Thursday"),
+                dropdown.Option("Friday"),
+                dropdown.Option("Saturday"),
+                dropdown.Option("Sunday"),
+            ],
+            text_style=TextStyle(color=grey,
+                                 size=12,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
+            width=158,
         )
 
         working_time = TextField(
@@ -381,9 +410,25 @@ class ClinicSignUpPage:
             open=False
         )
 
-        def open_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = True
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text(
+                "Somthing went wrong! Please make sure that you have filled in the details completely.",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+
+        def close_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
             page.update()
 
         def addToDatabase(e):
@@ -391,16 +436,20 @@ class ClinicSignUpPage:
             c = db.cursor()
             if (
                     clinic_name.value != "" and clinic_location.value != "" and clinic_area.value != "" and working_time.value != ""
-                    and working_day.value != "" and description.value != "" and phoneNumber.value != "" and clinic_image_textField.value != ""
+                    and working_day.value != "" and clinic_closed.value != "" and description.value != "" and phoneNumber.value != "" and clinic_image_textField.value != ""
                     and clinic_map_textField.value != "" and clinic_environment_textField.value != "" and password.value != "" and email.value != ""):
                 c.execute(
-                    "INSERT INTO clinic (name, email, password, location, area, workingTime, workingDay, clinicDescription, phoneNumber,"
-                    "clinicImage, mapImage, environmentImage, approvalStatus)"
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (clinic_name.value, email.value, password.value, clinic_location.value, clinic_area.value, working_time.value,
-                     working_day.value, description.value, phoneNumber.value, location_file.value, map_file.value, environment_file.value, 0))
+                    "INSERT INTO clinic (name, email, password, location, area, workingTime, workingDay, "
+                    "clinicDescription, phoneNumber, clinicImage, mapImage, environmentImage, approvalStatus, closed)"
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (clinic_name.value, email.value, password.value, clinic_location.value, clinic_area.value,
+                     working_time.value,
+                     working_day.value, description.value, phoneNumber.value, location_file.value, map_file.value,
+                     environment_file.value, 0, clinic_closed.value))
                 db.commit()
-                open_dlg()
+                open_dlg(alert_dialog)
+            else:
+                open_dlg(error_dialog)
 
         return View(
             "/clinicSignUp",
@@ -409,10 +458,8 @@ class ClinicSignUpPage:
                           height=700,
                           bgcolor=colors.WHITE,
                           border_radius=30,
-                          # child control
                           content=Column(
                               horizontal_alignment="center",
-                              # auto_scroll=True,
                               scroll=True,
                               controls=[
                                   Row(
@@ -453,7 +500,12 @@ class ClinicSignUpPage:
 
                                               clinic_area,
 
-                                              working_day,
+                                              Row(
+                                                  controls=[
+                                                      working_day,
+                                                      clinic_closed
+                                                  ]
+                                              ),
 
                                               working_time,
 

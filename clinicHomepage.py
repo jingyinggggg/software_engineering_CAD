@@ -73,25 +73,29 @@ class ClinicHomepage:
             page.update()
 
         def get_clinic_details():
-            c = db.cursor()
-            c.execute("SELECT id,name, phoneNumber , approvalStatus FROM clinic WHERE id = ?", (user_id,))
-            record = c.fetchall()
+            try:
+                cursor.execute("SELECT id,name, phoneNumber , approvalStatus FROM clinic WHERE id = ?", (user_id,))
+                record = cursor.fetchall()
 
-            clinic_id = record[0][0]
-            clinicName = record[0][1]
-            phoneNumber = record[0][2]
-            approvalStatus = record[0][3]
+                clinic_id = record[0][0]
+                clinicName = record[0][1]
+                phoneNumber = record[0][2]
+                approvalStatus = record[0][3]
 
-            return clinic_id, clinicName, phoneNumber, approvalStatus
+                return clinic_id, clinicName, phoneNumber, approvalStatus
+            except sqlite3.Error as e:
+                print("SQLite error:", e)
 
         clinic_id, clinicName, phoneNumber, approvalStatus = get_clinic_details()
 
         def get_doctor_details():
-            c = db.cursor()
-            c.execute("SELECT fullName, specialization, id FROM doctors WHERE clinicID = ? LIMIT 10", (clinic_id,))
-            doctor_records = c.fetchall()
+            try:
+                cursor.execute("SELECT * FROM doctors WHERE clinicID = ? LIMIT 10", (clinic_id,))
+                doctor_records = cursor.fetchall()
 
-            return doctor_records
+                return doctor_records
+            except sqlite3.Error as e:
+                print("SQLite error:", e)
 
         doctor_records = get_doctor_details()
 
@@ -190,14 +194,25 @@ class ClinicHomepage:
 
                 )
 
+        def getDoctorStatus(doctor_status):
+            if doctor_status == 1:
+                return Container(
+                    content=Image(
+                        src=f"pic/approved_doctor.png"
+                    )
+                )
+            else:
+                return Container(
+                    content=Image(
+                        src=f"pic/pending_doctor.png"
+                    )
+                )
+
         def display_doctor_list(records):
             if records:
                 record_containers = []
                 for record in records:
-                    def remove_doctor(doctor_id=record[2]):
-                        c = db.cursor()
-                        c.execute("DELETE FROM doctors WHERE id = ?", (doctor_id,))
-                        db.commit()
+                    doctor_status = record[13]
 
                     record_container = Container(
                         margin=margin.only(left=25),
@@ -218,19 +233,16 @@ class ClinicHomepage:
                                     content=Row(
                                         controls=[
                                             Container(
-                                                content=IconButton(
-                                                    icons.PERSON_REMOVE_ROUNDED,
-                                                    icon_color=colors.RED,
-                                                    on_click=remove_doctor,
-                                                )
+                                                getDoctorStatus(doctor_status),
                                             ),
                                             Container(
                                                 content=Text(
-                                                    value=f"Doctor {record[0]} ({record[1]})",
+                                                    value=f"Doctor {record[1]} ({record[7]})",
                                                     size=14,
                                                     color=colors.BLACK,
                                                     font_family="RobotoSlab",
-                                                )
+                                                ),
+                                                # on_click=
                                             ),
                                         ]
                                     )

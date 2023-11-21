@@ -81,7 +81,7 @@ class LoginPage:
         }
 
         email = TextField(label="Enter Email",
-                          value='bwell@gmail.com',
+                          value='johnson@gmail.com',
                           label_style=TextStyle(font_family="RobotoSlab",
                                                 size=14,
                                                 color=colors.GREY_800),
