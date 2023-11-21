@@ -33,7 +33,7 @@ class ViewDoctorPage:
         def get_doctor_details():
             c = db.cursor()
             c.execute("SELECT fullName, email, clinicPhoneNumber, experience, specialization, description, clinicID, "
-                      "workingTime, workingDay, image  FROM doctors WHERE id = ?", (doctor_id,))
+                      "workingTime, workingDay, image, nonWorkingDay  FROM doctors WHERE id = ?", (doctor_id,))
             record = c.fetchall()
             return record
 
@@ -49,6 +49,12 @@ class ViewDoctorPage:
             return clinic_name
 
         clinic_name = get_clinic_id()
+
+        def check_doctor_working_day(workingDay, nonWorkingDay):
+            if nonWorkingDay == "None":
+                return f"{workingDay}"
+            else:
+                return f"{workingDay} ({nonWorkingDay} Not Available)"
 
         def displayDoctor(records):
             if records:
@@ -194,7 +200,7 @@ class ViewDoctorPage:
 
                                                             Container(
                                                                 content=Text(
-                                                                    value=f"{record[8]}",
+                                                                    value=check_doctor_working_day(record[8], record[10]),
                                                                     size=12,
                                                                     font_family="RobotoSlab",
                                                                     color=colors.BLACK,
