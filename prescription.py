@@ -28,19 +28,24 @@ class Prescription:
         }
 
         # Variables to store control values
-        medication_name_value = ""
+        # prescriptionID = int
+        # patientID = int
+        # bookingID = int
+        medicationName_value = ""
         quantity_value = ""
         duration_value = ""
         instruction_value = ""
-        date_signed = datetime.datetime.now().strftime('%Y-%m-%d')
+        dateSigned = datetime.datetime.now().strftime('%Y-%m-%d')
 
         def create_prescriptions_table():
             c = db.cursor()
             c.execute('''
                 CREATE TABLE IF NOT EXISTS prescriptions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    patient_name TEXT NOT NULL,
-                    medication_name TEXT NOT NULL,
+                    prescriptionID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    patientID INTEGER NOT NULL,
+                    bookingID INTEGER NOT NULL,
+                    patientName TEXT NOT NULL,
+                    medicationName TEXT NOT NULL,
                     quantity TEXT NOT NULL,
                     duration TEXT NOT NULL,
                     date_signed DATE NOT NULL,
@@ -64,9 +69,11 @@ class Prescription:
             return data
 
         appointmentData = get_appointment_details()
-        patient_name = appointmentData[0][15]
-        patient_first_name = appointmentData[0][15].split()[-2:]
-        patient_last_name = appointmentData[0][15].split()[0]
+        patientID = appointmentData[0][15]
+        bookingID = appointmentData[0][0]
+        patientName = appointmentData[0][16]
+        patient_first_name = appointmentData[0][16].split()[-2:]
+        patient_last_name = appointmentData[0][16].split()[0]
 
         def update_database():
             # Create the 'prescriptions' table if it doesn't exist
@@ -74,18 +81,18 @@ class Prescription:
 
             c = db.cursor()
 
-            # Print values for debugging
-            print(f"patient_name: {patient_name}")
-            print(f"medication_name_value: {medication_name_value}")
-            print(f"quantity_value: {quantity_value}")
-            print(f"duration_value: {duration_value}")
-            print(f"date_signed: {date_signed}")
-            print(f"instruction_value: {instruction_value}")
+            # # Print values for debugging
+            # print(f"patient_name: {patientName}")
+            # print(f"medication_name_value: {medicationName_value}")
+            # print(f"quantity_value: {quantity_value}")
+            # print(f"duration_value: {duration_value}")
+            # print(f"dateSigned: {dateSigned}")
+            # print(f"instruction_value: {instruction_value}")
 
             c.execute('''
-                INSERT INTO prescriptions (patient_name, medication_name, quantity, duration, date_signed, instructions)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (patient_name, medication_name_value, quantity_value, duration_value, date_signed, instruction_value))
+                INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration, dateSigned, instructions)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (patientID, bookingID, patientName, medicationName_value, quantity_value, duration_value, dateSigned, instruction_value))
 
             db.commit()
 
@@ -142,10 +149,10 @@ class Prescription:
             page.update()
 
         def update_variable(value, variable_name):
-            nonlocal medication_name_value, quantity_value, duration_value, instruction_value
+            nonlocal medicationName_value, quantity_value, duration_value, instruction_value
 
             if variable_name == "medication_name":
-                medication_name_value = value
+                medicationName_value = value
             elif variable_name == "quantity":
                 quantity_value = value
             elif variable_name == "duration":
@@ -157,7 +164,7 @@ class Prescription:
 
         def on_generate_click():
             # Validate all fields
-            if validate_all_fields(medication_name_value, quantity_value, duration_value):
+            if validate_all_fields(medicationName_value, quantity_value, duration_value):
                 open_error_dialog()
             else:
                 # Update the database with the captured values
@@ -255,7 +262,7 @@ class Prescription:
                                             alignment=MainAxisAlignment.START,
                                             controls=[
                                                 TextField(
-                                                    value=medication_name_value,
+                                                    value=medicationName_value,
                                                     width=310,
                                                     height=35,
                                                     label_style=TextStyle(color="BLACK"),

@@ -26,10 +26,22 @@ def CreateTable():
     db.commit()
 
 
-def AddColumn():
-    c = db.cursor()
-    c.execute("""ALTER TABLE booking ADD COLUMN prescriptionStatus TEXT""")
-    db.commit()
+# def DeleteTable():
+#     c = db.cursor()
+#     c.execute("DROP TABLE prescriptions")
+#     db.commit()
+#
+#
+# DeleteTable()
+
+# def AddColumn():
+#     c = db.cursor()
+#     c.execute("ALTER TABLE booking ADD COLUMN prescriptionStatus INTEGER")
+#     db.commit()
+#
+#
+# AddColumn()
+
 
 # def update():
 #     c = db.cursor()

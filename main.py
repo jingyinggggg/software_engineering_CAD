@@ -45,7 +45,7 @@ from doctorSetting import DoctorSettingPage
 from doctorPassword import DoctorPasswordPage
 from doctorAccountSetting import DoctorAccountSettingPage
 from doctorProfile import DoctorProfilePage
-from doctorViewStatus import DoctorViewStatus
+from prescriptionList import PrescriptionList
 from appointment import Appointment
 from doctorViewMedicalRecord import DoctorViewMedicalRecord
 from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
@@ -118,7 +118,7 @@ def main(mainPage: Page):
         path(url="/doctorAccountSetting/:user_id", clear=False, view=DoctorAccountSettingPage().view),
         path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
         path(url="/doctorProfile/:user_id", clear=False, view=DoctorProfilePage().view),
-        path(url="/doctorViewStatus/:user_id", clear=False, view=DoctorViewStatus().view),
+        path(url="/prescriptionList/:user_id:booking_id", clear=False, view=PrescriptionList().view),
         path(url="/appointment/:user_id", clear=False, view=Appointment().view),
         path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False, view=DoctorViewMedicalRecord().view),
         path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False, view=DoctorViewMedicalRecordList().view),

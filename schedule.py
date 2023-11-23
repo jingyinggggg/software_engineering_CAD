@@ -54,17 +54,36 @@ class Schedule:
             record = c.fetchall()
 
             fullName = record[0][1]
+            workingTime = record[0][10]
+            workingDate = record[0][11]
 
-            return fullName
+            return fullName, workingTime, workingDate
 
-        fullName = get_doctor_details()
+        fullName, workingTime, workingDate = get_doctor_details()
 
-        # Sample schedule data
-        self.schedule_data = [
-            {"date": "2023-10-16", "time": "09:00 AM", "event": "Consultation"},
-            {"date": "2023-10-17", "time": "10:30 AM", "event": "Follow Up"},
-            {"date": "2023-10-18", "time": "14:00 PM", "event": "Conference Call"},
-        ]
+        # # Sample schedule data
+        # self.schedule_data = [
+        #     {"date": "2023-10-16", "time": "09:00 AM", "event": "Consultation"},
+        #     {"date": "2023-10-17", "time": "10:30 AM", "event": "Follow Up"},
+        #     {"date": "2023-10-18", "time": "14:00 PM", "event": "Conference Call"},
+        # ]
+
+        def get_schedule_data(user_id):
+            try:
+                conn = sqlite3.connect("cad.db")  # Replace "your_database.db" with your actual database file
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM booking WHERE id = ?", (user_id,))
+                schedule_data = cursor.fetchall()
+                return schedule_data
+            except sqlite3.Error as e:
+                print("SQLite error:", e)
+            finally:
+                if conn:
+                    conn.close()
+            return []
+
+        # You can call this function to retrieve the schedule data for a specific user:
+        schedule_data = get_schedule_data(user_id)
 
         return View(
             "/schedule/:user_id",
@@ -118,32 +137,8 @@ class Schedule:
                                              size=18,
                                              weight=FontWeight.BOLD)])),
 
-                            # Container(padding=padding.only(top=5, left=5),
-                            #           margin=margin.only(left=5, top=5),
-                            #           content=Row(
-                            #               alignment=MainAxisAlignment.SPACE_AROUND,
-                            #               controls=[TextButton(date.strftime('%d'),
-                            #                                    style=ButtonStyle(shape=CircleBorder(),
-                            #                                                      color={
-                            #                                                          MaterialState.HOVERED: colors.WHITE},
-                            #                                                      overlay_color=colors.INDIGO_400
-                            #                                                      ),
-                            #                                    on_click=lambda event: self.showSchedule(),
-                            #                                    )for date in zip(week_dates)])),
-                            #
-                            # Container(padding=padding.only(top=5, left=5),
-                            #           margin=margin.only(left=5, top=5),
-                            #           content=Row(
-                            #               alignment=MainAxisAlignment.SPACE_AROUND,
-                            #               controls=[Text(day,
-                            #                              color="#979797",
-                            #                              text_align=TextAlign.CENTER,
-                            #                              size=12)for day in zip(days_of_week)])),
-
-
                             # Display the week's dates with days of the week
-                            Container(padding=padding.only(top=5, left=5),
-                                      margin=margin.only(left=5, top=5),
+                            Container(margin=margin.only(left=5, top=5),
                                       content=Row(
                                           alignment=MainAxisAlignment.SPACE_AROUND,
                                           controls=[
@@ -152,6 +147,7 @@ class Schedule:
                                                   controls=[
                                                       Column(
                                                           alignment=MainAxisAlignment.CENTER,
+                                                          horizontal_alignment=CrossAxisAlignment.CENTER,
                                                           controls=[
                                                               TextButton(date.strftime('%d'),
                                                                          style=ButtonStyle(shape=CircleBorder(),
@@ -204,22 +200,22 @@ class Schedule:
                                                                                         weight=FontWeight.BOLD)),
                                                              ],
                                                          ))
-                                                     ] +
-                                                     [
-                                                         Container(
-                                                             margin=margin.only(top=5),
-                                                             padding=padding.only(left=10, right=10, top=5, bottom=5),
-                                                             content=Row(
-                                                                 alignment=MainAxisAlignment.START,
-                                                                 controls=[
-                                                                     Container(width=120, content=Text(item["time"],
-                                                                                                       color="BLACK")),
-                                                                     Container(width=200, content=Text(item["event"],
-                                                                                                       color="BLACK")),
-                                                                 ],
-                                                             ),
-                                                         )
-                                                         for item in self.schedule_data
-                                                     ]
-                                                     )
-                                      )]))])
+                                                     ] + schedule_data
+                                                     # [
+                                                     #     Container(
+                                                     #         margin=margin.only(top=5),
+                                                     #         padding=padding.only(left=10, right=10, top=5, bottom=5),
+                                                     #         content=Row(
+                                                     #             alignment=MainAxisAlignment.START,
+                                                     #             controls=[
+                                                     #                 Container(width=120, content=Text(item["time"],
+                                                     #                                                   color="BLACK")),
+                                                     #                 Container(width=200, content=Text(item["event"],
+                                                     #                                                   color="BLACK")),
+                                                     #             ],
+                                                     #         ),
+                                                     #     )
+                                                     #     for item in self.schedule_data
+                                                     # ]
+                                                     # )
+                                                     ))]))])

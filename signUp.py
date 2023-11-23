@@ -37,11 +37,8 @@ def CreateTable():
 #
 # def UpdateTable():
 #     c = db.cursor()
-#     c.execute("""ALTER TABLE users
-#                  ADD dob TEXT,
-#                  ADD gender TEXT,
-#                  ADD address TEXT,
-#                  ADD emergencyContact TEXT
+#     c.execute("""ALTER TABLE doctors
+#                  ADD availability INTEGER
 #                  """)
 #     db.commit()
 #

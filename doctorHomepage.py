@@ -12,6 +12,8 @@ class DoctorHomepage:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        # prescription_id = int(params.prescription_id)
+        # booking_id = int(params.booking_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -42,17 +44,19 @@ class DoctorHomepage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            c.execute("SELECT *, booking.doctorID FROM doctors INNER JOIN booking ON "
+                      "doctors.id = booking.doctorID WHERE id = ?", (user_id,))
             record = c.fetchall()
 
             fullName = record[0][1]
             username = record[0][2]
             phoneNumber = record[0][4]
             image = record[0][12]
+            booking_id = record[0][13]
 
-            return fullName, username, phoneNumber, image
+            return fullName, username, phoneNumber, image, booking_id
 
-        fullName, username, phoneNumber, image = get_doctor_details()
+        fullName, username, phoneNumber, image, booking_id = get_doctor_details()
 
         # Sidebar
         sidebar = Container(
@@ -494,7 +498,7 @@ class DoctorHomepage:
                                                         ),
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
-                                                        on_click=lambda _: page.go(f"/doctorViewStatus/{user_id}")
+                                                        on_click=lambda _: page.go(f"/prescriptionList/{user_id}{booking_id}")
 
                                                     )
 

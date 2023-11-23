@@ -6,12 +6,11 @@ import sqlite3
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
-class MedicalRecordPage:
+class PatientPrescriptionPage:
     def __init__(self):
         self.show_sidebar = False
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # print(params)
         user_id = int(params.user_id)
 
         page.title = "Call A Doctor"
@@ -29,7 +28,8 @@ class MedicalRecordPage:
         blue = "#3386C5"
         grey = "#71839B"
 
-        def get_user_medical_record():
+        def get_user_prescription_record():
+            # pass
             c = db.cursor()
             c.execute(
                 "SELECT id, allergies, pastMedicalCondition, currentMedicalCondition, date FROM medicalRecordHistory "
@@ -37,14 +37,15 @@ class MedicalRecordPage:
             record = c.fetchall()
             return record
 
-        medicalRecord = get_user_medical_record()
+        prescriptionRecord = get_user_prescription_record()
 
         def displayRecord(records):
             if records:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewMedicalRecord/{record_id}")
+                        return lambda _: page.go(f"/viewPrescription/{user_id}")
+                        # return lambda _: page.go(f"/viewPrescription/{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -55,21 +56,14 @@ class MedicalRecordPage:
                             controls=[
                                 Container(
                                     # margin=margin.only(top=0),
-                                    padding=padding.only(top=-10),
+                                    padding=padding.only(top=-20, right=5),
                                     content=Column(
                                         horizontal_alignment="center",
                                         controls=[
                                             Image(
-                                                src="pic/medicalRecord.png",
-                                                color=grey,
-                                                width=40,
-                                                height=40,
-                                            ),
-                                            Text(
-                                                value=f"{record[4]}",
-                                                color=colors.BLACK,
-                                                size=10,
-                                                weight=FontWeight.W_700
+                                                src="pic/prescription_icon.png",
+                                                width=60,
+                                                height=70,
                                             )
                                         ]
                                     )
@@ -80,7 +74,7 @@ class MedicalRecordPage:
                                         Container(
                                             width=220,
                                             content=Text(
-                                                value=f"Past Medical Condition: {record[2]}",
+                                                value=f"Assigned by: ",
                                                 color=colors.BLACK,
                                                 size=12,
                                                 font_family="RobotoSlab",
@@ -92,7 +86,7 @@ class MedicalRecordPage:
                                         Container(
                                             width=220,
                                             content=Text(
-                                                value=f"Current Medical Condition: {record[3]}",
+                                                value=f"Assigned date: ",
                                                 color=colors.BLACK,
                                                 size=12,
                                                 font_family="RobotoSlab",
@@ -104,19 +98,31 @@ class MedicalRecordPage:
                                         Container(
                                             width=220,
                                             content=Text(
-                                                value=f"Allergies: {record[1]}",
+                                                value=f"Treatment: ",
                                                 color=colors.BLACK,
                                                 size=12,
                                                 font_family="RobotoSlab",
                                                 weight=FontWeight.W_500,
                                                 text_align=TextAlign.JUSTIFY
                                             )
-                                        )
+                                        ),
+
+                                        Container(padding=padding.only(left=150, bottom=-10, top=-10),
+                                                  content=TextButton(
+                                                      content=Text(
+                                                          "More >>",
+                                                          size=10,
+                                                          font_family="RobotoSlab",
+                                                          color=blue),
+                                                      on_click=lambda _: page.go(f"/viewPrescription/{user_id}")
+                                                      # on_click=on_more_button_click()
+                                                  )
+
+                                                  ),
                                     ]
                                 )
                             ]
-                        ),
-                        on_click=on_more_button_click()
+                        )
                     )
                     record_containers.append(record_container)
 
@@ -129,27 +135,16 @@ class MedicalRecordPage:
                         horizontal_alignment="center",
                         controls=[
                             Image(
-                                src="pic/addMedicalRecord.png",
+                                src="pic/prescription_icon.png",
                                 width=150,
                                 height=150
                             ),
 
                             Container(
-                                padding=padding.only(top=10),
+                                padding=padding.only(left=30, right=30),
                                 content=Text(
-                                    value="Add a medical record",
-                                    text_align=TextAlign.CENTER,
-                                    size=18,
-                                    weight=FontWeight.W_500,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab"
-                                )
-                            ),
-
-                            Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="A detailed health history helps a doctor diagnose you better.",
+                                    width=250,
+                                    value="You do not have any prescription yet.",
                                     text_align=TextAlign.CENTER,
                                     size=12,
                                     color=grey,
@@ -162,7 +157,7 @@ class MedicalRecordPage:
                 )
 
         return View(
-            "/medicalRecord/:user_id",
+            "/patientPrescription/:user_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -175,40 +170,34 @@ class MedicalRecordPage:
                                   Container(width=350,
                                             height=70,
                                             bgcolor=blue,
-                                            padding=padding.only(left=20, top=20),
+                                            alignment=alignment.top_center,
+                                            padding=padding.only(left=10, right=10, bottom=0),
                                             content=Row(
-                                                alignment="spaceBetween",
                                                 controls=[
-                                                    Container(
-                                                        content=Image(
-                                                            src="pic/back.png",
-                                                            color=colors.WHITE,
-                                                            width=20,
-                                                            height=20
-                                                        ),
-                                                        on_click=lambda _: page.go(f"/homepage/{user_id}")
-                                                    ),
+                                                    Container(padding=padding.only(top=25),
+                                                              content=Image(
+                                                                  src="pic/back.png",
+                                                                  color=colors.WHITE,
+                                                                  width=20,
+                                                                  height=20
+                                                              ),
+                                                              on_click=lambda _: page.go(f"/homepage/{user_id}")
+                                                              ),
 
-                                                    Text(
-                                                        value="Medical Reocrd",
-                                                        size=20,
-                                                        font_family="RobotoSlab",
-                                                        color=colors.WHITE,
-                                                        text_align=TextAlign.CENTER),
-
-                                                    Container(
-                                                        content=IconButton(
-                                                            icon=icons.ADD,
-                                                            icon_color=colors.WHITE,
-                                                            on_click=lambda _: page.go(f"/addMedicalRecord/{user_id}")
-                                                        )
-                                                    )
+                                                    Container(padding=padding.only(left=85, top=25),
+                                                              content=Text(
+                                                                  value="Prescription",
+                                                                  size=20,
+                                                                  font_family="RobotoSlab",
+                                                                  color=colors.WHITE,
+                                                                  text_align=TextAlign.CENTER)
+                                                              ),
 
                                                 ]
                                             )
                                             ),
 
-                                  displayRecord(medicalRecord)
+                                  displayRecord(prescriptionRecord)
 
                               ]
                           )
