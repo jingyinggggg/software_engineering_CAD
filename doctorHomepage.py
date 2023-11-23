@@ -1,6 +1,7 @@
 from flet import *
 from flet_route import Params, Basket
 import sqlite3
+import datetime
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
@@ -23,6 +24,22 @@ class DoctorHomepage:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
+        lightBlue = "#D0DCEE"
+        blue = "#3386C5"
+        grey = "#71839B"
+
+        self.db = sqlite3.connect("cad.db", check_same_thread=False)
+
+        # Define a function to show the sidebar
+        def show_side_bar(e):
+            sidebar.offset = transform.Offset(0, 0)
+            page.update()
+
+        # Define a function to hide the sidebar
+        def hide_side_bar(e):
+            sidebar.offset = transform.Offset(-205, 0)
+            page.update()
+
         def get_doctor_details():
             c = db.cursor()
             c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
@@ -30,10 +47,197 @@ class DoctorHomepage:
 
             fullName = record[0][1]
             username = record[0][2]
+            phoneNumber = record[0][4]
+            image = record[0][12]
 
-            return fullName, username
+            return fullName, username, phoneNumber, image
 
-        fullName, username = get_doctor_details()
+        fullName, username, phoneNumber, image = get_doctor_details()
+
+        # Sidebar
+        sidebar = Container(
+            padding=10,
+            width=200,
+            height=700,
+            bgcolor=colors.WHITE,
+            content=Column(
+                controls=[
+                    Container(
+                        padding=padding.only(top=60, left=10),
+                        content=Column(
+                            controls=[
+                                Row(
+                                    controls=[
+                                        Image(
+                                            src="pic/avatar.png",
+                                            width=50,
+                                            height=50
+                                        ),
+
+                                        Column(
+                                            controls=[
+                                                Container(
+                                                    padding=padding.only(top=5, bottom=-5),
+                                                    content=Text(
+                                                        value=username,
+                                                        size=14,
+                                                        font_family="RobotoSlab",
+                                                        color=colors.BLACK
+                                                    )
+                                                ),
+                                                Row(
+                                                    controls=[
+                                                        Icon(
+                                                            icons.PHONE,
+                                                            color=colors.BLACK,
+                                                            size=10
+                                                        ),
+                                                        Container(
+                                                            padding=padding.only(left=-8),
+                                                            content=Text(
+                                                                value=phoneNumber,
+                                                                size=10,
+                                                                font_family="RobotoSlab",
+                                                                color=colors.BLACK
+                                                            )
+                                                        )
+
+                                                    ]
+                                                )
+
+                                            ]
+                                        ),
+                                    ]
+                                ),
+
+                                Container(
+                                    padding=padding.only(top=20, left=10, right=10),
+                                    content=Column(
+                                        controls=[
+                                            Row(
+                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                controls=[
+                                                    Row(
+                                                        controls=[
+                                                            Icon(
+                                                                icons.PERSON,
+                                                                size=20,
+                                                                color=grey
+                                                            ),
+
+                                                            Text(
+                                                                value="Profile",
+                                                                size=12,
+                                                                color=colors.BLACK,
+                                                                text_align=TextAlign.LEFT,
+                                                                font_family="RobotoSlab",
+                                                            )
+                                                        ]
+                                                    ),
+
+                                                    Container(
+                                                        content=Icon(
+                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                            size=14,
+                                                            color=grey
+
+                                                        ), on_click=lambda _: page.go(f"/doctorProfile/{user_id}")
+                                                    ),
+                                                ]
+                                            )
+
+                                        ]
+                                    )
+                                ),
+
+                                Container(
+                                    padding=padding.only(top=20, left=10, right=10),
+                                    content=Column(
+                                        controls=[
+                                            Row(
+                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                controls=[
+                                                    Row(
+                                                        controls=[
+                                                            Icon(
+                                                                icons.SETTINGS,
+                                                                size=20,
+                                                                color=grey
+                                                            ),
+
+                                                            Text(
+                                                                value="Settings",
+                                                                size=12,
+                                                                color=colors.BLACK,
+                                                                text_align=TextAlign.LEFT,
+                                                                font_family="RobotoSlab",
+                                                            )
+                                                        ]
+                                                    ),
+
+                                                    Container(
+                                                        content=Icon(
+                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                            size=14,
+                                                            color=grey
+
+                                                        ), on_click=lambda _: page.go(f"/doctorSettingPage/{user_id}")
+                                                    ),
+                                                ]
+                                            )
+
+                                        ]
+                                    )
+                                ),
+
+                                Container(
+                                    padding=padding.only(top=20, left=10, right=10),
+                                    content=Column(
+                                        controls=[
+                                            Row(
+                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                controls=[
+                                                    Row(
+                                                        controls=[
+                                                            Icon(
+                                                                icons.LOGOUT,
+                                                                size=20,
+                                                                color=grey
+                                                            ),
+
+                                                            Text(
+                                                                value="Log Out",
+                                                                size=12,
+                                                                color=colors.BLACK,
+                                                                text_align=TextAlign.LEFT,
+                                                                font_family="RobotoSlab",
+                                                            )
+                                                        ]
+                                                    ),
+
+                                                    Container(
+                                                        content=Icon(
+                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                            size=14,
+                                                            color=grey,
+                                                        ),
+                                                        on_click=lambda _: page.go("/")
+                                                    )
+                                                ]
+                                            )
+
+                                        ]
+                                    )
+                                ),
+
+                            ]
+                        )
+                    )
+                ]
+            ),
+            offset=transform.Offset(-5, 0),
+            animate_offset=animation.Animation(400)
+        )
 
         # phone container
         return View(
@@ -46,215 +250,296 @@ class DoctorHomepage:
                     bgcolor="#FFFFFF",
                     border_radius=30,
                     alignment=alignment.center,
-
-                    content=Column(
-                        horizontal_alignment=CrossAxisAlignment.START,
+                    content=Stack(
+                        # scroll=True,
+                        # horizontal_alignment=CrossAxisAlignment.START,
                         controls=[
                             Container(
-                                width=350,
-                                height=250,
-                                bgcolor="#3386C5",
-                                padding=padding.symmetric(horizontal=10, vertical=20),
-
+                                on_click=hide_side_bar,
                                 content=Column(
                                     controls=[
-                                        Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                            controls=[
-                                                Container(
-                                                    content=IconButton(icons.MENU,
-                                                                       icon_color="WHITE",
-                                                                       on_click=lambda _: page.go(f"/sideBar"))),
-                                                Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
-                                                                         icon_color="WHITE",
-                                                                         on_click=lambda _: page.go(
-                                                                             f"/notification/{user_id}"))])]),
-
-                                        Text(value="Welcome !",
-                                             size=30,
-                                             font_family="RobotoSlab",
-                                             weight=FontWeight.BOLD,
-                                             color="WHITE"),
-
-                                        Text(value=f"Dr. {fullName}",
-                                             size=30,
-                                             font_family="RobotoSlab",
-                                             weight=FontWeight.BOLD,
-                                             color="WHITE"),
-
                                         Container(
-                                            padding=padding.only(left=100, top=-140),
+                                            width=350,
+                                            height=250,
+                                            bgcolor="#3386C5",
+                                            padding=padding.symmetric(horizontal=10, vertical=20),
 
-                                            content=Row(
-                                                # horizontal_alignment="top_left",
+                                            content=Column(
                                                 controls=[
-                                                    Image(
-                                                        src="pic/doctor.png",
-                                                        width=280,
-                                                        height=280
-                                                    )
-                                                ])),
+                                                    Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                        controls=[
+                                                            Container(
+                                                                content=IconButton(icons.MENU,
+                                                                                   icon_color="WHITE",
+                                                                                   on_click=show_side_bar)),
+                                                            Row(controls=[IconButton(icons.CIRCLE_NOTIFICATIONS_ROUNDED,
+                                                                                     icon_color="WHITE",
+                                                                                     on_click=lambda _: page.go(
+                                                                                         f"/doctorNotification/{user_id}"))])]),
 
-                                        Container(bgcolor="WHITE",
-                                                  padding=padding.only(top=10, left=10),
-                                                  alignment=alignment.top_left,
-                                                  width=800,
-                                                  height=800,
-                                                  margin=margin.only(top=-100, left=-10, right=-10),
-                                                  border_radius=30,
-                                                  content=Column(
-                                                      controls=[Text("Our Services",
-                                                                     text_align=TextAlign.CENTER,
-                                                                     size=16,
-                                                                     font_family="RobotoSlab",
-                                                                     weight=FontWeight.W_500,
-                                                                     color="BLACK"),
-                                                                ])
+                                                    Text(value="Welcome !",
+                                                         size=30,
+                                                         font_family="RobotoSlab",
+                                                         weight=FontWeight.BOLD,
+                                                         color="WHITE"),
 
-                                                  ),
+                                                    Text(value=f"Dr. {fullName}",
+                                                         size=30,
+                                                         font_family="RobotoSlab",
+                                                         weight=FontWeight.BOLD,
+                                                         color="WHITE"),
 
-                                    ])),
-                            Container(
-                                alignment=alignment.center,
-                                margin=margin.only(top=10),
-                                content=Row(
-                                    alignment=MainAxisAlignment.SPACE_EVENLY,
-                                    controls=[
-                                        Container(
-                                            content=IconButton(
-                                                icons.HISTORY,
-                                                icon_color="#3D3F99",
-                                                icon_size=45,
-                                                tooltip="view history",
-                                                on_click=lambda _: page.go(f"/history/{user_id}")
-                                            ),
-                                            border_radius=50,
-                                            border=border.all(1, "#000000"),
-                                            height=60,
-                                            width=60,
+                                                    Container(
+                                                        padding=padding.only(left=100, top=-140),
 
-                                        ),
+                                                        content=Row(
+                                                            # horizontal_alignment="top_left",
+                                                            controls=[
+                                                                Image(
+                                                                    src=f"{image}",
+                                                                    width=280,
+                                                                    height=280
+                                                                )
+                                                            ])),
 
-                                        Container(
-                                            content=IconButton(
-                                                icons.DATE_RANGE_ROUNDED,
-                                                icon_color="#3D3F99",
-                                                icon_size=45,
-                                                tooltip="view schedule",
-                                                on_click=lambda _: page.go(f"/schedule/{user_id}")
-                                            ),
-                                            border_radius=50,
-                                            border=border.all(1, "#000000"),
-                                            height=60,
-                                            width=60
-                                            # Add border here
-                                        ),
-                                        Container(
-                                            content=IconButton(
-                                                icons.WECHAT,
-                                                icon_color="#3D3F99",
-                                                icon_size=45,
-                                                tooltip="view chat",
-                                                on_click=lambda _: page.go(f"/chat/{user_id}")
-                                            ),
-                                            border_radius=50,
-                                            border=border.all(1, "#000000"),
-                                            height=60,
-                                            width=60
-                                            # Add border here
-                                        )
-                                    ]
-                                )
-                            ),
-                            Container(alignment=alignment.center,
-                                      content=Row(alignment=MainAxisAlignment.SPACE_EVENLY,
-                                                  controls=[Container(
-                                                      content=Text("History",
-                                                                   font_family="RobotoSlab",
-                                                                   size=14,
-                                                                   color="BLACK"),
-                                                  ),
-                                                      Text("Schedule",
-                                                           font_family="RobotoSlab",
-                                                           size=14,
-                                                           color="BLACK"),
-                                                      Text("Chat",
-                                                           font_family="RobotoSlab",
-                                                           size=14,
-                                                           color="BLACK")])),
-
-                            Container(alignment=alignment.center,
-                                      padding=padding.only(left=10, top=30, right=10),
-                                      content=Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                  controls=[Container(
-                                                      content=Text("Appointment",
-                                                                   font_family="RobotoSlab",
-                                                                   color="BLACK",
-                                                                   size=16,
-                                                                   weight=FontWeight.W_500)),
-                                                      Text(disabled=False,
-                                                           spans=[TextSpan(
-                                                               "see more",
-                                                               TextStyle(
-                                                                   decoration=TextDecoration.UNDERLINE,
-                                                                   color="#3386C5"),
-                                                               on_click=lambda _: page.go(f"/schedule/{user_id}"))])
-
-                                                  ])),
-
-                            Container(alignment=alignment.center,
-                                      border_radius=8,
-                                      padding=padding.only(left=10),
-                                      margin=margin.only(left=10),
-                                      border=border.all(color="BLACK"),
-                                      width=320,
-                                      height=180,
-                                      content=Column(controls=
-                                                     [Row(alignment=MainAxisAlignment.START,
-                                                          controls=[Container(
+                                                    Container(bgcolor="WHITE",
+                                                              padding=padding.only(top=20, left=10),
                                                               alignment=alignment.top_left,
-                                                              margin=margin.only(top=10),
-                                                              content=
-                                                              Text("Appointment Date & Time",
-                                                                   font_family="RobotoSlab",
-                                                                   size=14,
-                                                                   color="#979797"))]
-                                                          ),
-                                                      Container(content=Row(alignment=alignment.center,
-                                                                            controls=[Container(
-                                                                                Icon(icons.WATCH_LATER_OUTLINED,
-                                                                                     color="BLACK"), ),
-                                                                                Text("Tue Oct 02 | 09:00AM - 10.00 AM",
-                                                                                     weight=FontWeight.W_500,
-                                                                                     size=12,
-                                                                                     color="BLACK")])),
+                                                              # width=800,
+                                                              # height=320,
+                                                              margin=margin.only(top=-100, left=-10, right=-10),
+                                                              border_radius=30,
+                                                              content=Column(
+                                                                  controls=[Text("Our Services",
+                                                                                 text_align=TextAlign.CENTER,
+                                                                                 size=16,
+                                                                                 weight=FontWeight.BOLD,
+                                                                                 color="BLACK"),
+                                                                            ])
 
-                                                      Container(
-                                                          content=Row(alignment=alignment.center,
-                                                                      controls=[Container(
-                                                                          Image(src="pic/patient.png",
-                                                                                border_radius=20,
-                                                                                width=65,
-                                                                                height=65), ),
-                                                                          Text("Melody Wong Yi Yi",
-                                                                               weight=FontWeight.W_500,
-                                                                               size=14,
-                                                                               color="BLACK"),
-                                                                      ])),
-                                                      Container(margin=margin.only(left=75, top=-35),
-                                                                content=Column(alignment=alignment.center,
-                                                                               controls=[Container(
-                                                                                   Text("Consultation",
-                                                                                        color="#979797"))])),
+                                                              ),
 
-                                                      Container(margin=margin.only(left=220, top=-20),
-                                                                content=Column(alignment=alignment.center,
-                                                                               controls=[Container(
-                                                                                   TextButton("more >>",
-                                                                                              on_click=lambda _: page.go(f"/appointmentDetail/{user_id}"))
+                                                ])
+                                        ),
+                                        Container(
+                                            alignment=alignment.top_left,
+                                            margin=margin.only(top=30, left=30, right=10),
+                                            content=Row(
+                                                controls=[
+                                                    Container(
+                                                        padding=padding.only(top=20),
+                                                        alignment=alignment.center,
+                                                        height=120,
+                                                        width=120,
+                                                        content=Column(
+                                                            controls=[
+                                                                Container(
+                                                                    Image(
+                                                                        src="pic/icons8-history-80.png",
+                                                                        width=50,
+                                                                    )
+                                                                ),
+                                                                Container(
+                                                                    Text(
+                                                                        "History",
+                                                                        size=14,
+                                                                        color="BLACK",
+                                                                        weight=FontWeight.W_500
+                                                                    )
 
-                                                                               )]))
+                                                                )
+                                                            ]
+                                                        ),
+                                                        border=border.all(width=2, color="BLACK"),
+                                                        border_radius=10,
+                                                        on_click=lambda _: page.go(f"/history/{user_id}")
 
-                                                      ])),
+                                                    ),
+                                                    Container(
+                                                        margin=margin.only(top=10, left=30, right=10),
+                                                        content=Row(
+                                                            controls=[
+                                                                Container(
+                                                                    padding=padding.only(top=20),
+                                                                    alignment=alignment.center,
+                                                                    height=120,
+                                                                    width=120,
+                                                                    content=Column(
+                                                                        controls=[
+                                                                            Container(
+                                                                                alignment=alignment.center,
+                                                                                content=Image(
+                                                                                    src="pic/icons8-appointment-64.png",
+                                                                                    width=50,
+                                                                                )
+                                                                            ),
+                                                                            Container(
+                                                                                alignment=alignment.center,
+                                                                                content=Text(
+                                                                                    "Appointment",
+                                                                                    size=14,
+                                                                                    color="BLACK",
+                                                                                    weight=FontWeight.W_500
+                                                                                )
 
-                            # ResponsiveRow([Container(Text())])
-                        ]))])
+                                                                            )
+                                                                        ]
+                                                                    ),
+                                                                    border=border.all(width=2, color="BLACK"),
+                                                                    border_radius=10,
+                                                                    on_click=lambda _: page.go(
+                                                                        f"/appointment/{user_id}")
+
+                                                                )
+                                                            ]
+                                                        )
+                                                    ),
+
+                                                    # Container(
+                                                    #     margin=margin.only(left=30),
+                                                    #     padding=padding.only(top=20),
+                                                    #     alignment=alignment.center,
+                                                    #     height=120,
+                                                    #     width=120,
+                                                    #     content=Column(
+                                                    #         controls=[
+                                                    #             Container(
+                                                    #                 alignment=alignment.center,
+                                                    #                 content=Image(
+                                                    #                     src="pic/icons8-schedule-100.png",
+                                                    #                     width=50,
+                                                    #                 )
+                                                    #             ),
+                                                    #             Container(
+                                                    #                 alignment=alignment.center,
+                                                    #                 content=Text(
+                                                    #                     "Schedule",
+                                                    #                     size=14,
+                                                    #                     color="BLACK",
+                                                    #                     weight=FontWeight.W_500
+                                                    #                 )
+                                                    #
+                                                    #             )
+                                                    #         ]
+                                                    #     ),
+                                                    #     border=border.all(width=2, color="BLACK"),
+                                                    #     border_radius=10,
+                                                    #     on_click=lambda _: page.go(f"/schedule/{user_id}")
+                                                    #
+                                                    # )
+
+                                                ])),
+                                        Container(
+                                            margin=margin.only(top=10, left=30, right=10),
+                                            content=Row(
+                                                controls=[
+                                                    Container(
+                                                        padding=padding.only(top=20),
+                                                        alignment=alignment.center,
+                                                        height=120,
+                                                        width=120,
+                                                        content=Column(
+                                                            controls=[
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Image(
+                                                                        src="pic/icons8-chat-64.png",
+                                                                        width=50,
+                                                                    )
+                                                                ),
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Text(
+                                                                        "Chat",
+                                                                        size=14,
+                                                                        color="BLACK",
+                                                                        weight=FontWeight.W_500
+                                                                    )
+
+                                                                )
+                                                            ]
+                                                        ),
+                                                        border=border.all(width=2, color="BLACK"),
+                                                        border_radius=10,
+                                                        on_click=lambda _: page.go(f"/chat/{user_id}")
+
+                                                    ),
+
+                                                    Container(
+                                                        margin=margin.only(left=30),
+                                                        padding=padding.only(top=20),
+                                                        alignment=alignment.center,
+                                                        height=120,
+                                                        width=120,
+                                                        content=Column(
+                                                            controls=[
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Image(
+                                                                        src="pic/icons8-prescription-100.png",
+                                                                        width=50,
+                                                                    )
+                                                                ),
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Text(
+                                                                        "Prescription",
+                                                                        size=14,
+                                                                        color="BLACK",
+                                                                        weight=FontWeight.W_500
+                                                                    )
+
+                                                                )
+                                                            ]
+                                                        ),
+                                                        border=border.all(width=2, color="BLACK"),
+                                                        border_radius=10,
+                                                        on_click=lambda _: page.go(f"/doctorViewStatus/{user_id}")
+
+                                                    )
+
+                                                ])),
+                                        # Container(
+                                        #     margin=margin.only(top=10, left=30, right=10),
+                                        #     content=Row(
+                                        #         controls=[
+                                        #             Container(
+                                        #                 padding=padding.only(top=20),
+                                        #                 alignment=alignment.center,
+                                        #                 height=120,
+                                        #                 width=120,
+                                        #                 content=Column(
+                                        #                     controls=[
+                                        #                         Container(
+                                        #                             alignment=alignment.center,
+                                        #                             content=Image(
+                                        #                                 src="pic/icons8-appointment-64.png",
+                                        #                                 width=50,
+                                        #                             )
+                                        #                         ),
+                                        #                         Container(
+                                        #                             alignment=alignment.center,
+                                        #                             content=Text(
+                                        #                                 "Appointment",
+                                        #                                 size=14,
+                                        #                                 color="BLACK",
+                                        #                                 weight=FontWeight.W_500
+                                        #                             )
+                                        #
+                                        #                         )
+                                        #                     ]
+                                        #                 ),
+                                        #                 border=border.all(width=2, color="BLACK"),
+                                        #                 border_radius=10,
+                                        #                 on_click=lambda _: page.go(f"/appointment/{user_id}")
+                                        #
+                                        #             )
+                                        #         ]
+                                        #     )
+                                        # )
+                                    ]
+                                ),
+                            ), sidebar
+                        ]
+                    )
+                )])

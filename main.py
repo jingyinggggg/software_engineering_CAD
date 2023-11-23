@@ -2,59 +2,144 @@ import flet
 from flet import *
 from flet_route import Routing, path
 
+# Shared interface
+from welcome import WelcomePage
 from login import LoginPage
 from signUp import SignUpPage
-from homepage import Homepage
 from resetPassword import ResetPasswordPage
-from welcome import WelcomePage
-from doctorHomepage import DoctorHomepage
-from profile import ProfilePage
+
+# Patient's interface
+from homepage import Homepage
 from medicalRecord import MedicalRecordPage
 from addMedicalRecord import AddMedicalRecordPage
 from viewMedicalRecord import ViewMedicalRecordPage
+from setting import SettingPage
+from password import PasswordPage
+from accountSetting import AccountSettingPage
 from clinic import ClinicPage
 from viewClinic import ViewClinicPage
-from clinicSignUp import ClinicSignUpPage
-from notification import Notification
+from doctorListClinic import DoctorListBasedOnClinic
+from doctor import DoctorPage
+from viewDoctor import ViewDoctorPage
+from makeAppointment import MakeAppointmentPage
+from patientPrescription import PatientPrescriptionPage
+from viewPrescription import ViewPrescriptionPage
+from healthTips import HealthTipsPage
+from bookingPage import BookingPage
+from viewBooking import ViewBookingPage
+from profile import ProfilePage
+from patientNotification import PatientNotificationPage
+from patientChatViewDoctor import PatientChatViewDoctorPage
+from patientChat import PatientChatPage
+
+# Doctor's interface
+from doctorHomepage import DoctorHomepage
+from doctorNotification import DoctorNotification
 from history import HistoryPage
 from schedule import Schedule
 from appointmentDetail import AppointmentDetail
 from chat import Chat
 from chat_info import ChatInfo
 from prescription import Prescription
+from doctorSetting import DoctorSettingPage
+from doctorPassword import DoctorPasswordPage
+from doctorAccountSetting import DoctorAccountSettingPage
+from doctorProfile import DoctorProfilePage
+from doctorViewStatus import DoctorViewStatus
+from appointment import Appointment
+from doctorViewMedicalRecord import DoctorViewMedicalRecord
+from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
+from doctorCallInterface import DoctorCallInterface
+
+# Clinic's interface
+from clinicSignUp import ClinicSignUpPage
 from addDoctorDetails import AddDoctorDetailsPage
-from doctor import DoctorPage
-from viewDoctor import ViewDoctorPage
+from clinicHomepage import ClinicHomepage
+
+# Clinic admin interface
+from clinicAdminHomepage import AdminHomepage
+from clinicAdminPatientRequestList import AdminPatientRequestList
+from clinicAdminUpdateAppointment import ClinicAdminUpdateAppointmentPage
+from clinicAdminUpdateAppointmentDetails import ClinicAdminUpdateAppointmentDetailsPage
+
+# Project admin interface
+from projectAdminHomepage import ProjectAdminHomepage
 
 
 def main(mainPage: Page):
-    mainPage.theme_mode = "light"
+    mainPage.theme_mode = "dark"
+
     app_routes = [
+
+        # Shared interface path
         path(url="/", clear=True, view=WelcomePage().view),
         path(url="/loginUser", clear=False, view=LoginPage().view),
         path(url="/signUp", clear=False, view=SignUpPage().view),
-        path(url="/homepage/:user_id", clear=False, view=Homepage().view),
         path(url="/resetPassword", clear=False, view=ResetPasswordPage().view),
-        path(url="/profile/:user_id", clear=False, view=ProfilePage().view),
+
+
+        # Patient interface path
+        path(url="/homepage/:user_id", clear=False, view=Homepage().view),
+        path(url="/patientNotification/:user_id", clear=False, view=PatientNotificationPage().view),
         path(url="/medicalRecord/:user_id", clear=False, view=MedicalRecordPage().view),
         path(url="/addMedicalRecord/:user_id", clear=False, view=AddMedicalRecordPage().view),
         path(url="/viewMedicalRecord/:medicalRecord_id", clear=False, view=ViewMedicalRecordPage().view),
+        path(url="/setting/:user_id", clear=False, view=SettingPage().view),
+        path(url="/accountSetting/:user_id", clear=False, view=AccountSettingPage().view),
+        path(url="/password/:user_id", clear=False, view=PasswordPage().view),
         path(url="/clinic/:user_id", clear=False, view=ClinicPage().view),
         path(url="/viewClinic/:user_id:clinic_id", clear=False, view=ViewClinicPage().view),
+        path(url="/doctorListBasedOnClinic/:user_id:clinic_id", clear=False, view=DoctorListBasedOnClinic().view),
         path(url="/doctor/:user_id", clear=False, view=DoctorPage().view),
-        path(url="/viewDoctor/:user_id:doctor_id", clear=False, view=ViewDoctorPage().view),
-        path(url="/login/homepage/:user_id", clear=False, view=DoctorHomepage().view),
-        path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
-        path(url="/notification/:user_id",clear=False,view=Notification().view),
-        path(url="/history/:user_id",clear=False,view=HistoryPage().view),
-        path(url="/schedule/:user_id",clear=False,view=Schedule().view),
-        path(url="/appointmentDetail/:user_id",clear=False,view=AppointmentDetail().view),
-        path(url="/chat/:user_id",clear=False,view=Chat().view),
-        path(url="/chat_info/:user_id",clear=False,view=ChatInfo().view),
-        path(url="/prescription/:user_id",clear=False,view=Prescription().view),
-        path(url="/addDoctorDetails", clear=False, view=AddDoctorDetailsPage().view),
-    ]
+        path(url="/viewDoctor/:user_id:doctor_id:previous_page", clear=False, view=ViewDoctorPage().view),
+        path(url="/makeAppointment/:user_id:doctor_id:previous_page", clear=False, view=MakeAppointmentPage().view),
+        path(url="/patientPrescription/:user_id", clear=False, view=PatientPrescriptionPage().view),
+        path(url="/viewPrescription/:user_id", clear=False, view=ViewPrescriptionPage().view),
+        # path(url="/viewPrescription/:prescription_id", clear=False, view=PatientPrescriptionPage().view),
+        path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
+        path(url="/patientChatViewDoctor/:user_id", clear=False, view=PatientChatViewDoctorPage().view),
+        path(url="/patientChat/:user_id:doctor_id", clear=False, view=PatientChatPage().view),
+        path(url="/booking/:user_id", clear=False, view=BookingPage().view),
+        path(url="/viewBooking/:user_id:booking_id", clear=False, view=ViewBookingPage().view),
+        path(url="/profile/:user_id", clear=False, view=ProfilePage().view),
 
+
+        # Doctor interface path
+        path(url="/login/homepage/:user_id", clear=False, view=DoctorHomepage().view),
+        path(url="/doctorNotification/:user_id", clear=False, view=DoctorNotification().view),
+        path(url="/history/:user_id", clear=False, view=HistoryPage().view),
+        path(url="/schedule/:user_id", clear=False, view=Schedule().view),
+        path(url="/appointmentDetail/:user_id:appointment_id", clear=False, view=AppointmentDetail().view),
+        path(url="/chat/:user_id", clear=False, view=Chat().view),
+        path(url="/chat_info/:user_id:patient_id", clear=False, view=ChatInfo().view),
+        path(url="/prescription/:user_id:booking_id", clear=False, view=Prescription().view),
+        path(url="/doctorSettingPage/:user_id", clear=False, view=DoctorSettingPage().view),
+        path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
+        path(url="/doctorAccountSetting/:user_id", clear=False, view=DoctorAccountSettingPage().view),
+        path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
+        path(url="/doctorProfile/:user_id", clear=False, view=DoctorProfilePage().view),
+        path(url="/doctorViewStatus/:user_id", clear=False, view=DoctorViewStatus().view),
+        path(url="/appointment/:user_id", clear=False, view=Appointment().view),
+        path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False, view=DoctorViewMedicalRecord().view),
+        path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False, view=DoctorViewMedicalRecordList().view),
+        path(url="/doctorCallInterface/:user_id:patient_id", clear=False, view=DoctorCallInterface().view),
+
+        # Clinic interface path
+        path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
+        path(url="/addDoctorDetails/:clinic_id", clear=False, view=AddDoctorDetailsPage().view),
+        path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
+
+
+        # Clinic admin interface path
+        path(url="/login/adminHomepage/:user_id", clear=False, view=AdminHomepage().view),
+        path(url="/admin/adminPatientRequestList", clear=False, view=AdminPatientRequestList().view),
+        path(url="/admin/clinicAdminUpdateAppointment/:user_id", clear=False, view=ClinicAdminUpdateAppointmentPage().view),
+        path(url="/admin/clinicAdminUpdateAppointmentDetails/:user_id:booking_id", clear=False, view=ClinicAdminUpdateAppointmentDetailsPage().view),
+
+        # Project admin interface path
+        path(url="/projectAdminHomepage/:user_id", clear=False, view=ProjectAdminHomepage().view),
+
+    ]
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
 

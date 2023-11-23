@@ -6,12 +6,73 @@ import sqlite3
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
+def CreateTable():
+    c = db.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS doctors(
+                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 fullName TEXT NOT NULL,
+                 username TEXT ,
+                 email TEXT NOT NULL,
+                 phoneNumber TEXT NOT NULL,
+                 password TEXT ,
+                 experience TEXT NOT NULL,
+                 specialization TEXT NOT NULL,
+                 description TEXT NOT NULL,
+                 clinicID INTEGER NOT NULL,
+                 workingTime TEXT NOT NULL,
+                 workingDay TEXT NOT NULL,
+                 image TEXT NOT NULL,
+                 STATUS INTEGER NOT NULL)""")
+    db.commit()
+
+
+def AddColumn():
+    c = db.cursor()
+    c.execute("""ALTER TABLE booking ADD COLUMN prescriptionStatus TEXT""")
+    db.commit()
+
+# def update():
+#     c = db.cursor()
+#     c.execute(
+#         f"UPDATE booking SET bookingStatus = ?, appointmentStatus = ?, proofStatus = ? WHERE bookingID = ?",
+#         (1, "Scheduled", "", 1))
+#     db.commit()
+
+
+# def createTable():
+#     c = db.cursor()
+#     c.execute("""CREATE TABLE IF NOT EXISTS clinicAdmin(
+#                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                      fullName TEXT NOT NULL,
+#                      username TEXT NOT NULL,
+#                      email TEXT NOT NULL,
+#                      password TEXT NOT NULL,
+#                      clinicID INTEGER NOT NULL)""")
+#     db.commit()
+#
+# def addToDatabase():
+#     c = db.cursor()
+#     c.execute("INSERT INTO clinicAdmin (fullName, username, email, password, clinicID) VALUES (?,?,?,?,?)",
+#               ("Bwell Clinic admin", "Bwell Clinic admin", "bwelladmin@gmail.com", "123", 1))
+#     db.commit()
+#
+# def drop():
+#     c= db.cursor()
+#     c.execute("DROP TABLE clinicAdmin")
+#     db.commit()
+
 class LoginPage:
     def __init__(self):
         pass
 
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
+
+        # drop()
+        # createTable()
+        # addToDatabase()
+        # update()
+        # AddColumn()
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -26,6 +87,7 @@ class LoginPage:
         }
 
         email = TextField(label="Enter Email",
+                          value="",
                           label_style=TextStyle(font_family="RobotoSlab",
                                                 size=14,
                                                 color=colors.GREY_800),
@@ -35,6 +97,7 @@ class LoginPage:
                                                color=colors.BLACK))
 
         password = TextField(label="Enter Password",
+                             value="",
                              password=True,
                              can_reveal_password=True,
                              label_style=TextStyle(font_family="RobotoSlab",
@@ -65,6 +128,32 @@ class LoginPage:
             alert_dialog.open = False
             page.update()
 
+        # def verifyUser(e):
+        #     c = db.cursor()
+        #     c.execute("SELECT id FROM users WHERE email = ? AND password = ?", (email.value, password.value))
+        #     user = c.fetchone()
+        #
+        #     if user:
+        #         page.go(f"/homepage/{user[0]}")
+        #
+        #     elif email.value == "" or password.value == "":
+        #         open_dlg()
+        #
+        #     else:
+        #         c.execute("SELECT id FROM doctors WHERE email = ? AND password = ?", (email.value, password.value))
+        #         doctor = c.fetchone()
+        #
+        #         if doctor is not None:
+        #             page.go(f"/login/homepage/{doctor[0]}")
+        #         else:
+        #             c.execute("SELECT id FROM admin WHERE email = ? AND password = ?", (email.value, password.value))
+        #             admin = c.fetchone()
+        #
+        #             if admin is not None:
+        #                 page.go(f"/")
+        #             else:
+        #                 open_dlg()
+
         def verifyUser(e):
             c = db.cursor()
             c.execute("SELECT id FROM users WHERE email = ? AND password = ?", (email.value, password.value))
@@ -87,9 +176,23 @@ class LoginPage:
                     admin = c.fetchone()
 
                     if admin is not None:
-                        page.go(f"/")
+                        page.go(f"/projectAdminHomepage/{admin[0]}")
                     else:
-                        open_dlg()
+                        c.execute("SELECT id FROM clinic WHERE email = ? AND password = ?",
+                                  (email.value, password.value))
+                        clinic = c.fetchone()
+
+                        if clinic is not None:
+                            page.go(f"/clinicHomepage/{clinic[0]}")
+                        else:
+                            c.execute("SELECT clinicID FROM clinicAdmin WHERE email = ? AND password = ?",
+                                      (email.value, password.value))
+                            clinicAdmin = c.fetchone()
+
+                            if clinicAdmin is not None:
+                                page.go(f"/login/adminHomepage/{clinicAdmin[0]}")
+                            else:
+                                open_dlg()
 
         return View(
             "/loginUser",
@@ -195,12 +298,6 @@ class LoginPage:
                                                     )
                                                 ]
                                             ))
-
-                                  # Container(padding=padding.only(top=50),
-                                  #           content=
-                                  #               ]
-                                  #           )
-                                  #           )
                               ]
                           )
                           )

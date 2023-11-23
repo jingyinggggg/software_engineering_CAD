@@ -6,6 +6,7 @@ import datetime
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
+
 class DoctorNotification:
     def __init__(self):
         pass
@@ -19,7 +20,8 @@ class DoctorNotification:
         else:
             return "Unknown"  # Default if patient information is not available
 
-    def get_appointment_notification_message(self, fullName, appointment_type, patient_name, appointment_date, appointment_time, appointment_status):
+    def get_appointment_notification_message(self, fullName, appointment_type, patient_name, appointment_date,
+                                             appointment_time, appointment_status):
         # if appointment_status == "Requested":
         #     return f"Hi, Dr. {fullName}! You have a new appointment request from patient ({patient_name}) on {appointment_date} at {appointment_time}. Please review and take action."
         appointment_date = datetime.datetime.strptime(appointment_date, "%d %B %Y").date()
@@ -60,18 +62,16 @@ class DoctorNotification:
             c = self.db.cursor()
             c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
             record = c.fetchall()
-
             fullName = record[0][1]
-
             return fullName
 
         def get_booking_data(status_list):
             c = self.db.cursor()
-            query = "SELECT * FROM booking WHERE doctorID = ? AND appointmentStatus IN ({})".format(",".join(["?"] * len(status_list)))
+            query = "SELECT * FROM booking WHERE doctorID = ? AND appointmentStatus IN ({})".format(
+                ",".join(["?"] * len(status_list)))
             bindings = [user_id] + status_list
             c.execute(query, bindings)
             records = c.fetchall()
-
             return records
 
         fullName = get_doctor_details()
@@ -99,16 +99,16 @@ class DoctorNotification:
                         height=95,
                         border_radius=8,
                         border=border.all(width=1, color="BLACK"),
-                        content=Row(  # Change from Column to Row
+                        content=Row(
                             controls=[
                                 Icon(icons.TIPS_AND_UPDATES_OUTLINED, size=40, color="#3D3F99"),
-                                Container(  # Add a container to hold text
+                                Container(
                                     padding=padding.only(left=10),
                                     content=Column(
                                         controls=[
-                                            Text(appointment_message, color="BLACK", size=12, overflow=TextOverflow.VISIBLE,
+                                            Text(appointment_message, color="BLACK", size=12,
+                                                 overflow=TextOverflow.VISIBLE,
                                                  width=230, font_family="RobotoSlab", text_align=TextAlign.JUSTIFY),
-                                            # buttons_row  # Include the row of buttons
                                         ]
                                     )
                                 )
@@ -117,6 +117,68 @@ class DoctorNotification:
                     )
                 )
 
+        # Check if there are no notifications
+        if not notification_controls:
+            # If there are no notifications, display a default message
+            default_message = "No notifications at the moment."
+
+            return View(
+                "/doctorNotification/:user_id",
+                controls=[
+                    Container(
+                        width=350,
+                        height=700,
+                        bgcolor="#FFFFFF",
+                        border_radius=30,
+                        alignment=alignment.center,
+                        content=Column(
+                            controls=[
+                                Row(
+                                    alignment=MainAxisAlignment.CENTER,
+                                    controls=[
+                                        Container(
+                                            padding=padding.only(right=120),
+                                            width=350,
+                                            height=80,
+                                            alignment=alignment.center,
+                                            bgcolor="#3386C5",
+                                            content=Row(
+                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                                controls=[
+                                                    Container(padding=padding.only(left=10),
+                                                        content=Image(
+                                                            src="pic/back.png",
+                                                            color=colors.WHITE,
+                                                            width=20,
+                                                            height=20
+                                                        ),on_click=lambda _: page.go(
+                                                                   f"/login/homepage/{user_id}")),
+                                                    Text("Notification",
+                                                         color="WHITE",
+                                                         text_align=TextAlign.CENTER,
+                                                         size=20,
+                                                         font_family="RobotoSlab")
+                                                ]
+                                            )
+                                        )
+                                    ]
+                                ),
+                                Container(alignment=alignment.center,
+                                          margin=margin.only(top=230),
+                                          content=Image(src="pic/icons8-no-notification-64.png"),
+                                          ),
+                                Container(alignment=alignment.center,
+                                          content=Text(default_message, color="BLACK", size=16,
+                                                       font_family="RobotoSlab",
+                                                       text_align=TextAlign.CENTER))
+
+                            ]
+                        )
+                    )
+                ]
+            )
+
+        # If there are notifications, display the list of notification_controls
         return View(
             "/doctorNotification/:user_id",
             controls=[
@@ -128,7 +190,8 @@ class DoctorNotification:
                     alignment=alignment.center,
                     content=Column(
                         controls=[
-                            Row(alignment=MainAxisAlignment.CENTER,
+                            Row(
+                                alignment=MainAxisAlignment.CENTER,
                                 controls=[
                                     Container(
                                         padding=padding.only(right=120),
@@ -136,20 +199,25 @@ class DoctorNotification:
                                         height=80,
                                         alignment=alignment.center,
                                         bgcolor="#3386C5",
-                                        content=Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                    controls=[IconButton(icons.ARROW_BACK_ROUNDED,
-                                                                         icon_size=30,
-                                                                         icon_color="WHITE",
-                                                                         on_click=lambda _: page.go(
-                                                                             f"/login/homepage/{user_id}")),
-                                                              Text("Notification",
-                                                                   color="WHITE",
-                                                                   text_align=TextAlign.CENTER,
-                                                                   size=20,
-                                                                   font_family="RobotoSlab",
-                                                                   weight=FontWeight.BOLD)]))
-                                ]),
-                            # Include the list of notification controls
+                                        content=Row(
+                                            alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                            controls=[
+                                                IconButton(icons.ARROW_BACK_ROUNDED,
+                                                           icon_size=30,
+                                                           icon_color="WHITE",
+                                                           on_click=lambda _: page.go(f"/login/homepage/{user_id}")),
+                                                Text("Notification",
+                                                     color="WHITE",
+                                                     text_align=TextAlign.CENTER,
+                                                     size=20,
+                                                     font_family="RobotoSlab",
+                                                     weight=FontWeight.BOLD)
+                                            ]
+                                        )
+                                    )
+                                ]
+                            ),
+                            # Include the list of notification_controls
                             *notification_controls
                         ]
                     )

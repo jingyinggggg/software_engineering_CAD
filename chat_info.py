@@ -1,5 +1,4 @@
-from _pydecimal import Overflow
-
+import flet
 from flet import *
 from flet_route import Params, Basket
 import sqlite3
@@ -9,15 +8,15 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 class ChatInfo:
     def __init__(self):
-        self.message_input = ""  # Initialize the message input
-        self.conversation = []  # Initialize an empty list to store the conversation
+        self.show_sidebar = False
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        patient_id = int(params.patient_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
-        page.window_height = 900
+        page.window_height = 800
         page.horizontal_alignment = "center"
         page.vertical_alignment = "center"
         page.theme_mode = "dark"
@@ -26,146 +25,253 @@ class ChatInfo:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        def get_doctor_details():
+        lightBlue = "#D0DCEE"
+        blue = "#3386C5"
+        grey = "#71839B"
+
+        def get_user_name():
             c = db.cursor()
-            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
-            record = c.fetchall()
+            c.execute("SELECT fullName FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchone()
 
-            fullName = record[0][1]
+            username = record[0]
+            return username
 
-            return fullName
+        username = get_user_name()
 
-        fullName = get_doctor_details()
+        def get_initials(name):
+            return name[:1].capitalize()
 
-        def send_message():
-            # Implement the logic to send the message here
-            # You can access the message from self.message_input
-            message = self.message_input
-            # Perform the necessary actions to send the message
+        def get_patient_name():
+            c = db.cursor()
+            c.execute("SELECT fullName FROM users WHERE id = ?", (user_id,))
+            record = c.fetchone()
 
-            # Add the sent message to the conversation
-            self.conversation.append({
-                "sender": "Doctor",  # You can change this to the actual sender's name
-                "message": message
-            })
+            name = record[0]
+            print(name)
+            return name
 
-            # Clear the message input field after sending
-            self.message_input = ""
+        name = get_patient_name()
 
-            # Update the page to reflect the sent message
-            page.update()
-
-        # Build the conversation based on the stored messages
-        conversation_controls = []
-        for message_data in self.conversation:
-            # Create a container for each message in the conversation
-            message_container = Container(
-                bgcolor="#3386C5",  # Blue background for the doctor's messages
-                border_radius=20,
-                padding=padding.all(10),
-                content=Text(message_data["message"], color="WHITE"),
-            )
-
-            conversation_controls.append(message_container)
-
-        conversation = Column(controls=conversation_controls)
-
-        return View(
-            "/chat_info/:user_id",
+        # Chat messages
+        chat = ListView(
+            expand=True,
+            spacing=10,
+            auto_scroll=True,
             controls=[
                 Container(
-                    width=350,
-                    height=700,
-                    bgcolor="#FFFFFF",
-                    border_radius=30,
-                    alignment=alignment.center,
-                    content=Column(
+                    margin=margin.only(top=10, left=40),
+                    width=240,
+                    # alignment=alignment.center_right,
+                    content=Row(
+                        # vertical_alignment="center",
                         controls=[
-                            Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
+                            Column(
                                 controls=[
+                                    Text(
+                                        width=235,
+                                        value=f"{name}",
+                                        weight="bold",
+                                        color=colors.BLACK,
+                                        font_family="RobotoSlab",
+                                        size=14,
+                                        text_align=TextAlign.RIGHT
+                                    ),
+
                                     Container(
-                                        padding=padding.only(right=160),
-                                        width=350,
-                                        height=60,
-                                        alignment=alignment.center,
-                                        bgcolor="WHITE",
-                                        border=border.all(color="#666666"),
-                                        content=Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                    controls=[
-                                                        IconButton(icons.ARROW_BACK_ROUNDED,
-                                                                   icon_size=20,
-                                                                   icon_color="BLACK",
-                                                                   on_click=lambda _: page.go(
-                                                                       f"/chat/{user_id}")),
-
-                                                        Text("Melody Wong Yi Yi",
-                                                             color="BLACK",
-                                                             text_align=TextAlign.CENTER,
-                                                             size=16,
-                                                             font_family="RobotoSlab",
-                                                             weight=FontWeight.BOLD)
-                                                    ])
+                                        padding=padding.only(top=10, left=10, right=10, bottom=10),
+                                        bgcolor=lightBlue,
+                                        border_radius=10,
+                                        # width=220,
+                                        content=Text(
+                                            width=220,
+                                            value="Hi, Dr. Johnson, I am Ng Jing Ying who is a gastric person ...",
+                                            size=12,
+                                            text_align=TextAlign.JUSTIFY,
+                                            color=colors.BLACK,
+                                            font_family="RobotoSlab"
+                                        )
                                     )
-                                ]),
 
-                            # Sample Conversation with sender's and receiver's messages
-                            Column(controls=[
-                                # Sender's message on the right
-                                Row(
-                                    alignment=MainAxisAlignment.END,  # Align to the right
-                                    controls=[
-                                        Container(
-                                            bgcolor="#3386C5",
-                                            border_radius=20,
-                                            padding=padding.all(10),
-                                            content=Text("Hello Melody!", color="WHITE"),
-                                        )
-                                    ]
-                                ),
-                                # Receiver's message on the left
-                                Row(
-                                    alignment=MainAxisAlignment.START,  # Align to the left
-                                    controls=[
-                                        Container(
-                                            bgcolor="#EFEFEF",
-                                            border_radius=20,
-                                            padding=padding.all(10),
-                                            content=Text("Hi there!", color="BLACK"),
-                                        )
-                                    ]
-                                ),
-                                conversation,
-                                # Add input field for writing messages
-                                Container(margin=margin.only(top=320),
-                                          content=Row(
-                                              alignment=MainAxisAlignment.END,  # Align to the center
+                                ],
 
-                                              controls=[
-                                                  Container(
-                                                            width=280,
-                                                            content=TextField(
-                                                                label="Write your message",
-                                                                value=self.message_input,
-                                                                on_change=lambda text: setattr(self, "message_input",
-                                                                                               text),
-                                                                border_color="#3386C5",
-                                                                border_radius=10,
-                                                                text_style=TextStyle(size=14, color=colors.BLACK),
-                                                                height=40
-                                                            )),
-                                                  IconButton(
-                                                      icons.SEND,
-                                                      on_click=send_message,
-                                                      icon_size=24,
-                                                      icon_color="#3386C5",
-                                                      width=50,
-                                                      height=40
-                                                  )
-                                              ]
-                                          ))
-                            ])
+                                tight=True,
+                                spacing=3
+                            ),
+
+                            CircleAvatar(
+                                content=Text(get_initials(name)),
+                                color=colors.WHITE,
+                                bgcolor=blue
+                            ),
                         ]
                     )
+
                 )
+            ]
+        )
+
+        new_message = TextField(
+            width=240,
+            # height=40,
+            dense=True,
+            border_width=1,
+            border_color=blue,
+            multiline=True,
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 font_family="RobotoSlab"
+                                 ),
+            hint_text="Write a message...",
+            hint_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 font_family="RobotoSlab"),
+            autofocus=True,
+        )
+
+        def send_click(e):
+            message = new_message.value
+            if message.strip():
+                chat.controls.append(
+                    Container(
+                        width=220,
+                        margin=margin.only(top=10, left=20),
+                        content=Row(
+                            controls=[
+                                CircleAvatar(
+                                    content=Text(get_initials(username)),
+                                    color=colors.WHITE,
+                                    bgcolor="#87CEEC"
+                                ),
+
+                                Column(
+                                    controls=[
+                                        Text(
+                                            value=f"Dr. {username}",
+                                            weight="bold",
+                                            color=colors.BLACK,
+                                            font_family="RobotoSlab",
+                                            size=14,
+                                        ),
+
+                                        Container(
+                                            padding=padding.only(top=10, left=10, right=10, bottom=10),
+                                            bgcolor=lightBlue,
+                                            border_radius=10,
+                                            content=Text(
+                                                width=190,
+                                                value=new_message.value,
+                                                size=12,
+                                                text_align=TextAlign.JUSTIFY,
+                                                color=colors.BLACK,
+                                                font_family="RobotoSlab"
+                                            )
+                                        )
+
+                                    ],
+
+                                    tight=True,
+                                    spacing=3
+                                )
+                            ]
+                        )
+
+                    )
+
+                )
+                new_message.value = ""
+                new_message.error_text = None
+                page.update()
+            else:
+                new_message.error_text = "You are not allowed to send an empty message..."
+                new_message.error_style = TextStyle(font_family="RobotoSlab",
+                                                    color="#FF0000",
+                                                    size=8)
+                page.update()
+                # new_message.error_text("You are not allowed to send empty message..."),
+                # new_message.error_style(TextStyle(font_family="RobotoSlab"))
+
+        return View(
+            "/chat_info/:user_id:patient_id",
+            controls=[
+                Container(width=350,
+                          height=700,
+                          bgcolor=colors.WHITE,
+                          border_radius=30,
+                          # child control
+                          content=Column(
+                              horizontal_alignment="center",
+                              controls=[
+                                  Container(width=350,
+                                            height=70,
+                                            bgcolor=blue,
+                                            alignment=alignment.top_center,
+                                            padding=padding.only(left=10, right=10, bottom=0),
+                                            content=Row(
+                                                controls=[
+                                                    Container(padding=padding.only(top=25),
+                                                              content=Image(
+                                                                  src="pic/back.png",
+                                                                  color=colors.WHITE,
+                                                                  width=20,
+                                                                  height=20
+                                                              ),
+                                                              on_click=lambda _: page.go(f"/chat/{user_id}")
+                                                              ),
+
+                                                    Container(padding=padding.only(left=120, top=25),
+                                                              content=Text(
+                                                                  value="Chat",
+                                                                  size=20,
+                                                                  font_family="RobotoSlab",
+                                                                  color=colors.WHITE,
+                                                                  text_align=TextAlign.CENTER)
+                                                              ),
+                                                    Container(padding=padding.only(left=80, top=20),
+                                                              content=Icon(
+                                                                  icons.PHONE,
+                                                                  color=colors.WHITE,
+                                                                  size=20
+                                                              ), on_click=lambda _:page.go(f"/doctorCallInterface/{user_id}{patient_id}")
+                                                              )
+
+                                                ]
+                                            )
+                                            ),
+
+                                  chat,
+
+                                  Container(
+                                      width=300,
+                                      # alignment=alignment.center,
+                                      margin=margin.only(bottom=20),
+                                      content=Row(
+                                          vertical_alignment=CrossAxisAlignment.CENTER,
+                                          controls=[
+                                              new_message,
+
+                                              Container(
+                                                  content=TextButton(
+                                                      content=Text("Send",
+                                                                   size=10,
+                                                                   font_family="RobotoSlab",
+                                                                   color=blue,
+                                                                   text_align=TextAlign.CENTER),
+                                                      style=ButtonStyle(bgcolor={"": lightBlue},
+                                                                        shape={
+                                                                            "": RoundedRectangleBorder(
+                                                                                radius=15)},
+                                                                        ),
+                                                      on_click=send_click
+                                                  ),
+                                              )
+
+                                          ]
+                                      )
+                                  )
+
+                              ]
+                          )
+                          )
             ]
         )
