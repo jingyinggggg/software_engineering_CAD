@@ -164,27 +164,6 @@ class DoctorListBasedOnClinic:
 
                 return Column(controls=record_containers)
 
-            else:
-                return Container(
-                    padding=padding.only(top=250),
-                    content=Column(
-                        horizontal_alignment="center",
-                        controls=[
-                            Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="There is no any doctor in the selected clinic currently.",
-                                    text_align=TextAlign.CENTER,
-                                    size=12,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab"
-                                )
-                            ),
-
-                        ]
-                    )
-                )
-
         return View(
             "/doctorListBasedOnClinic/:user_id:clinic_id",
             controls=[

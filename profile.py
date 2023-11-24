@@ -647,8 +647,8 @@ class ProfilePage:
                     f"UPDATE users SET dob = ?, gender = ?, address = ?, emergencyContact = ? WHERE id = {user_id}",
                     (
                     dobTextField.value, genderTextField.value, addressTextField.value, emergencyContactTextField.value))
-                open_dlg()
                 db.commit()
+                open_dlg()
                 fullName, username, email, phoneNumber, password, dob, gender, address, emergencyContact = get_user_details()
                 setTextFieldValue(fullNameTextField, fullName)
                 setTextFieldValue(emailTextField, email)

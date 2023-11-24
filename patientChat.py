@@ -48,7 +48,7 @@ class PatientChatPage:
             record = c.fetchone()
 
             doctorName = record[0]
-            print(doctorName)
+
             return doctorName
 
         doctorName = get_doctor_name()
@@ -189,8 +189,6 @@ class PatientChatPage:
                                                     color="#FF0000",
                                                     size=8)
                 page.update()
-                # new_message.error_text("You are not allowed to send empty message..."),
-                # new_message.error_style(TextStyle(font_family="RobotoSlab"))
 
         return View(
             "/patientChat/:user_id:doctor_id",
@@ -207,8 +205,9 @@ class PatientChatPage:
                                             height=70,
                                             bgcolor=blue,
                                             alignment=alignment.top_center,
-                                            padding=padding.only(left=10, right=10, bottom=0),
+                                            padding=padding.only(left=10, bottom=0),
                                             content=Row(
+                                                alignment="spaceBetween",
                                                 controls=[
                                                     Container(padding=padding.only(top=25),
                                                               content=Image(
@@ -217,17 +216,29 @@ class PatientChatPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/patientChatViewDoctor/{user_id}")
+                                                              on_click=lambda _: page.go(
+                                                                  f"/patientChatViewDoctor/{user_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=120, top=25),
-                                                              content=Text(
-                                                                  value="Chat",
-                                                                  size=20,
-                                                                  font_family="RobotoSlab",
-                                                                  color=colors.WHITE,
-                                                                  text_align=TextAlign.CENTER)
-                                                              ),
+                                                    Container(
+                                                        padding=padding.only(top=25),
+                                                        content=Text(
+                                                            value="Chat",
+                                                            size=20,
+                                                            font_family="RobotoSlab",
+                                                            color=colors.WHITE,
+                                                            text_align=TextAlign.CENTER)
+                                                    ),
+
+                                                    Container(
+                                                        padding=padding.only(top=25),
+                                                        content=IconButton(
+                                                            icons.CALL,
+                                                            icon_color=colors.WHITE,
+                                                            icon_size=20,
+                                                            on_click=lambda _:page.go(f"/patientCall/{user_id}{doctor_id}")
+                                                        )
+                                                    )
 
                                                 ]
                                             )

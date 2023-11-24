@@ -32,8 +32,7 @@ class PatientPrescriptionPage:
             # pass
             c = db.cursor()
             c.execute(
-                "SELECT id, allergies, pastMedicalCondition, currentMedicalCondition, date FROM medicalRecordHistory "
-                "WHERE patientUserID = ? ORDER BY date DESC", (user_id,))
+                "SELECT * FROM prescription WHERE patientUserID = ? ORDER BY date DESC", (user_id,))
             record = c.fetchall()
             return record
 

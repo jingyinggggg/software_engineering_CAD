@@ -8,23 +8,24 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
 class AppointmentDetail:
-    def get_patient_appointment_data(self, user_id):
+    def get_patient_appointment_data(self, booking_id):
         c = db.cursor()
         sql = '''
-        SELECT fullName, dob, gender
+        SELECT id, fullName, dob, gender
         FROM users
         INNER JOIN booking
         ON users.id = booking.patientID
-        WHERE users.id = ?;
+        WHERE booking.bookingID = ?;
         '''
-        c.execute(sql, (user_id,))
+        c.execute(sql, (booking_id,))
         result = c.fetchall()
 
-        if result:
-            fullName, dob, gender = result[0]
-            return fullName, dob, gender
-        else:
-            return None
+        id = result[0][0]
+        fullName = result[0][1]
+        dob = result[0][2]
+        gender = result[0][3]
+
+        return id, fullName, dob, gender
 
     def get_appointment_detail(self, user_id):
         c = db.cursor()
@@ -33,26 +34,28 @@ class AppointmentDetail:
         FROM booking
         INNER JOIN users
         ON booking.patientID = users.id
-        WHERE users.id = ?;
+        WHERE booking.doctorID = ?;
         '''
         c.execute(sql, (user_id,))
-        result = c.fetchall()
+        record = c.fetchall()
 
-        if result:
-            appointmentDate, appointmentTime, appointmentType, reasonVisit, bookingID = result[0]
+        if record:
+            appointmentDate, appointmentTime, appointmentType, reasonVisit, bookingID = record[0]
             return appointmentDate, appointmentTime, appointmentType, reasonVisit, bookingID
         else:
             return None
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        booking_id = int(params.appointment_id)
 
         # Retrieve patient and appointment data
-        patient_data = self.get_patient_appointment_data(user_id)
-        appointment_data = self.get_appointment_detail(user_id)
+        patient_data = self.get_patient_appointment_data(booking_id)
+        # print(patient_data[0])
+        appointment_data = self.get_appointment_detail(booking_id)
 
         if patient_data and appointment_data:
-            fullName, dob, gender = patient_data
+            id, fullName, dob, gender = patient_data
             appointmentDate, appointmentTime, appointmentType, reasonVisit, bookingID = appointment_data
 
             # Update the relevant parts of your view with the retrieved data
@@ -76,14 +79,14 @@ class AppointmentDetail:
             grey = "#71839B"
 
             def display_patient_details(patient_details):
-                fullName, dob, gender = patient_details
+                id, fullName, dob, gender = patient_details
 
                 return Column(
                     controls=[
                         Row(
                             alignment="spaceBetween",
                             controls=[
-                                Text("Full Name", color="BLACK", size=12, weight=FontWeight.BOLD, width=90),
+                                Text("Full Name", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                                 Text(": ", color="BLACK", size=12),
                                 Text(fullName, text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
                                      weight=FontWeight.W_600, width=100)
@@ -92,7 +95,7 @@ class AppointmentDetail:
                         Row(
                             alignment="spaceBetween",
                             controls=[
-                                Text("Date of Birth", color="BLACK", size=12, weight=FontWeight.BOLD, width=90),
+                                Text("Date of Birth", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                                 Text(": ", color="BLACK", size=12),
                                 Text(dob, color="BLACK", text_align=TextAlign.JUSTIFY, size=12, weight=FontWeight.W_600,
                                      width=100)
@@ -101,10 +104,22 @@ class AppointmentDetail:
                         Row(
                             alignment="spaceBetween",
                             controls=[
-                                Text("Gender", color="BLACK", size=12, weight=FontWeight.BOLD, width=90),
+                                Text("Gender", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                                 Text(": ", color="BLACK", size=12),
                                 Text(gender, text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
                                      weight=FontWeight.W_600, width=100)
+                            ]
+                        ),
+                        Row(
+                            alignment="spaceBetween",
+                            controls=[
+                                Text("Medical Records", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
+                                Text(": ", color="BLACK", size=12),
+                                Container(content=Text("view", font_family="RobotoSlab", size=12, color="lightblue"
+                                                       ),
+                                          on_click=lambda _:page.go(f"/doctorViewMedicalRecordList/{user_id}{id}")
+                                          )
+
                             ]
                         )
                     ]
@@ -209,13 +224,15 @@ class AppointmentDetail:
             def addToDatabase(e):
                 c = db.cursor()
                 if image_file.value != "":
-                    c.execute("UPDATE booking SET proof = ? WHERE bookingID = ?",
+                    c.execute("UPDATE booking SET proof = ? AND proofStatus = 0 WHERE bookingID = ?",
                               (image_file.value, bookingID))
                     db.commit()
                     open_dlg()
+
+                    # Pass the patient ID to the DoctorViewMedicalRecordList page
+                    # page.go(f"/doctorViewMedicalRecordList/{user_id}?patient_id={id}")
                 else:
                     open_dlg1()
-
 
             patient_details_control = display_patient_details(patient_data)
 
@@ -297,7 +314,7 @@ class AppointmentDetail:
             appointment_details_control = display_appointment_details(appointment_data)
 
             return View(
-                "/appointmentDetail/:user_id",
+                "/appointmentDetail/:user_id:appointment_id",
                 controls=[Container(
                     width=350,
                     height=700,
@@ -312,21 +329,24 @@ class AppointmentDetail:
                                         padding=padding.only(right=120),
                                         width=350,
                                         height=80,
-                                        alignment=alignment.center,
                                         bgcolor="#3386C5",
                                         content=Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
                                                     controls=[
-                                                        IconButton(icons.ARROW_BACK_ROUNDED,
-                                                                   icon_size=30,
-                                                                   icon_color="WHITE",
-                                                                   on_click=lambda _: page.go(
-                                                                       f"/login/homepage/{user_id}")),
-                                                        Text("Appointment",
-                                                             color="WHITE",
-                                                             text_align=TextAlign.CENTER,
-                                                             size=20,
-                                                             font_family="RobotoSlab",
-                                                             weight=FontWeight.BOLD)
+                                                        Container(padding=padding.only(top=5, left=10),
+                                                                  content=Image(
+                                                                      src="pic/back.png",
+                                                                      color=colors.WHITE,
+                                                                      width=20,
+                                                                      height=20
+                                                                  ), on_click=lambda _: page.go(
+                                                                f"/login/homepage/{user_id}")),
+                                                        Container(padding=padding.only(left=80),
+                                                                  content=Text("Appointment",
+                                                                               color="WHITE",
+                                                                               text_align=TextAlign.CENTER,
+                                                                               size=20,
+                                                                               font_family="RobotoSlab",
+                                                                               ))
                                                     ]
                                                     )
                                     )

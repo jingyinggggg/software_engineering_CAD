@@ -125,7 +125,7 @@ class ClinicAdminUpdateAppointmentDetailsPage:
             if reject_reason.value != "":
                 c.execute(
                     f"UPDATE booking SET proofStatus = ? AND proofRejectReason = ? WHERE bookingID = {booking_id}",
-                    (2,reject_reason.value))
+                    (-1,reject_reason.value))
                 db.commit()
                 updated = True
                 if updated:
@@ -134,7 +134,6 @@ class ClinicAdminUpdateAppointmentDetailsPage:
                     open_error_dlg()
             else:
                 open_error_dlg()
-
 
         reject_reason = TextField(
             label="Enter the reject reason",

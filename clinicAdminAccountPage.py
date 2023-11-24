@@ -168,11 +168,11 @@ class ClinicAdminAccountPage:
                           border_radius=30,
                           # child control
                           content=Column(
-                              horizontal_alignment="center",
+                              # horizontal_alignment="center",
                               controls=[
                                   Container(
-                                      padding=padding.only(top=25, left=10, bottom=10),
-                                      content=Row(
+                                      padding=padding.only(top=25, left=20, bottom=10),
+                                      content=Column(
                                           controls=[
                                               Container(
                                                   content=Image(
@@ -194,7 +194,7 @@ class ClinicAdminAccountPage:
                                   ),
 
                                   Container(
-                                      padding=padding.only(top=10),
+                                      padding=padding.only(top=10, left =110),
                                       content=Column(
                                           horizontal_alignment="center",
                                           controls=[

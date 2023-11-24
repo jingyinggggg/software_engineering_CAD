@@ -115,7 +115,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                 alignment=alignment.top_right,
                                                 content=
                                                 Text(
-                                                    value=f"Appointment With DR. {record[0][24]}",
+                                                    value=f"Appointment With DR. {record[0][25]}",
                                                     color="#3386C5",
                                                     size=18,
                                                     weight=FontWeight.W_600,
@@ -182,7 +182,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][15]}",
+                                                        Text(value=f"{record[0][16]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -207,7 +207,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][17]}",
+                                                        Text(value=f"{record[0][18]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -232,7 +232,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][18]}",
+                                                        Text(value=f"{record[0][19]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -257,7 +257,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][20]}",
+                                                        Text(value=f"{record[0][21]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -282,7 +282,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][21]}",
+                                                        Text(value=f"{record[0][22]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -307,7 +307,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][22]}",
+                                                        Text(value=f"{record[0][23]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,
@@ -332,7 +332,7 @@ class ClinicAdminPatientAppointmentDetails:
                                                              color="BLACK",
                                                              size=15),
 
-                                                        Text(value=f"{record[0][23]}",
+                                                        Text(value=f"{record[0][24]}",
                                                              color="BLACK",
                                                              size=15,
                                                              text_align=TextAlign.CENTER,

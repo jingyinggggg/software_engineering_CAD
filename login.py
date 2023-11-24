@@ -9,42 +9,37 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 def CreateTable():
     c = db.cursor()
     c.execute("""CREATE TABLE IF NOT EXISTS doctors(
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 fullName TEXT NOT NULL,
-                 username TEXT ,
-                 email TEXT NOT NULL,
-                 phoneNumber TEXT NOT NULL,
-                 password TEXT ,
-                 experience TEXT NOT NULL,
-                 specialization TEXT NOT NULL,
-                 description TEXT NOT NULL,
-                 clinicID INTEGER NOT NULL,
-                 workingTime TEXT NOT NULL,
-                 workingDay TEXT NOT NULL,
-                 image TEXT NOT NULL,
-                 STATUS INTEGER NOT NULL)""")
+                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                     fullName TEXT NOT NULL,
+                     username TEXT ,
+                     email TEXT NOT NULL,
+                     clinicPhoneNumber TEXT NOT NULL,
+                     password TEXT ,
+                     experience TEXT NOT NULL,
+                     specialization TEXT NOT NULL,
+                     description TEXT NOT NULL,
+                     clinicID INTEGER NOT NULL,
+                     workingTime TEXT NOT NULL,
+                     workingDay TEXT NOT NULL,
+                     image TEXT NOT NULL,
+                     STATUS INTEGER NOT NULL,
+                     nonWorkingDay TEXT NOT NULL)""")
     db.commit()
 
 
 # def update():
 #     c = db.cursor()
 #     c.execute(
-#         f"UPDATE booking SET bookingStatus = ?, appointmentStatus = ?, proofStatus = ? WHERE bookingID = ?",
-#         (1, "Scheduled", "", 1))
+#         f"UPDATE doctors SET STATUS = ? WHERE id = ?",
+#         (1, 2))
 #     db.commit()
 
-
-# def createTable():
+# def UpdateTable():
 #     c = db.cursor()
-#     c.execute("""CREATE TABLE IF NOT EXISTS clinicAdmin(
-#                      id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                      fullName TEXT NOT NULL,
-#                      username TEXT NOT NULL,
-#                      email TEXT NOT NULL,
-#                      password TEXT NOT NULL,
-#                      clinicID INTEGER NOT NULL)""")
+#     c.execute("""ALTER TABLE booking
+#                  ADD reassignDoctorID INTEGER """)
 #     db.commit()
-#
+
 # def addToDatabase():
 #     c = db.cursor()
 #     c.execute("INSERT INTO clinicAdmin (fullName, username, email, password, clinicID) VALUES (?,?,?,?,?)",
@@ -53,7 +48,12 @@ def CreateTable():
 #
 # def drop():
 #     c= db.cursor()
-#     c.execute("DROP TABLE clinicAdmin")
+#     c.execute("DROP TABLE doctors")
+#     db.commit()
+
+# def delete():
+#     c= db.cursor()
+#     c.execute("DELETE FROM booking")
 #     db.commit()
 
 class LoginPage:
@@ -64,9 +64,11 @@ class LoginPage:
         # print(params)
 
         # drop()
-        # createTable()
+        # CreateTable()
         # addToDatabase()
         # update()
+        # UpdateTable()
+        # delete()
 
         page.title = "Call A Doctor"
         page.window_width = 380
