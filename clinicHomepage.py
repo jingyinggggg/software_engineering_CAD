@@ -27,10 +27,10 @@ def addRow():
         print("SQLite error:", e)
 
 
-# def UpdateRow():
-#     c = db.cursor()
-#     c.execute("UPDATE doctors SET id = '1' WHERE id = ?", (5,))
-#     db.commit()
+def update_row():
+    c = db.cursor()
+    c.execute("UPDATE doctors SET approvalStatus = -1 WHERE id = ?", (1,))
+    db.commit()
 #
 #
 # def DeleteRow():
@@ -39,6 +39,8 @@ def addRow():
 #
 #
 # DeleteRow()
+
+update_row()
 
 class ClinicHomepage:
 
