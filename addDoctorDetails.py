@@ -70,7 +70,9 @@ class AddDoctorDetailsPage:
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text(
-                "You have upload the doctor details successfully. Doctor will be able to log into their account after it is approved by admin. Please stay tuned to the doctor account approval status.",
+                "You have upload the doctor details successfully."
+                " Doctor will be able to log into their account after it is approved by admin. "
+                "Please stay tuned to the doctor account approval status.",
                 text_align=TextAlign.CENTER),
             actions=[TextButton("Done", on_click=lambda _: close_dlg(alert_dialog))],
             actions_alignment=MainAxisAlignment.CENTER,
@@ -109,8 +111,8 @@ class AddDoctorDetailsPage:
                     "description, clinicID, workingTime, workingDay, nonWorkingDay, image, status)"
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                     (name.value, email.value, phoneNumber.value, experience.value + " years working experience",
-                     specialization.value,description.value, clinic_id, working_time.value, working_day.value,
-                     non_working_day.value, image_file.value,0)
+                     specialization.value, description.value, clinic_id, working_time.value, working_day.value,
+                     non_working_day.value, image_file.value, 0)
                 )
                 db.commit()
                 open_dlg(alert_dialog)

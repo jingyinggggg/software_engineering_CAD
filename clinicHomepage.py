@@ -92,7 +92,6 @@ class ClinicHomepage:
             try:
                 cursor.execute("SELECT * FROM doctors WHERE clinicID = ? LIMIT 10", (clinic_id,))
                 doctor_records = cursor.fetchall()
-
                 return doctor_records
             except sqlite3.Error as e:
                 print("SQLite error:", e)
@@ -194,25 +193,54 @@ class ClinicHomepage:
 
                 )
 
-        def getDoctorStatus(doctor_status):
+        def getDoctorStatus(doctor_status, doctor_id, doctor_name, doctor_specialization, clinic_id):
             if doctor_status == 1:
                 return Container(
-                    content=Image(
-                        src=f"pic/approved_doctor.png"
+                    content=Row(
+                        controls=[
+                            Container(
+                                content=Image(
+                                    src=f"pic/approved_doctor.png"
+                                )
+                            ),
+                            Container(
+                                content=TextButton(
+                                    f"Doctor {doctor_name} ({doctor_specialization})",
+                                    on_click=lambda _: (
+                                        page.go(f"/clinicViewDoctorDetails/{doctor_id}{clinic_id}"))
+                                ),
+                            )
+                        ]
                     )
                 )
-            else:
+            elif doctor_status == 0:
                 return Container(
-                    content=Image(
-                        src=f"pic/pending_doctor.png"
+                    content=Row(
+                        controls=[
+                            Container(
+                                content=Image(
+                                    src=f"pic/pending_doctor.png"
+                                )
+                            ),
+                            Container(
+                                content=Text(
+                                    f"Doctor {doctor_name} ({doctor_specialization})"
+                                ),
+                            )
+                        ]
                     )
                 )
+
 
         def display_doctor_list(records):
             if records:
                 record_containers = []
                 for record in records:
                     doctor_status = record[13]
+                    doctor_id = record[0]
+                    doctor_name = record[1]
+                    doctor_specialization = record[7]
+                    clinic_id = record[9]
 
                     record_container = Container(
                         margin=margin.only(left=25),
@@ -230,20 +258,13 @@ class ClinicHomepage:
                                 ),
 
                                 Container(
-                                    content=Row(
+                                    content=Column(
                                         controls=[
-                                            Container(
-                                                getDoctorStatus(doctor_status),
-                                            ),
-                                            Container(
-                                                content=Text(
-                                                    value=f"Doctor {record[1]} ({record[7]})",
-                                                    size=14,
-                                                    color=colors.BLACK,
-                                                    font_family="RobotoSlab",
-                                                ),
-                                                # on_click=
-                                            ),
+                                          Container(
+                                              getDoctorStatus(doctor_status, doctor_id
+                                                              , doctor_name, doctor_specialization
+                                                              , clinic_id),
+                                          ),
                                         ]
                                     )
                                 ),
@@ -476,7 +497,7 @@ class ClinicHomepage:
                                                               text_align=TextAlign.LEFT,
                                                               spans=[
                                                                   TextSpan(
-                                                                      "Join Call A Doctor",
+                                                                      "Call A Doctor",
                                                                       TextStyle(size=18,
                                                                                 font_family="RobotoSlab",
                                                                                 color=dark_blue,

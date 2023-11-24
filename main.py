@@ -39,12 +39,23 @@ from history import HistoryPage
 from schedule import Schedule
 from appointmentDetail import AppointmentDetail
 from chat import Chat
+from chat_info import ChatInfo
 from prescription import Prescription
+from prescriptionList import PrescriptionList
+from doctorSetting import DoctorSettingPage
+from doctorPassword import DoctorPasswordPage
+from doctorAccountSetting import DoctorAccountSettingPage
+from doctorProfile import DoctorProfilePage
+from appointment import Appointment
+from doctorViewMedicalRecord import DoctorViewMedicalRecord
+from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
+from doctorCallInterface import DoctorCallInterface
 
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
 from addDoctorDetails import AddDoctorDetailsPage
 from clinicHomepage import ClinicHomepage
+from clinicViewDoctorDetails import ClinicViewDoctorDetails
 
 # Clinic admin interface
 from clinicAdminHomepage import AdminHomepage
@@ -93,18 +104,31 @@ def main(mainPage: Page):
         # Doctor interface path
         path(url="/login/homepage/:user_id", clear=False, view=DoctorHomepage().view),
         path(url="/doctorNotification/:user_id", clear=False, view=DoctorNotification().view),
-        path(url="/history", clear=False, view=HistoryPage().view),
-        path(url="/schedule", clear=False, view=Schedule().view),
-        path(url="/appointmentDetail/:user_id", clear=False, view=AppointmentDetail().view),
-        path(url="/chat", clear=False, view=Chat().view),
-        path(url="/prescription", clear=False, view=Prescription().view),
+        path(url="/history/:user_id", clear=False, view=HistoryPage().view),
+        path(url="/schedule/:user_id", clear=False, view=Schedule().view),
+        path(url="/appointmentDetail/:user_id:appointment_id", clear=False, view=AppointmentDetail().view),
+        path(url="/chat/:user_id", clear=False, view=Chat().view),
+        path(url="/chat_info/:user_id:patient_id", clear=False, view=ChatInfo().view),
+        path(url="/prescription/:user_id:booking_id", clear=False, view=Prescription().view),
+        path(url="/prescriptionList/:user_id:booking_id", clear=False, view=PrescriptionList().view),
+        path(url="/doctorSettingPage/:user_id", clear=False, view=DoctorSettingPage().view),
+        path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
+        path(url="/doctorAccountSetting/:user_id", clear=False, view=DoctorAccountSettingPage().view),
+        path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
+        path(url="/doctorProfile/:user_id", clear=False, view=DoctorProfilePage().view),
+        path(url="/appointment/:user_id", clear=False, view=Appointment().view),
+        path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False,
+             view=DoctorViewMedicalRecord().view),
+        path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False,
+             view=DoctorViewMedicalRecordList().view),
+        path(url="/doctorCallInterface/:user_id:patient_id", clear=False, view=DoctorCallInterface().view),
 
 
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/addDoctorDetails/:clinic_id", clear=False, view=AddDoctorDetailsPage().view),
         path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
-
+        path(url="/clinicViewDoctorDetails/:doctor_id:clinic_id", clear=False, view=ClinicViewDoctorDetails().view),
 
         # Clinic admin interface path
         path(url="/login/adminHomepage/:user_id", clear=False, view=AdminHomepage().view),
