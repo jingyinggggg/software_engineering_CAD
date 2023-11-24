@@ -16,11 +16,15 @@ def CreateTable():
                  appointmentDate TEXT NOT NULL,
                  appointmentTime TEXT NOT NULL,
                  appointmentType TEXT NOT NULL, 
-                 clinicName TEXT NOT NULL,
+                 clinicID INTEGER NOT NULL,
                  reasonVisit TEXT NOT NULL,
                  appointmentStatus TEXT,
                  bookingStatus INTEGER NOT NULL,
-                 rejectReason TEXT)""")
+                 rejectReason TEXT,
+                 proof TEXT,
+                 proofStatus INTEGER,
+                 proofRejectReason TEXT,
+                 reassignDoctorID INTEGER)""")
     db.commit()
 
 
@@ -30,6 +34,7 @@ def dropTable():
 
 
 class MakeAppointmentPage:
+
     def __init__(self):
         self.calendar_grid = None
         self.chosen_date = None
@@ -283,9 +288,9 @@ class MakeAppointmentPage:
         self.time_slots_column.update()
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # print(params)
         user_id = int(params.user_id)
         doctor_id = int(params.doctor_id)
+        previous_page_route = params.previous_page
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -304,17 +309,17 @@ class MakeAppointmentPage:
 
         def get_doctor_working_time():
             c = db.cursor()
-            c.execute("SELECT workingTime, clinic from doctors WHERE id = ?", (doctor_id,))
+            c.execute("SELECT workingTime, clinicID from doctors WHERE id = ?", (doctor_id,))
             record = c.fetchall()
 
             workingTime = record[0][0]
-            clinic_name = record[0][1]
-            return workingTime, clinic_name
+            clinic_id = record[0][1]
+            return workingTime, clinic_id
 
-        workingTime, clinic_name = get_doctor_working_time()
+        workingTime, clinic_id = get_doctor_working_time()
         time_slot_button = self.generate_time_slots(workingTime)
 
-        appointment_type = Dropdown(
+        appointment_type = TextField(
             dense=True,
             label="Appointment Type",
             border_color=blue,
@@ -322,14 +327,12 @@ class MakeAppointmentPage:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            options=[
-                dropdown.Option("Offline Appointment (Visit doctor at clinic)"),
-                dropdown.Option("Video Call"),
-                dropdown.Option("Chat"),
-            ],
-            text_style=TextStyle(color=grey,
-                                 size=12,
-                                 font_family="RobotoSlab"),
+            text_style=TextStyle(size=12,
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab"
+                                 ),
+            value="Offline Appointment (Visit doctor at clinic)",
+            read_only=True
         )
 
         current_date = datetime.date.today()
@@ -339,35 +342,43 @@ class MakeAppointmentPage:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            height=50,
+            # height=50,
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
+                                 color=colors.BLACK,
                                  font_family="RobotoSlab"
                                  ),
             hint_text="Please enter the reason of visit",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
             dense=True,
-            multiline=True
+            multiline=True,
+            min_lines=1,
+            max_lines=3
         )
 
-        current_year = current_date.year
-        current_month = current_date.month
-
-        month_name = calendar.month_name[current_month]
+        # current_year = current_date.year
+        # current_month = current_date.month
+        #
+        # month_name = calendar.month_name[current_month]
 
         alert_dialog = AlertDialog(
-            modal=True,
+            modal=False,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text(
                 f"You have submitted your request to visit this doctor."
                 f"\nPlease wait for the admin to review your request."
                 f"\nYou can check your request status in booking page ",
                 text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/homepage/{user_id}"))],
+            actions=[TextButton("Done", on_click=lambda _: navigate_homepage())],
             actions_alignment=MainAxisAlignment.CENTER,
-            open=False
+            open=True
         )
+
+        def navigate_homepage():
+            try:
+                page.go(f"/homepage/{user_id}")
+            except Exception as e:
+                print(f"Error navigating to homepage: {e}")
 
         def open_dlg():
             page.dialog = alert_dialog
@@ -380,15 +391,15 @@ class MakeAppointmentPage:
             if (self.chosen_date != "" and self.selected_time_slot != "" and appointment_type.value != ""
                     and reason_visit.value != ""):
                 c.execute(f"INSERT INTO booking (patientID, doctorID, appointmentDate, appointmentTime, "
-                          f"appointmentType, clinicName, reasonVisit, appointmentStatus, bookingStatus)"
+                          f"appointmentType, clinicID, reasonVisit, appointmentStatus, bookingStatus)"
                           f"VALUES (?,?,?,?,?,?,?,?,?)",
                           (user_id, doctor_id, self.appointment_date, self.selected_time_slot, appointment_type.value,
-                           clinic_name, reason_visit.value, "Requested",0))
+                           clinic_id, reason_visit.value, "Requested",0))
                 db.commit()
                 open_dlg()
 
         return View(
-            "/makeAppointment/:user_id:doctor_id",
+            "/makeAppointment/:user_id:doctor_id:previous_page",
             controls=[
                 Container(width=350,
                           height=700,
@@ -413,7 +424,7 @@ class MakeAppointmentPage:
                                                                   height=20
                                                               ),
                                                               on_click=lambda _: page.go(
-                                                                  f"/viewDoctor/{user_id}{doctor_id}")
+                                                                  f"/viewDoctor/{user_id}{doctor_id}{previous_page_route}")
                                                               ),
 
                                                     Container(padding=padding.only(left=75, top=25),
@@ -436,7 +447,7 @@ class MakeAppointmentPage:
                                           font_family="RobotoSlab",
                                           color=colors.BLACK,
                                           weight=FontWeight.W_500,
-                                          italic=True
+                                          # italic=True
                                       )
                                   ),
 
@@ -450,7 +461,7 @@ class MakeAppointmentPage:
                                           font_family="RobotoSlab",
                                           color=colors.BLACK,
                                           weight=FontWeight.W_500,
-                                          italic=True
+                                          # italic=True
                                       )
                                   ),
 

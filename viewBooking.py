@@ -45,6 +45,15 @@ class ViewBookingPage:
 
         appointmentData = getAppointment_details()
 
+        def get_clinic_name():
+            c = db.cursor()
+            c.execute(f"SELECT name FROM clinic WHERE id = {appointmentData[0][6]}")
+            record = c.fetchone()
+            clinic_name = record[0]
+            return clinic_name
+
+        clinic_name = get_clinic_name()
+
         reject_reason = Container(
             margin=margin.only(bottom=30),
             visible=False,
@@ -123,7 +132,7 @@ class ViewBookingPage:
                                             border_radius=10,
                                             bgcolor=lightBlue,
                                             content=Image(
-                                                src=f"{appointmentData[0][23]}",
+                                                src=f"{appointmentData[0][26]}",
                                                 width=150,
                                                 height=150,
 
@@ -139,7 +148,7 @@ class ViewBookingPage:
                                                             alignment=alignment.center,
                                                             width=170,
                                                             content=Text(
-                                                                value=f"DR. {appointmentData[0][12]}",
+                                                                value=f"DR. {appointmentData[0][15]}",
                                                                 size=15,
                                                                 font_family="RobotoSlab",
                                                                 color=colors.BLACK,
@@ -162,7 +171,7 @@ class ViewBookingPage:
                                                         Container(
                                                             width=300,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][18]}",
+                                                                value=f"{appointmentData[0][21]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -185,7 +194,7 @@ class ViewBookingPage:
                                                         Container(
                                                             width=120,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][17]}",
+                                                                value=f"{appointmentData[0][20]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -204,7 +213,7 @@ class ViewBookingPage:
                                                         Container(
                                                             width=130,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][19]}",
+                                                                value=f"{appointmentData[0][22]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -219,121 +228,6 @@ class ViewBookingPage:
                                     ]
                                 )
                             ),
-
-                            # Container(
-                            #     alignment=alignment.center,
-                            #     content=Row(
-                            #         controls=[
-                            #             Container(
-                            #                 width=320,
-                            #                 height=205,
-                            #                 border_radius=8,
-                            #                 content=Row(
-                            #                     controls=[
-                            #                         Container(
-                            #                             border_radius=10,
-                            #                             bgcolor=lightBlue,
-                            #                             content=Image(
-                            #                                 src=f"{appointmentData[0][23]}",
-                            #                                 width=150,
-                            #                                 height=150,
-                            #
-                            #                             )
-                            #                         ),
-                            #                         Container(
-                            #                             width=100,
-                            #                             padding=padding.only(top=15),
-                            #                             content=Column(controls=[
-                            #
-                            #                                 Row(
-                            #                                     controls=[
-                            #                                         Container(
-                            #                                             alignment=alignment.center,
-                            #                                             width=170,
-                            #                                             content=Text(
-                            #                                                 value=f"DR. {appointmentData[0][12]}",
-                            #                                                 size=15,
-                            #                                                 font_family="RobotoSlab",
-                            #                                                 color=colors.BLACK,
-                            #                                                 text_align=TextAlign.JUSTIFY,
-                            #                                                 weight=FontWeight.W_600
-                            #
-                            #                                             )
-                            #                                         )
-                            #
-                            #                                     ]
-                            #
-                            #                                 ),
-                            #                                 Row(
-                            #                                     controls=[
-                            #                                         Text(
-                            #                                             value="🩺",
-                            #                                             size=12
-                            #                                         ),
-                            #
-                            #                                         Container(
-                            #                                             width=300,
-                            #                                             content=Text(
-                            #                                                 value=f"{appointmentData[0][18]}",
-                            #                                                 size=12,
-                            #                                                 font_family="RobotoSlab",
-                            #                                                 color=grey,
-                            #                                                 text_align=TextAlign.JUSTIFY
-                            #
-                            #                                             )
-                            #                                         )
-                            #
-                            #                                     ]
-                            #
-                            #                                 ),
-                            #
-                            #                                 Row(
-                            #                                     controls=[
-                            #                                         Text(
-                            #                                             value="🥼",
-                            #                                             size=12
-                            #                                         ),
-                            #
-                            #                                         Container(
-                            #                                             width=120,
-                            #                                             content=Text(
-                            #                                                 value=f"{appointmentData[0][17]}",
-                            #                                                 size=12,
-                            #                                                 font_family="RobotoSlab",
-                            #                                                 color=grey,
-                            #                                             )
-                            #                                         )
-                            #                                     ]
-                            #                                 ),
-                            #
-                            #                                 Row(
-                            #                                     controls=[
-                            #                                         Text(
-                            #                                             value="📝",
-                            #                                             size=12
-                            #                                         ),
-                            #
-                            #                                         Container(
-                            #                                             width=130,
-                            #                                             content=Text(
-                            #                                                 value=f"{appointmentData[0][19]}",
-                            #                                                 size=12,
-                            #                                                 font_family="RobotoSlab",
-                            #                                                 color=grey,
-                            #
-                            #                                             )
-                            #                                         )
-                            #                                     ]
-                            #                                 ),
-                            #                             ])
-                            #                         )
-                            #                     ]
-                            #
-                            #                 )
-                            #             )]
-                            #     )
-                            #
-                            # ),
 
                             Container(
                                 margin=margin.only(left=10),
@@ -380,10 +274,12 @@ class ViewBookingPage:
                                                     color=colors.GREY_500,
                                                 ),
                                                 Text(
+                                                    width=320,
                                                     value=f"{appointmentData[0][7]}",
                                                     color=colors.BLACK,
                                                     weight=FontWeight.W_600,
                                                     size=17,
+                                                    text_align=TextAlign.JUSTIFY
                                                 ),
                                             ],
                                         ),
@@ -396,7 +292,7 @@ class ViewBookingPage:
                                                     color=colors.GREY_500,
                                                 ),
                                                 Text(
-                                                    value=f"{appointmentData[0][6]}",
+                                                    value=clinic_name,
                                                     color=colors.BLACK,
                                                     weight=FontWeight.W_600,
                                                     size=17,
