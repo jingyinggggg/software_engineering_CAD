@@ -11,6 +11,7 @@ class Chat:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        patient_id = int(params.patient_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -27,9 +28,18 @@ class Chat:
         blue = "#3386C5"
         grey = "#71839B"
 
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT doctorID, doctors.fullName from booking INNER JOIN doctors ON booking.doctorID = doctors.id WHERE doctors.id = ?", (user_id,))
+            record = c.fetchall()
+
+            return record
+
+        doctor = get_doctor_details()
+
         def get_patient_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName FROM users WHERE id = ?", (1,))
+            c.execute("SELECT id, fullName FROM users WHERE id = ?", (patient_id,))
             record = c.fetchall()
             return record
 
@@ -86,7 +96,7 @@ class Chat:
                                                     Container(
                                                         width=170,
                                                         content=Text(
-                                                            value=f"{record[1]}",
+                                                            value=f"Dr. {doctor[0][1]}",
                                                             size=10,
                                                             font_family="RobotoSlab",
                                                             color=grey,
@@ -116,7 +126,7 @@ class Chat:
                 return Column(controls=record_containers)
 
         return View(
-            "/chat/:user_id",
+            "/chat/:user_id:patient_id",
             controls=[
                 Container(width=350,
                           height=700,

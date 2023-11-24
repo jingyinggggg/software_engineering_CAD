@@ -29,113 +29,113 @@ class Appointment:
         blue = "#3386C5"
         grey = "#71839B"
 
-        def get_booking_detail(user_id):
-            c = db.cursor()
-            c.execute(
-                "SELECT doctorID, bookingID, patientID, appointmentDate, appointmentTime, appointmentType, users.fullName, users.id FROM booking "
-                "INNER JOIN users ON users.id = booking.patientID WHERE doctorID = ?", (user_id,))
-            record = c.fetchall()
-            return record
-
-        booking = get_booking_detail(user_id)
-
-        def displayAppointment(records):
-            if records:
-                record_containers = []
-                for record in records:
-                    def on_more_button_click(record_id=record[1]):
-                        return lambda _: page.go(f"/appointmentDetail/{user_id}{record_id}")
-
-                    record_container = Container(
-                        margin=margin.only(left=10, right=10, top=10),
-                        padding=padding.only(left=10, right=10, top=10, bottom=10),
-                        border_radius=10,
-                        border=border.all(1, blue),
-                        content=Row(
-                            controls=[
-                                Container(
-                                    margin=margin.only(top=10, bottom=10),
-                                    # padding=padding.only(top=10, bottom=10),
-                                    bgcolor=lightBlue,
-                                    border_radius=10,
-                                    content=Image(
-                                        src="pic/medicalRecord.png",
-                                        width=80,
-                                        height=80,
-
-                                    )
-                                ),
-
-                                Container(
-                                    margin=margin.only(top=10),
-                                    content=Column(
-                                        controls=[
-                                            Text(
-                                                value=f"{record[6]}",
-                                                size=14,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_600,
-                                                color=colors.BLACK
-                                            ),
-
-                                            Row(
-                                                controls=[
-                                                    Text(
-                                                        value="Appointment Date:",
-                                                        size=10,
-                                                        color="BLACK"
-                                                    ),
-
-                                                    Container(
-                                                        width=185,
-                                                        content=Text(
-                                                            value=f"{record[3]}",
-                                                            size=10,
-                                                            font_family="RobotoSlab",
-                                                            color=grey,
-                                                            text_align=TextAlign.JUSTIFY
-
-                                                        )
-                                                    )
-
-                                                ]
-
-                                            ),
-
-                                            Container(
-                                                margin=margin.only(top=-3),
-                                                content=Row(
-                                                    controls=[
-                                                        Text(
-                                                            value="Appointment Time:",
-                                                            size=10,
-                                                            color="BLACK"
-                                                        ),
-
-                                                        Container(
-                                                            content=Text(
-                                                                width=200,
-                                                                value=f"{record[4]}",
-                                                                overflow=TextOverflow.VISIBLE,
-                                                                size=10,
-                                                                font_family="RobotoSlab",
-                                                                color=grey,
-                                                                text_align=TextAlign.JUSTIFY
-
-                                                            )
-                                                        )
-                                                    ]
-                                                )
-                                            )
-                                        ]
-                                    )
-                                )
-                            ]
-                        ), on_click=on_more_button_click()
-                    )
-                    record_containers.append(record_container)
-
-                return Column(controls=record_containers)
+        # def get_booking_detail(user_id):
+        #     c = db.cursor()
+        #     c.execute(
+        #         "SELECT doctorID, bookingID, patientID, appointmentDate, appointmentTime, appointmentType, users.fullName, users.id FROM booking "
+        #         "INNER JOIN users ON users.id = booking.patientID WHERE doctorID = ?", (user_id,))
+        #     record = c.fetchall()
+        #     return record
+        #
+        # booking = get_booking_detail(user_id)
+        #
+        # def displayAppointment(records):
+        #     if records:
+        #         record_containers = []
+        #         for record in records:
+        #             def on_more_button_click(record_id=record[1]):
+        #                 return lambda _: page.go(f"/appointmentDetail/{user_id}{record_id}")
+        #
+        #             record_container = Container(
+        #                 margin=margin.only(left=10, right=10, top=10),
+        #                 padding=padding.only(left=10, right=10, top=10, bottom=10),
+        #                 border_radius=10,
+        #                 border=border.all(1, blue),
+        #                 content=Row(
+        #                     controls=[
+        #                         Container(
+        #                             margin=margin.only(top=10, bottom=10),
+        #                             # padding=padding.only(top=10, bottom=10),
+        #                             bgcolor=lightBlue,
+        #                             border_radius=10,
+        #                             content=Image(
+        #                                 src="pic/medicalRecord.png",
+        #                                 width=80,
+        #                                 height=80,
+        #
+        #                             )
+        #                         ),
+        #
+        #                         Container(
+        #                             margin=margin.only(top=10),
+        #                             content=Column(
+        #                                 controls=[
+        #                                     Text(
+        #                                         value=f"{record[6]}",
+        #                                         size=14,
+        #                                         font_family="RobotoSlab",
+        #                                         weight=FontWeight.W_600,
+        #                                         color=colors.BLACK
+        #                                     ),
+        #
+        #                                     Row(
+        #                                         controls=[
+        #                                             Text(
+        #                                                 value="Appointment Date:",
+        #                                                 size=10,
+        #                                                 color="BLACK"
+        #                                             ),
+        #
+        #                                             Container(
+        #                                                 width=185,
+        #                                                 content=Text(
+        #                                                     value=f"{record[3]}",
+        #                                                     size=10,
+        #                                                     font_family="RobotoSlab",
+        #                                                     color=grey,
+        #                                                     text_align=TextAlign.JUSTIFY
+        #
+        #                                                 )
+        #                                             )
+        #
+        #                                         ]
+        #
+        #                                     ),
+        #
+        #                                     Container(
+        #                                         margin=margin.only(top=-3),
+        #                                         content=Row(
+        #                                             controls=[
+        #                                                 Text(
+        #                                                     value="Appointment Time:",
+        #                                                     size=10,
+        #                                                     color="BLACK"
+        #                                                 ),
+        #
+        #                                                 Container(
+        #                                                     content=Text(
+        #                                                         width=200,
+        #                                                         value=f"{record[4]}",
+        #                                                         overflow=TextOverflow.VISIBLE,
+        #                                                         size=10,
+        #                                                         font_family="RobotoSlab",
+        #                                                         color=grey,
+        #                                                         text_align=TextAlign.JUSTIFY
+        #
+        #                                                     )
+        #                                                 )
+        #                                             ]
+        #                                         )
+        #                                     )
+        #                                 ]
+        #                             )
+        #                         )
+        #                     ]
+        #                 ), on_click=on_more_button_click()
+        #             )
+        #             record_containers.append(record_container)
+        #
+        #         return Column(controls=record_containers)
 
         def get_schedule_appointment():
             c = db.cursor()
@@ -153,6 +153,7 @@ class Appointment:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
+                        # print(record_id)
                         return lambda _: page.go(f"/appointmentDetail/{user_id}{record_id}")
 
                     record_container = Container(
@@ -294,7 +295,7 @@ class Appointment:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/prescription/{user_id}{record_id}")
+                        return lambda _: page.go(f"/appointmentDetail/{user_id}{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -435,7 +436,7 @@ class Appointment:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/prescription/{user_id}{record_id}")
+                        return lambda _: page.go(f"/rejectedAppointmentDetails/{user_id}{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),

@@ -30,8 +30,6 @@ class DoctorHomepage:
         blue = "#3386C5"
         grey = "#71839B"
 
-        self.db = sqlite3.connect("cad.db", check_same_thread=False)
-
         # Define a function to show the sidebar
         def show_side_bar(e):
             sidebar.offset = transform.Offset(0, 0)
@@ -42,9 +40,20 @@ class DoctorHomepage:
             sidebar.offset = transform.Offset(-205, 0)
             page.update()
 
+        def get_patient():
+            c = db.cursor()
+            c.execute("SELECT bookingID, users.id, users.fullName FROM booking INNER JOIN users ON booking.patientID "
+                      "= users.id WHERE doctorID = ? ", (user_id,))
+            record = c.fetchall()
+            print(record[1])
+
+            return record
+
+        record = get_patient()
+
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT *, booking.doctorID FROM doctors INNER JOIN booking ON "
+            c.execute("SELECT *, booking.bookingID FROM doctors INNER JOIN booking ON "
                       "doctors.id = booking.doctorID WHERE id = ?", (user_id,))
             record = c.fetchall()
 
@@ -52,7 +61,7 @@ class DoctorHomepage:
             username = record[0][2]
             phoneNumber = record[0][4]
             image = record[0][12]
-            booking_id = record[0][13]
+            booking_id = record[0][14]
 
             return fullName, username, phoneNumber, image, booking_id
 
@@ -357,10 +366,10 @@ class DoctorHomepage:
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
                                                         on_click=lambda _: page.go(f"/history/{user_id}")
-
                                                     ),
+
                                                     Container(
-                                                        margin=margin.only(top=10, left=30, right=10),
+                                                        margin=margin.only(left=30, right=10),
                                                         content=Row(
                                                             controls=[
                                                                 Container(
@@ -398,6 +407,7 @@ class DoctorHomepage:
                                                             ]
                                                         )
                                                     ),
+
 
                                                     # Container(
                                                     #     margin=margin.only(left=30),
@@ -465,7 +475,7 @@ class DoctorHomepage:
                                                         ),
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
-                                                        on_click=lambda _: page.go(f"/chat/{user_id}")
+                                                        on_click=lambda _: page.go(f"/chat/{user_id}{record[0][1]}")
 
                                                     ),
 
@@ -502,47 +512,9 @@ class DoctorHomepage:
 
                                                     )
 
-                                                ])),
-                                        # Container(
-                                        #     margin=margin.only(top=10, left=30, right=10),
-                                        #     content=Row(
-                                        #         controls=[
-                                        #             Container(
-                                        #                 padding=padding.only(top=20),
-                                        #                 alignment=alignment.center,
-                                        #                 height=120,
-                                        #                 width=120,
-                                        #                 content=Column(
-                                        #                     controls=[
-                                        #                         Container(
-                                        #                             alignment=alignment.center,
-                                        #                             content=Image(
-                                        #                                 src="pic/icons8-appointment-64.png",
-                                        #                                 width=50,
-                                        #                             )
-                                        #                         ),
-                                        #                         Container(
-                                        #                             alignment=alignment.center,
-                                        #                             content=Text(
-                                        #                                 "Appointment",
-                                        #                                 size=14,
-                                        #                                 color="BLACK",
-                                        #                                 weight=FontWeight.W_500
-                                        #                             )
-                                        #
-                                        #                         )
-                                        #                     ]
-                                        #                 ),
-                                        #                 border=border.all(width=2, color="BLACK"),
-                                        #                 border_radius=10,
-                                        #                 on_click=lambda _: page.go(f"/appointment/{user_id}")
-                                        #
-                                        #             )
-                                        #         ]
-                                        #     )
-                                        # )
+                                                ]))
                                     ]
-                                ),
+                                )
                             ), sidebar
                         ]
                     )

@@ -216,7 +216,7 @@ class ChatInfo:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/chat/{user_id}")
+                                                              on_click=lambda _: page.go(f"/chat/{user_id}{patient_id}")
                                                               ),
 
                                                     Container(padding=padding.only(left=120, top=25),

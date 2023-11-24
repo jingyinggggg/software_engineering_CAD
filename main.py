@@ -50,6 +50,7 @@ from appointment import Appointment
 from doctorViewMedicalRecord import DoctorViewMedicalRecord
 from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
 from doctorCallInterface import DoctorCallInterface
+from rejectedAppointmentDetails import RejectedAppointmentDetails
 
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
@@ -64,6 +65,7 @@ from clinicAdminUpdateAppointmentDetails import ClinicAdminUpdateAppointmentDeta
 
 # Project admin interface
 from projectAdminHomepage import ProjectAdminHomepage
+from projectAdminViewClinicDetail import ProjectAdminViewClinicDetail
 
 
 def main(mainPage: Page):
@@ -110,7 +112,7 @@ def main(mainPage: Page):
         path(url="/history/:user_id", clear=False, view=HistoryPage().view),
         path(url="/schedule/:user_id", clear=False, view=Schedule().view),
         path(url="/appointmentDetail/:user_id:appointment_id", clear=False, view=AppointmentDetail().view),
-        path(url="/chat/:user_id", clear=False, view=Chat().view),
+        path(url="/chat/:user_id:patient_id", clear=False, view=Chat().view),
         path(url="/chat_info/:user_id:patient_id", clear=False, view=ChatInfo().view),
         path(url="/prescription/:user_id:booking_id", clear=False, view=Prescription().view),
         path(url="/doctorSettingPage/:user_id", clear=False, view=DoctorSettingPage().view),
@@ -123,6 +125,7 @@ def main(mainPage: Page):
         path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False, view=DoctorViewMedicalRecord().view),
         path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False, view=DoctorViewMedicalRecordList().view),
         path(url="/doctorCallInterface/:user_id:patient_id", clear=False, view=DoctorCallInterface().view),
+        path(url="/rejectedAppointmentDetails/:user_id:appointment_id", clear=False, view=RejectedAppointmentDetails().view),
 
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
@@ -138,6 +141,7 @@ def main(mainPage: Page):
 
         # Project admin interface path
         path(url="/projectAdminHomepage/:user_id", clear=False, view=ProjectAdminHomepage().view),
+        path(url="/projectAdminViewClinicDetail/:user_id:clinic_id", clear=False, view=ProjectAdminViewClinicDetail().view),
 
     ]
     Routing(page=mainPage, app_routes=app_routes)
