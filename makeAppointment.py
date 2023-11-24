@@ -23,7 +23,8 @@ def CreateTable():
                  rejectReason TEXT,
                  proof TEXT,
                  proofStatus INTEGER,
-                 proofRejectReason TEXT)""")
+                 proofRejectReason TEXT,
+                 reassignDoctorID INTEGER)""")
     db.commit()
 
 
@@ -308,7 +309,7 @@ class MakeAppointmentPage:
 
         def get_doctor_working_time():
             c = db.cursor()
-            c.execute("SELECT workingTime, id from doctors WHERE id = ?", (doctor_id,))
+            c.execute("SELECT workingTime, clinicID from doctors WHERE id = ?", (doctor_id,))
             record = c.fetchall()
 
             workingTime = record[0][0]
@@ -361,17 +362,23 @@ class MakeAppointmentPage:
         # month_name = calendar.month_name[current_month]
 
         alert_dialog = AlertDialog(
-            modal=True,
+            modal=False,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text(
                 f"You have submitted your request to visit this doctor."
                 f"\nPlease wait for the admin to review your request."
                 f"\nYou can check your request status in booking page ",
                 text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/homepage/{user_id}"))],
+            actions=[TextButton("Done", on_click=lambda _: navigate_homepage())],
             actions_alignment=MainAxisAlignment.CENTER,
-            open=False
+            open=True
         )
+
+        def navigate_homepage():
+            try:
+                page.go(f"/homepage/{user_id}")
+            except Exception as e:
+                print(f"Error navigating to homepage: {e}")
 
         def open_dlg():
             page.dialog = alert_dialog
