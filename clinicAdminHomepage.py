@@ -58,12 +58,29 @@ class AdminHomepage:
                                             weight=FontWeight.W_600,
                                             size=15,
                                         ),
-                                        Text(
-                                            value=f"{clinic_admin_name}",
-                                            color="#3386C5",
-                                            weight=FontWeight.W_600,
-                                            size=18,
+
+                                        Container(
+                                            margin=margin.only(right=10),
+                                            content=Row(
+                                                alignment="spaceBetween",
+                                                controls=[
+                                                    Text(
+                                                        value=f"{clinic_admin_name}",
+                                                        color="#3386C5",
+                                                        weight=FontWeight.W_600,
+                                                        size=18,
+                                                    ),
+
+                                                    IconButton(
+                                                        icons.LOGOUT,
+                                                        icon_size=20,
+                                                        icon_color="#3386C5",
+                                                        on_click=lambda _: page.go(f"/loginUser")
+                                                    )
+                                                ]
+                                            )
                                         )
+
                                     ]
                                 ),
                             ),
@@ -85,7 +102,8 @@ class AdminHomepage:
                                                     border=border.all(color="#D3D3D3", width=2),
                                                     bgcolor=colors.WHITE,
                                                     alignment=alignment.center,
-                                                    on_click=lambda _: page.go(f"/admin/adminPatientRequestList"),
+                                                    on_click=lambda _: page.go(
+                                                        f"/admin/adminPatientRequestList/{user_id}"),
                                                     content=Column([
                                                         Container(
                                                             padding=padding.only(top=20),
@@ -123,6 +141,8 @@ class AdminHomepage:
                                                     border=border.all(color="#D3D3D3", width=2),
                                                     bgcolor=colors.WHITE,
                                                     alignment=alignment.center,
+                                                    on_click=lambda _: page.go(
+                                                        f"/admin/clinicAdminPatientAppointmentList/{user_id}"),
                                                     content=Column([
                                                         Container(
                                                             padding=padding.only(top=20),
@@ -190,7 +210,9 @@ class AdminHomepage:
                                                                 weight=FontWeight.BOLD,
                                                             )
                                                         )
-                                                    ])
+                                                    ]),
+                                                    on_click=lambda _: page.go(
+                                                        f"/admin/clinicAdminManageDoctor/{user_id}")
                                                 )
                                             ])
                                         ),
@@ -228,7 +250,8 @@ class AdminHomepage:
                                                             )
                                                         )
                                                     ]),
-                                                    on_click=lambda _:page.go(f"/admin/clinicAdminUpdateAppointment/{user_id}")
+                                                    on_click=lambda _: page.go(
+                                                        f"/admin/clinicAdminUpdateAppointment/{user_id}")
                                                 )
                                             ])
                                         ),
@@ -241,43 +264,43 @@ class AdminHomepage:
                                 border_radius=15,
                                 content=Row(
                                     controls=[
-                                        Container(
-                                            width=165,
-                                            height=135,
-                                            alignment=alignment.center,
-                                            content=Column([
-                                                Container(
-                                                    width=135,
-                                                    height=135,
-                                                    border_radius=15,
-                                                    border=border.all(color="#D3D3D3", width=2),
-                                                    bgcolor=colors.WHITE,
-                                                    alignment=alignment.center,
-                                                    content=Column([
-                                                        Container(
-                                                            padding=padding.only(top=20),
-                                                            width=165,
-                                                            height=90,
-                                                            content=Image(
-                                                                src="pic/viewClinic.png", ),
-
-                                                        ),
-                                                        Container(
-                                                            alignment=alignment.top_center,
-                                                            width=165,
-                                                            height=50,
-                                                            content=Text(
-                                                                font_family="RobotoSlab",
-                                                                value="View Clinic",
-                                                                color=colors.BLACK,
-                                                                size=10,
-                                                                weight=FontWeight.BOLD,
-                                                            )
-                                                        )
-                                                    ])
-                                                )
-                                            ])
-                                        ),
+                                        # Container(
+                                        #     width=165,
+                                        #     height=135,
+                                        #     alignment=alignment.center,
+                                        #     content=Column([
+                                        #         Container(
+                                        #             width=135,
+                                        #             height=135,
+                                        #             border_radius=15,
+                                        #             border=border.all(color="#D3D3D3", width=2),
+                                        #             bgcolor=colors.WHITE,
+                                        #             alignment=alignment.center,
+                                        #             content=Column([
+                                        #                 Container(
+                                        #                     padding=padding.only(top=20),
+                                        #                     width=165,
+                                        #                     height=90,
+                                        #                     content=Image(
+                                        #                         src="pic/viewClinic.png", ),
+                                        #
+                                        #                 ),
+                                        #                 Container(
+                                        #                     alignment=alignment.top_center,
+                                        #                     width=165,
+                                        #                     height=50,
+                                        #                     content=Text(
+                                        #                         font_family="RobotoSlab",
+                                        #                         value="View Clinic",
+                                        #                         color=colors.BLACK,
+                                        #                         size=10,
+                                        #                         weight=FontWeight.BOLD,
+                                        #                     )
+                                        #                 )
+                                        #             ])
+                                        #         )
+                                        #     ])
+                                        # ),
                                         Container(
                                             width=165,
                                             height=135,
@@ -312,7 +335,7 @@ class AdminHomepage:
                                                             )
                                                         )
                                                     ]),
-                                                    on_click=lambda _:page.go(f"/admin/setting/{user_id}")
+                                                    on_click=lambda _: page.go(f"/admin/setting/{user_id}")
                                                 )
                                             ])
                                         ),
