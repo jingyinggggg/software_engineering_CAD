@@ -42,6 +42,10 @@ class Homepage:
             sidebar.offset = transform.Offset(-5, 0)
             page.update()
 
+        for x in range(len(page.views)):
+            if x > 3:
+                page.views.pop()
+
         def get_notification_count():
             c = db.cursor()
             c.execute("SELECT COUNT(*) FROM booking WHERE patientID = ? AND bookingStatus = ? AND appointmentDate >= ?",(user_id,1, formatted_date))
