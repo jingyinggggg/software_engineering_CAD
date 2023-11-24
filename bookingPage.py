@@ -648,6 +648,7 @@ class BookingPage:
                           # child control
                           content=Column(
                               horizontal_alignment="center",
+                              scroll=True,
                               controls=[
                                   Container(width=350,
                                             height=70,

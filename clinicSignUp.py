@@ -74,8 +74,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
@@ -87,8 +88,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
@@ -101,8 +103,9 @@ class ClinicSignUpPage:
             border_color=blue,
             multiline=True,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
@@ -119,10 +122,13 @@ class ClinicSignUpPage:
                 dropdown.Option("Bayan Lepas"),
                 dropdown.Option("Sungai Ara"),
                 dropdown.Option("Relau"),
+                dropdown.Option("Jelutong"),
+                dropdown.Option("Georgetown"),
             ],
             text_style=TextStyle(color=grey,
                                  size=12,
-                                 font_family="RobotoSlab"),
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
         )
 
         working_day = TextField(
@@ -132,8 +138,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Example: Monday - Sunday (Thursday closed)",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -147,8 +154,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Example: 12:00 pm - 8:00 pm",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -162,8 +170,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True
         )
@@ -175,8 +184,9 @@ class ClinicSignUpPage:
                                   color=colors.GREY_800),
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             hint_text="Please describe that what services can you provided...",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
@@ -192,8 +202,9 @@ class ClinicSignUpPage:
                                                    color=colors.GREY_800),
                              border_color=blue,
                              text_style=TextStyle(size=12,
-                                                  color=grey,
-                                                  font_family="RobotoSlab"
+                                                  color=colors.BLACK,
+                                                  font_family="RobotoSlab",
+                                                  weight=FontWeight.W_500
                                                   ),
                              dense=True)
 
@@ -207,8 +218,9 @@ class ClinicSignUpPage:
             value="Filename: clinic_name_image",
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True,
             read_only=True
@@ -244,7 +256,8 @@ class ClinicSignUpPage:
                                                         size=12,
                                                         font_family="RobotoSlab",
                                                         color=colors.BLACK,
-                                                        text_align=TextAlign.CENTER),
+                                                        text_align=TextAlign.CENTER,
+                                                        weight=FontWeight.W_500),
                                            on_click=lambda _: file_picker.pick_files()
                                            )
                     )
@@ -262,8 +275,9 @@ class ClinicSignUpPage:
             value="Filename: clinic_name_map",
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True,
             read_only=True
@@ -295,7 +309,8 @@ class ClinicSignUpPage:
                                                         size=12,
                                                         font_family="RobotoSlab",
                                                         color=colors.BLACK,
-                                                        text_align=TextAlign.CENTER),
+                                                        text_align=TextAlign.CENTER,
+                                                        weight=FontWeight.W_500),
                                            on_click=lambda _: map_picker.pick_files()
                                            )
                     )
@@ -312,8 +327,9 @@ class ClinicSignUpPage:
             value="Filename: clinic_name_environment",
             border_color=blue,
             text_style=TextStyle(size=12,
-                                 color=grey,
-                                 font_family="RobotoSlab"
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
                                  ),
             dense=True,
             read_only=True
@@ -345,7 +361,8 @@ class ClinicSignUpPage:
                                                         size=12,
                                                         font_family="RobotoSlab",
                                                         color=colors.BLACK,
-                                                        text_align=TextAlign.CENTER),
+                                                        text_align=TextAlign.CENTER,
+                                                        weight=FontWeight.W_500),
                                            on_click=lambda _: environment_picker.pick_files()
                                            )
                     )
@@ -359,7 +376,7 @@ class ClinicSignUpPage:
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text("You have created your account successfully. Log in to your account to enjoy our service now!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions=[TextButton("Done", on_click=lambda _: page.go("/"))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
@@ -367,11 +384,6 @@ class ClinicSignUpPage:
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
-            page.update()
-
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
             page.update()
 
         def addToDatabase(e):
@@ -386,7 +398,7 @@ class ClinicSignUpPage:
                     "clinicImage, mapImage, environmentImage, approvalStatus)"
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     (clinic_name.value, email.value, password.value, clinic_location.value, clinic_area.value, working_time.value,
-                     working_day.value, description.value, phoneNumber.value, location_file.value, map_file.value, environment_file.value, 1))
+                     working_day.value, description.value, phoneNumber.value, location_file.value, map_file.value, environment_file.value, 0))
                 db.commit()
                 open_dlg()
 

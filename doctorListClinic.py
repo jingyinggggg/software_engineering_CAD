@@ -6,28 +6,15 @@ import sqlite3
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
 
-class DoctorPage:
+class DoctorListBasedOnClinic:
     def __init__(self):
         self.show_sidebar = False
-
-    def get_doctor_details(self, selected_speciality):
-        c = db.cursor()
-        if selected_speciality:
-            if selected_speciality == "All":
-                c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                          "STATUS = ? ", (1,))
-            else:
-                c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                          "STATUS = ? AND specialization = ?", (1,selected_speciality))
-        else:
-            c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                      "STATUS = ? ", (1,))
-        record = c.fetchall()
-        return record
 
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
         user_id = int(params.user_id)
+        clinic_id = int(params.clinic_id)
+        # print(page.route)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -44,45 +31,14 @@ class DoctorPage:
         blue = "#3386C5"
         grey = "#71839B"
 
-        def refresh_clinic_list(e):
-            updated_clinic_list = self.get_doctor_details(specialization_dropdown.value)
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT doctors.*, clinic.* FROM doctors INNER JOIN clinic ON doctors.clinicID = clinic.id"
+                      " WHERE clinic.id = ?", (clinic_id,))
+            record = c.fetchall()
+            return record
 
-            # Update the clinic_list control with the updated data
-            # Clear the controls first
-            doctorList.controls.clear()
-
-            # Append the controls with the data retrieved from database
-            doctorList.controls.append(displayDoctor(updated_clinic_list))
-
-            # Update the page to reflect the changes
-            page.update()
-
-        specialization_dropdown = Dropdown(
-            dense=True,
-            label="Specialization",
-            border_color=blue,
-            label_style=TextStyle(size=14,
-                                  weight=FontWeight.W_500,
-                                  color=blue),
-            hint_text="Search doctor by choosing the speciality",
-            hint_style=TextStyle(color=grey,
-                                 size=14,
-                                 italic=True),
-            options=[
-                dropdown.Option("All"),
-                dropdown.Option("General Practitioner"),
-                dropdown.Option("Cardiologists"),
-                dropdown.Option("Pediatrician"),
-                dropdown.Option("Obstetrician and Gynecologist"),
-            ],
-            text_style=TextStyle(size=14,
-                                 weight=FontWeight.W_500),
-            autofocus=True,
-            focused_color=grey,
-            on_change=refresh_clinic_list
-        )
-
-        doctor = self.get_doctor_details(specialization_dropdown.value)
+        doctor = get_doctor_details()
 
         split_current_route = page.route.split("/")
         previous_route = split_current_route[1]
@@ -107,7 +63,7 @@ class DoctorPage:
                                     bgcolor=lightBlue,
                                     border_radius=10,
                                     content=Image(
-                                        src=f"{record[5]}",
+                                        src=f"{record[12]}",
                                         width=80,
                                         height=80,
 
@@ -136,7 +92,7 @@ class DoctorPage:
                                                     Container(
                                                         width=185,
                                                         content=Text(
-                                                            value=f"{record[2]}",
+                                                            value=f"{record[7]}",
                                                             size=10,
                                                             font_family="RobotoSlab",
                                                             color=grey,
@@ -160,7 +116,7 @@ class DoctorPage:
 
                                                         Container(
                                                             content=Text(
-                                                                value=f"{record[3]}",
+                                                                value=f"{record[6]}",
                                                                 size=10,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -185,7 +141,7 @@ class DoctorPage:
                                                             width=185,
                                                             margin=margin.only(right=90),
                                                             content=Text(
-                                                                value=f"{record[4]}",
+                                                                value=f"{record[8]}",
                                                                 size=10,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -202,7 +158,6 @@ class DoctorPage:
                                 )
                             ]
                         ),
-
                         on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
@@ -211,19 +166,27 @@ class DoctorPage:
 
             else:
                 return Container(
-                    content=Text(
-                        width=300,
-                        value="There are no doctor in the selected specialization.",
-                        color=colors.BLACK,
-                        font_family="RobotoSlab",
-                        text_align=TextAlign.CENTER
+                    padding=padding.only(top=250),
+                    content=Column(
+                        horizontal_alignment="center",
+                        controls=[
+                            Container(
+                                padding=padding.only(top=10, left=30, right=30),
+                                content=Text(
+                                    value="There is no any doctor in the selected clinic currently.",
+                                    text_align=TextAlign.CENTER,
+                                    size=12,
+                                    color=colors.BLACK,
+                                    font_family="RobotoSlab"
+                                )
+                            ),
+
+                        ]
                     )
                 )
 
-        doctorList = displayDoctor(doctor)
-
         return View(
-            "/doctor/:user_id",
+            "/doctorListBasedOnClinic/:user_id:clinic_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -231,7 +194,6 @@ class DoctorPage:
                           border_radius=30,
                           # child control
                           content=Column(
-                              scroll=True,
                               horizontal_alignment="center",
                               controls=[
                                   Container(width=350,
@@ -248,7 +210,7 @@ class DoctorPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/homepage/{user_id}")
+                                                              on_click=lambda _: page.go(f"/viewClinic/{user_id}{clinic_id}")
                                                               ),
 
                                                     Container(padding=padding.only(left=110, top=25),
@@ -264,12 +226,7 @@ class DoctorPage:
                                             )
                                             ),
 
-                                  Container(
-                                      padding=padding.only(left=10, right=10, top=10, bottom=10),
-                                      content=specialization_dropdown
-                                  ),
-
-                                  doctorList
+                                  displayDoctor(doctor),
 
                               ]
                           )
