@@ -14,6 +14,7 @@ class PrescriptionList:
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
         booking_id = int(params.booking_id)
+        patient_id = int(params.patient_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -30,430 +31,98 @@ class PrescriptionList:
         blue = "#3386C5"
         grey = "#71839B"
 
-        self.db = sqlite3.connect("cad.db", check_same_thread=False)
-
         def get_prescription_list():
             c = db.cursor()
             c.execute("SELECT * FROM prescriptions INNER JOIN booking ON prescriptions.bookingID = booking.bookingID "
-                      "WHERE prescriptions.bookingID = ?",
+                      "WHERE booking.doctorID = ? AND booking.bookingID = ?",
                       (user_id, booking_id,))
             record = c.fetchall()
             return record
 
         prescription = get_prescription_list()
 
-        def displayApprovedBooking(records):
-            if records:
-                record_containers = []
-                for record in records:
-                    def on_more_button_click(record_id=record[4]):
-                        return lambda _: page.go(f"/prescription/{user_id}{record_id}")
-
-                    record_container = Container(
-                        margin=margin.only(left=15, right=15, top=20),
-                        border_radius=10,
-                        border=border.all(1, colors.BLACK),
-                        padding=padding.only(left=20, right=20, top=20, bottom=20),
-                        content=Row(
-                            controls=[
-                                Container(
-                                    padding=padding.only(top=-10),
-                                    content=Image(
-                                        src="pic/prescription_icon.png",
-                                        width=50,
-                                        height=50,
-                                    )
-
-                                ),
-
-                                Column(
-                                    controls=[
-                                        Container(
-                                            margin=margin.only(bottom=-3),
-                                            width=220,
-                                            content=Text(
-                                                value=f"Appointment Date: {record[0]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Appointment Time: {record[1]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Clinic Name: {record[2]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=235,
-                                            content=Row(
-                                                controls=[
-                                                    Text(
-                                                        value="Appointment Status: ",
-                                                        color=colors.BLACK,
-                                                        size=11,
-                                                        font_family="RobotoSlab",
-                                                        weight=FontWeight.W_500,
-                                                        text_align=TextAlign.JUSTIFY,
-                                                    ),
-
-                                                    Container(
-                                                        margin=margin.only(left=-8),
-                                                        content=Text(
-                                                            value=record[3],
-                                                            color=colors.GREEN,  # Set the text color to red
-                                                            size=11,
-                                                            font_family="RobotoSlab",
-                                                            weight=FontWeight.W_600,  # Set the text to bold
-                                                            text_align=TextAlign.JUSTIFY,
-                                                        )
-                                                    ),
-
-                                                ]
-                                            )
-                                        )
-                                    ]
-                                )
-                            ]
-                        ), on_click=on_more_button_click()
-                    )
-                    record_containers.append(record_container)
-
-                return Column(controls=record_containers)
-
-            else:
-                return Container(
-                    padding=padding.only(top=140),
-                    content=Column(
-                        horizontal_alignment="center",
-                        controls=[
-                            Image(
-                                src="pic/appointment_icon.png",
-                                width=120,
-                                height=120
-                            ),
-
-                            Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="You do not have any approved status yet.",
-                                    text_align=TextAlign.CENTER,
-                                    size=12,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab",
-                                    weight=FontWeight.W_500
-                                )
-                            ),
-
-                        ]
-                    )
-                )
-
-        def get_requested_booking():
+        def get_patient():
             c = db.cursor()
-            c.execute("SELECT appointmentDate, appointmentTime, clinic.name, appointmentStatus FROM booking INNER JOIN clinic ON booking.clinicID = clinic.id WHERE "
-                      "doctorID = ? AND proofStatus = ? ORDER BY bookingID DESC",
-                      (user_id, 0,))
-            record = c.fetchall()
-            return record
+            c.execute("SELECT * FROM users WHERE id = ?", (patient_id,))
+            patient_info = c.fetchall()
+            return patient_info
 
-        requested_booking = get_requested_booking()
+        patient = get_patient()
 
-        def displayRequestedBooking(records):
-            if records:
-                record_containers = []
-                for record in records:
-                    def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/prescription/{user_id}{record_id}")
-
-                    record_container = Container(
-                        margin=margin.only(left=15, right=15, top=20),
-                        border_radius=10,
-                        border=border.all(1, colors.BLACK),
-                        padding=padding.only(left=20, right=20, top=20, bottom=20),
-                        content=Row(
-                            controls=[
-                                Container(
-                                    padding=padding.only(top=-10),
-                                    content=Image(
-                                        src="pic/prescription_icon.png",
-                                        width=50,
-                                        height=50,
-                                    )
-
-                                ),
-
-                                Column(
-                                    controls=[
-                                        Container(
-                                            margin=margin.only(bottom=-3),
-                                            width=220,
-                                            content=Text(
-                                                value=f"Appointment Date: {record[0]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Appointment Time: {record[1]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Clinic Name: {record[2]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=235,
-                                            content=Row(
-                                                controls=[
-                                                    Text(
-                                                        value="Appointment Status: ",
-                                                        color=colors.BLACK,
-                                                        size=11,
-                                                        font_family="RobotoSlab",
-                                                        weight=FontWeight.W_500,
-                                                        text_align=TextAlign.JUSTIFY,
-                                                    ),
-
-                                                    Container(
-                                                        margin=margin.only(left=-8),
-                                                        content=Text(
-                                                            value=record[3],
-                                                            color=colors.GREEN,  # Set the text color to red
-                                                            size=11,
-                                                            font_family="RobotoSlab",
-                                                            weight=FontWeight.W_600,  # Set the text to bold
-                                                            text_align=TextAlign.JUSTIFY,
-                                                        )
-                                                    ),
-
-                                                ]
-                                            )
-                                        )
-                                    ]
-                                )
-                            ]
-                        ), on_click=on_more_button_click()
-                    )
-                    record_containers.append(record_container)
-
-                return Column(controls=record_containers)
-
-            else:
-                return Container(
-                    padding=padding.only(top=140),
-                    content=Column(
-                        horizontal_alignment="center",
+        def displayPrescriptionList():
+            return (
+                Container(
+                    margin=margin.only(left=10),
+                    width=330,
+                    height=100,
+                    border_radius=10,
+                    border=border.all(1, color=colors.BLACK),
+                    content=
+                    Row(
                         controls=[
-                            Image(
-                                src="pic/prescription_icon.png",
-                                width=120,
-                                height=120
-                            ),
-
                             Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="You do not have any requested appointment yet.",
-                                    text_align=TextAlign.CENTER,
-                                    size=12,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab",
-                                    weight=FontWeight.W_500
+                                margin=margin.only(left=10, right=10),
+                                content=Image(
+                                    src="pic/female_patient.png",
+                                    width=60,
+                                    height=60,
                                 )
                             ),
 
-                        ]
-                    )
-                )
-
-        def get_rejected_booking():
-            c = db.cursor()
-            c.execute("SELECT appointmentDate, appointmentTime, clinic.name, appointmentStatus FROM booking INNER JOIN clinic ON booking.clinicID = clinic.id WHERE "
-                      "doctorID = ? AND proofStatus = ? ORDER BY bookingID DESC",
-                      (user_id, -1,))
-            record = c.fetchall()
-            return record
-
-        rejected_booking = get_rejected_booking()
-
-        def displayRejectedBooking(records):
-            if records:
-                record_containers = []
-                for record in records:
-                    def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/prescription/{user_id}{record_id}")
-
-                    record_container = Container(
-                        margin=margin.only(left=15, right=15, top=20),
-                        border_radius=10,
-                        border=border.all(1, colors.BLACK),
-                        padding=padding.only(left=20, right=20, top=20, bottom=20),
-                        content=Row(
-                            controls=[
-                                Container(
-                                    padding=padding.only(top=-10),
-                                    content=Image(
-                                        src="pic/prescription_icon.png",
-                                        width=50,
-                                        height=50,
-                                    )
-
-                                ),
-
-                                Column(
-                                    controls=[
-                                        Container(
-                                            margin=margin.only(bottom=-3),
-                                            width=220,
-                                            content=Text(
-                                                value=f"Appointment Date: {record[0]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Appointment Time: {record[1]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Clinic Name: {record[2]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=235,
-                                            content=Row(
-                                                controls=[
-                                                    Text(
-                                                        value="Appointment Status: ",
-                                                        color=colors.BLACK,
-                                                        size=11,
-                                                        font_family="RobotoSlab",
-                                                        weight=FontWeight.W_500,
-                                                        text_align=TextAlign.JUSTIFY,
-                                                    ),
-
-                                                    Container(
-                                                        margin=margin.only(left=-8),
-                                                        content=Text(
-                                                            value=record[3],
-                                                            color=colors.RED,
-                                                            size=11,
-                                                            font_family="RobotoSlab",
-                                                            weight=FontWeight.W_600,  # Set the text to bold
-                                                            text_align=TextAlign.JUSTIFY,
-                                                        )
-                                                    ),
-
-                                                ]
-                                            )
+                            Column(
+                                controls=[
+                                    Container(
+                                        padding=padding.only(left=10, top=10, right=20),
+                                        content=Row(
+                                            alignment="spaceBetween",
+                                            controls=[
+                                                Text("Patient Name", color="BLACK", size=12, weight=FontWeight.BOLD,
+                                                     width=80),
+                                                Text(" :   ", color="BLACK", size=12),
+                                                Text(f"{patient[0][1]}", color="BLACK", size=12,
+                                                     text_align=TextAlign.JUSTIFY,
+                                                     weight=FontWeight.W_600, width=160)
+                                            ]
                                         )
-                                    ]
-                                )
-                            ]
-                        ), on_click=on_more_button_click()
-                    )
-                    record_containers.append(record_container)
-
-                return Column(controls=record_containers)
-
-            else:
-                return Container(
-                    padding=padding.only(top=140),
-                    content=Column(
-                        horizontal_alignment="center",
-                        controls=[
-                            Image(
-                                src="pic/prescription_icon.png",
-                                width=120,
-                                height=120
-                            ),
-
-                            Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="You do not have any rejected request yet.",
-                                    text_align=TextAlign.CENTER,
-                                    size=12,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab",
-                                    weight=FontWeight.W_500
-                                )
-                            ),
-
+                                    ),
+                                    Container(
+                                        padding=padding.only(left=10, right=20),  # Add padding to the entire container
+                                        content=Row(
+                                            alignment="spaceBetween",
+                                            controls=[
+                                                Text("Date Signed", color="BLACK", size=12, weight=FontWeight.BOLD,
+                                                     width=80),
+                                                Text(" :   ", color="BLACK", size=12),
+                                                Text(f"{prescription[0][7]}", color="BLACK", size=12,
+                                                     weight=FontWeight.W_600,
+                                                     text_align=TextAlign.JUSTIFY, width=160)
+                                            ]
+                                        )
+                                    ),
+                                    Container(
+                                        padding=padding.only(left=10, right=20),  # Add padding to the entire container
+                                        # margin=margin.only(right=10),
+                                        content=Row(
+                                            alignment="spaceBetween",
+                                            controls=[
+                                                Text("Medication", color="BLACK", size=12, weight=FontWeight.BOLD,
+                                                     width=80),
+                                                Text(" :   ", color="BLACK", size=12),
+                                                Text(f"{prescription[0][4]}", color="BLACK", size=12,
+                                                     text_align=TextAlign.JUSTIFY,
+                                                     weight=FontWeight.W_600, width=160)
+                                            ]
+                                        )
+                                    )]
+                            )
                         ]
-                    )
+                    ), on_click=lambda _: page.go(f"/prescription/{user_id}{booking_id}")
+
                 )
+            )
 
         return View(
-            "/prescriptionList/:user_id:booking_id",
+            "/prescriptionList/:user_id:booking_id:patient_id",
             controls=[
                 Container(
                     width=350,
@@ -463,36 +132,36 @@ class PrescriptionList:
                     alignment=alignment.center,
                     content=Column(
                         # alignment=MainAxisAlignment.CENTER,
-                                   controls=[
-                                       Row(
-                                           alignment=MainAxisAlignment.CENTER,
-                                           controls=[
-                                               Container(
-                                                   padding=padding.only(right=120),
-                                                   width=350,
-                                                   height=80,
-                                                   bgcolor="#3386C5",
-                                                   content=Row(controls=[
-                                                                   Container(padding=padding.only(left=10, top=5),
-                                                                             content=Image(
-                                                                                 src="pic/back.png",
-                                                                                 color=colors.WHITE,
-                                                                                 width=20,
-                                                                                 height=20
-                                                                             ),
-                                                                             on_click=lambda _: page.go(
-                                                                                 f"/login/homepage/{user_id}")),
-                                                                   Container(padding=padding.only(left=75),
-                                                                             content=Text("Prescription",
-                                                                                          color="WHITE",
-                                                                                          text_align=TextAlign.CENTER,
-                                                                                          size=20,
-                                                                                          font_family="RobotoSlab"
-                                                                                          ))
-                                                               ]),
+                        controls=[
+                            Row(
+                                alignment=MainAxisAlignment.CENTER,
+                                controls=[
+                                    Container(
+                                        padding=padding.only(right=120),
+                                        width=350,
+                                        height=80,
+                                        bgcolor="#3386C5",
+                                        content=Row(controls=[
+                                            Container(padding=padding.only(left=10, top=5),
+                                                      content=Image(
+                                                          src="pic/back.png",
+                                                          color=colors.WHITE,
+                                                          width=20,
+                                                          height=20
+                                                      ),
+                                                      on_click=lambda _: page.go(f"/login/homepage/{user_id}")),
+                                            Container(padding=padding.only(left=75),
+                                                      content=Text("Prescription",
+                                                                   color="WHITE",
+                                                                   text_align=TextAlign.CENTER,
+                                                                   size=20,
+                                                                   font_family="RobotoSlab"
+                                                                   ))
+                                        ])
 
-                                               )
-                                           ])
-                                   ])
+                                    )
+                                ]), displayPrescriptionList(),
+                            # print(user_id)
+                        ])
                 )
             ])
