@@ -26,6 +26,15 @@ def CreateTable():
     db.commit()
 
 
+# def update():
+#     c = db.cursor()
+#     c.execute("UPDATE clinic SET approvalStatus = 0 WHERE id = 4")
+#     db.commit()
+#
+#
+# update()
+
+
 # def DeleteTable():
 #     c = db.cursor()
 #     c.execute("DROP TABLE prescriptions")

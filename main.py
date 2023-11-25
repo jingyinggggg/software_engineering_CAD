@@ -51,6 +51,9 @@ from doctorViewMedicalRecord import DoctorViewMedicalRecord
 from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
 from doctorCallInterface import DoctorCallInterface
 from rejectedAppointmentDetails import RejectedAppointmentDetails
+from doctorGeneratePrescription import DoctorGeneratePrescription
+from editPrescription import EditPrescription
+from proofStatus import ProofStatus
 
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
@@ -120,12 +123,15 @@ def main(mainPage: Page):
         path(url="/doctorAccountSetting/:user_id", clear=False, view=DoctorAccountSettingPage().view),
         path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
         path(url="/doctorProfile/:user_id", clear=False, view=DoctorProfilePage().view),
-        path(url="/prescriptionList/:user_id:booking_id", clear=False, view=PrescriptionList().view),
+        path(url="/prescriptionList/:user_id:booking_id:patient_id", clear=False, view=PrescriptionList().view),
         path(url="/appointment/:user_id", clear=False, view=Appointment().view),
         path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False, view=DoctorViewMedicalRecord().view),
         path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False, view=DoctorViewMedicalRecordList().view),
         path(url="/doctorCallInterface/:user_id:patient_id", clear=False, view=DoctorCallInterface().view),
         path(url="/rejectedAppointmentDetails/:user_id:appointment_id", clear=False, view=RejectedAppointmentDetails().view),
+        path(url="/doctorGeneratePrescription/:user_id:booking_id", clear=False, view=DoctorGeneratePrescription().view),
+        path(url="/editPrescription/:user_id:booking_id:prescription_id", clear=False, view=EditPrescription().view),
+        path(url="/proofStatus/:user_id", clear=False, view=ProofStatus().view),
 
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
