@@ -50,7 +50,9 @@ class ClinicViewDoctorDetails:
 
         def get_doctor_details():
             try:
-                cursor.execute("SELECT fullName, username, email, password, experience, specialization, description, workingTime, workingDay, nonWorkingDay FROM doctors WHERE id = ?", (doctor_id,))
+                cursor.execute("SELECT fullName, username, email, password, experience, "
+                               "specialization, description, workingTime, workingDay, nonWorkingDay,image "
+                               "FROM doctors WHERE id = ?", (doctor_id,))
                 doctor_records = cursor.fetchall()
 
                 doctor_fullName = doctor_records[0][0]
@@ -63,12 +65,14 @@ class ClinicViewDoctorDetails:
                 doctor_working_time = doctor_records[0][7]
                 doctor_working_day = doctor_records[0][8]
                 doctor_non_working_day = doctor_records[0][9]
+                doctor_image = doctor_records[0][10]
 
                 return (doctor_fullName, doctor_username,
                         doctor_email, doctor_password,
                         doctor_experience, doctor_specialization,
                         doctor_desc, doctor_working_time,
-                        doctor_working_day, doctor_non_working_day)
+                        doctor_working_day, doctor_non_working_day,
+                        doctor_image)
 
             except sqlite3.Error as e:
                 print("SQLite error:", e)
@@ -77,7 +81,7 @@ class ClinicViewDoctorDetails:
          doctor_email, doctor_password,
          doctor_experience, doctor_specialization,
          doctor_desc, doctor_working_time,
-         doctor_working_day, doctor_non_working_day) = get_doctor_details()
+         doctor_working_day, doctor_non_working_day, doctor_image) = get_doctor_details()
 
         username = TextField(
             label = "Doctor Username",
@@ -274,6 +278,16 @@ class ClinicViewDoctorDetails:
             read_only=True
         )
 
+        doctor_image_Field = Container(
+            height=80,
+            width=80,
+            border=border.all(1, "blue"),
+            border_radius=5,
+            content=Image(
+                src=doctor_image,
+            ),
+        )
+
         return View(
             "/clinicViewDoctorDetails/:doctor_id:clinic_id",
             controls=[
@@ -323,6 +337,7 @@ class ClinicViewDoctorDetails:
                                   ),
 
                                   Container(
+                                      padding=padding.only(bottom=20),
                                       margin=margin.only(left=10, right=10),
                                       content=Column(
                                           controls=[
@@ -345,6 +360,28 @@ class ClinicViewDoctorDetails:
                                               working_clinic,
 
                                               working_time,
+
+                                              Row(
+                                                  width=325,
+                                                  controls=[
+                                                      working_day,
+                                                      non_working_day
+                                                  ]
+                                              ),
+
+                                              Column(
+                                                  controls=[
+                                                      Container(
+                                                          content=Text(
+                                                              "Doctor's image",
+                                                              font_family="RobotoSlab",
+                                                              size=12,
+                                                              color=colors.GREY_800
+                                                          )
+                                                      ),
+                                                      doctor_image_Field,
+                                                  ]
+                                              )
 
                                           ]
                                       )

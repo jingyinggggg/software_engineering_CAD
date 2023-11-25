@@ -29,7 +29,7 @@ def addRow():
 
 def update_row():
     c = db.cursor()
-    c.execute("UPDATE doctors SET approvalStatus = -1 WHERE id = ?", (1,))
+    c.execute("UPDATE clinic SET approvalStatus = -1 WHERE id = ?", (1,))
     db.commit()
 #
 #
@@ -108,11 +108,13 @@ class ClinicHomepage:
                     content=Row(
                         controls=[
                             Container(
+                                padding=padding.only(left=20),
                                 content=Image(
                                     src=f"pic/pending_request.png"
                                 )
                             ),
                             Container(
+                                padding=padding.only(left=25),
                                 content=Text(
                                     value="Pending",
                                     size=20,
@@ -171,11 +173,13 @@ class ClinicHomepage:
                     content=Row(
                         controls=[
                             Container(
+                                padding=padding.only(left=20),
                                 content=Image(
                                     src=f"pic/decline.png"
                                 )
                             ),
                             Container(
+                                padding=padding.only(left=25),
                                 content=Text(
                                     value="Declined",
                                     size=20,
@@ -183,7 +187,7 @@ class ClinicHomepage:
                                     weight=FontWeight.BOLD,
                                     font_family="RobotoSlab",
                                 )
-                            )
+                            ),
                         ]
                     ),
                     border=Border(top=BorderSide(2, colors.BLACK),
@@ -191,11 +195,66 @@ class ClinicHomepage:
                                   bottom=BorderSide(2, colors.BLACK),
                                   right=BorderSide(2, colors.BLACK)
                                   ),
-                    border_radius=10
+                    border_radius=10,
 
                 )
 
-        def getDoctorStatus(doctor_status, doctor_id, doctor_name, doctor_specialization, clinic_id):
+        def clinic_decline_status():
+            if approvalStatus == -1:
+                clinic_decline = Container(
+                    margin=margin.only(left=25),
+                    content=Column(
+                        controls=[
+                            Container(
+                                content=Text(
+                                    value="View Decline reason :",
+                                    size=15,
+                                    font_family="RobotoSlab",
+                                    color=dark_blue,
+                                    weight=FontWeight.BOLD,
+                                    text_align=TextAlign.LEFT,
+                                ),
+                            ),
+
+                            Container(
+                                width=200,
+                                height=40,
+                                alignment=alignment.center,
+                                content=Row(
+                                    controls=[
+                                        Container(
+                                            padding=padding.only(left=10),
+                                            content=Image(
+                                                height=30,
+                                                src=f"pic/view_decline_reason.png"
+                                            )
+                                        ),
+                                        Container(
+                                            padding=padding.only(left=10),
+                                            content=Text(
+                                                "View & Modify \nClinic Details",
+                                                size=13,
+                                                color=colors.BLACK,
+                                                font_family="RobotoSlab",
+                                                text_align=TextAlign.CENTER,
+                                            ),
+                                        )
+                                    ]
+                                ),
+                                border=Border(top=BorderSide(1, colors.BLACK),
+                                              left=BorderSide(1, colors.BLACK),
+                                              bottom=BorderSide(1, colors.BLACK),
+                                              right=BorderSide(1, colors.BLACK)
+                                              ),
+                                border_radius=10,
+                            ),
+
+                        ]
+                    )
+                )
+                return clinic_decline
+
+        def get_doctor_status(doctor_status, doctor_id, doctor_name, doctor_specialization, clinic_id):
             if doctor_status == 1:
                 return Container(
                     content=Row(
@@ -263,7 +322,7 @@ class ClinicHomepage:
                                     content=Column(
                                         controls=[
                                           Container(
-                                              getDoctorStatus(doctor_status, doctor_id
+                                              get_doctor_status(doctor_status, doctor_id
                                                               , doctor_name, doctor_specialization
                                                               , clinic_id),
                                           ),
@@ -539,7 +598,7 @@ class ClinicHomepage:
                                     ),
                                 ]
                             ),
-
+                            clinic_decline_status(),
                             display_doctor_list(doctor_records),
 
                             Container(
@@ -568,11 +627,11 @@ class ClinicHomepage:
                                         ),
                                     ]
                                 ),
-                                border=Border(top=BorderSide(2, colors.BLACK),
-                                              left=BorderSide(2, colors.BLACK),
-                                              bottom=BorderSide(2,
+                                border=Border(top=BorderSide(1, colors.BLACK),
+                                              left=BorderSide(1, colors.BLACK),
+                                              bottom=BorderSide(1,
                                                                 colors.BLACK),
-                                              right=BorderSide(2, colors.BLACK)
+                                              right=BorderSide(1, colors.BLACK)
                                               ),
                                 border_radius=10,
                                 on_click=lambda _: (
