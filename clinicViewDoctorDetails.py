@@ -101,6 +101,8 @@ class ClinicViewDoctorDetails:
 
         password = TextField(
             label="Doctor Password",
+            password=True,
+            can_reveal_password=True,
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),

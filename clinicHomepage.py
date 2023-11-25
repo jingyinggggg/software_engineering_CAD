@@ -7,24 +7,24 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
 
 
-def addRow():
-    try:
-        cursor.execute(
-            "INSERT INTO doctors (fullName, username, email, phoneNumber, password, experience, specialization, "
-            "description, clinic, workingTime, workingDay, image, status)"
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-
-            ("Johnson", "Johnson", "johnson@gmail.com", "0157778709", "123", "3 years experience",
-             "Cardiologists",
-             "Treat the patient this and that", "Bwell Clinic", "12:00pm - 5:00pm",
-             "Tuesday to Saturday (except Thursday)",
-             "pic/doctor.png",
-             1)
-        ),
-        db.commit()
-        print("1")
-    except sqlite3.Error as e:
-        print("SQLite error:", e)
+# def addRow():
+#     try:
+#         cursor.execute(
+#             "INSERT INTO doctors (fullName, username, email, phoneNumber, password, experience, specialization, "
+#             "description, clinic, workingTime, workingDay, image, status)"
+#             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+#
+#             ("Johnson", "Johnson", "johnson@gmail.com", "0157778709", "123", "3 years experience",
+#              "Cardiologists",
+#              "Treat the patient this and that", "Bwell Clinic", "12:00pm - 5:00pm",
+#              "Tuesday to Saturday (except Thursday)",
+#              "pic/doctor.png",
+#              1)
+#         ),
+#         db.commit()
+#         print("1")
+#     except sqlite3.Error as e:
+#         print("SQLite error:", e)
 
 
 def update_row():
@@ -39,8 +39,7 @@ def update_row():
 #
 #
 # DeleteRow()
-
-update_row()
+# update_row()
 
 class ClinicHomepage:
 
@@ -80,11 +79,11 @@ class ClinicHomepage:
                 record = cursor.fetchall()
 
                 clinic_id = record[0][0]
-                clinicName = record[0][1]
-                phoneNumber = record[0][2]
-                approvalStatus = record[0][3]
+                clinic_name = record[0][1]
+                phone_number = record[0][2]
+                approval_status = record[0][3]
 
-                return clinic_id, clinicName, phoneNumber, approvalStatus
+                return clinic_id, clinic_name, phone_number, approval_status
             except sqlite3.Error as e:
                 print("SQLite error:", e)
 
@@ -100,7 +99,7 @@ class ClinicHomepage:
 
         doctor_records = get_doctor_details()
 
-        def approval_status():
+        def clinic_approval_status():
             if approvalStatus == 0:
                 return Container(
                     width=300,
@@ -247,6 +246,7 @@ class ClinicHomepage:
                                               right=BorderSide(1, colors.BLACK)
                                               ),
                                 border_radius=10,
+                                on_click=lambda _:page.go(f"/clinicModifyDeclineDetails/{clinic_id}")
                             ),
 
                         ]
@@ -591,7 +591,7 @@ class ClinicHomepage:
 
                                                 ),
 
-                                                approval_status(),
+                                                clinic_approval_status(),
 
                                             ]
                                         )

@@ -7,11 +7,10 @@ from flet_route import Params, Basket
 import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
-
+cursor = db.cursor()
 
 def createTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS clinic(
+    cursor.execute("""CREATE TABLE IF NOT EXISTS clinic(
                      id INTEGER PRIMARY KEY AUTOINCREMENT,
                      name TEXT NOT NULL,
                      email TEXT NOT NULL,
@@ -48,8 +47,6 @@ class ClinicModifyDeclineDetails:
     def view(self, page: Page, params: Params, basket: Basket):
         clinic_id = int(params.clinic_id)
 
-        # AddColumn()
-
         page.title = "Call A Doctor"
         page.window_width = 380
         page.window_height = 800
@@ -64,6 +61,33 @@ class ClinicModifyDeclineDetails:
         lightBlue = "#D0DCEE"
         blue = "#3386C5"
         grey = "#71839B"
+
+        def get_clinic_details():
+            cursor.execute("SELECT * FROM clinic WHERE id  = ?",(clinic_id,))
+            clinic_record = cursor.fetchall()
+
+            name = clinic_record[0][1]
+            email = clinic_record[0][2]
+            password = clinic_record[0][3]
+            location = clinic_record[0][4]
+            area = clinic_record[0][5]
+            working_time = clinic_record[0][6]
+            working_day = clinic_record[0][7]
+            desc = clinic_record[0][8]
+            phone_no = clinic_record[0][9]
+            image = clinic_record[0][10]
+            map_image = clinic_record[0][11]
+            environment_image = clinic_record[0][12]
+            closed_day = clinic_record[0][13]
+
+            return (name, email, password, location, area, working_time,
+                    working_day, desc, phone_no, image,map_image,
+                    environment_image, closed_day)
+
+        (clinic_name, clinic_email, clinic_password,
+         clinic_location, clinic_area, clinic_working_time,
+         clinic_working_day, clinic_desc, clinic_phone_no,
+         clinic_image, clinic_map_image, clinic_environment, clinic_closed_day,) = get_clinic_details()
 
         def setTextFieldValue(textField, value):
             if value != "":
@@ -80,6 +104,7 @@ class ClinicModifyDeclineDetails:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
+            value=clinic_name,
             dense=True
         )
 
@@ -94,6 +119,7 @@ class ClinicModifyDeclineDetails:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
+            value=clinic_email,
             dense=True
         )
 
@@ -109,6 +135,7 @@ class ClinicModifyDeclineDetails:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
+            value=clinic_location,
             dense=True
         )
 
@@ -131,6 +158,7 @@ class ClinicModifyDeclineDetails:
                                  size=12,
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500),
+            value=clinic_area,
         )
 
         working_day = TextField(
@@ -146,6 +174,7 @@ class ClinicModifyDeclineDetails:
                                  ),
             hint_text="E.g. Monday - Sunday",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            value=clinic_working_day,
             dense=True,
             width=158
         )
@@ -172,6 +201,7 @@ class ClinicModifyDeclineDetails:
                                  size=12,
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500),
+            value=clinic_closed_day,
             width=158,
         )
 
@@ -188,6 +218,7 @@ class ClinicModifyDeclineDetails:
                                  ),
             hint_text="Example: 12:00 pm - 8:00 pm",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            value=clinic_working_time,
             dense=True
         )
 
@@ -202,6 +233,7 @@ class ClinicModifyDeclineDetails:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
+            value=clinic_phone_no,
             dense=True
         )
 
@@ -219,22 +251,26 @@ class ClinicModifyDeclineDetails:
             hint_text="Please describe that what services can you provided...",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
             dense=True,
+            value=clinic_desc,
             multiline=True
         )
 
-        password = TextField(label="Password",
-                             password=True,
-                             can_reveal_password=True,
-                             label_style=TextStyle(font_family="RobotoSlab",
-                                                   size=12,
-                                                   color=colors.GREY_800),
-                             border_color=blue,
-                             text_style=TextStyle(size=12,
-                                                  color=colors.BLACK,
-                                                  font_family="RobotoSlab",
-                                                  weight=FontWeight.W_500
-                                                  ),
-                             dense=True)
+        password = TextField(
+            label="Password",
+            password=True,
+            can_reveal_password=True,
+            label_style=TextStyle(font_family="RobotoSlab",
+                                  size=12,
+                                  color=colors.GREY_800),
+            border_color=blue,
+            text_style=TextStyle(size=12,
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500
+                                 ),
+            value=clinic_password,
+            dense=True
+        )
 
         clinic_image_textField = TextField(
             label="Clinic Image",
@@ -243,7 +279,7 @@ class ClinicModifyDeclineDetails:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            value="Filename: clinic_name_image",
+            hint_text="Filename: clinic_name_image",
             border_color=blue,
             text_style=TextStyle(size=12,
                                  color=colors.BLACK,
@@ -251,6 +287,7 @@ class ClinicModifyDeclineDetails:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
+            value=clinic_image,
             read_only=True
         )
 
@@ -300,7 +337,7 @@ class ClinicModifyDeclineDetails:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            value="Filename: clinic_name_map",
+            hint_text="Filename: clinic_name_map",
             border_color=blue,
             text_style=TextStyle(size=12,
                                  color=colors.BLACK,
@@ -308,6 +345,7 @@ class ClinicModifyDeclineDetails:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
+            value=clinic_map_image,
             read_only=True
         )
 
@@ -352,7 +390,7 @@ class ClinicModifyDeclineDetails:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            value="Filename: clinic_name_environment",
+            hint_text="Filename: clinic_name_environment",
             border_color=blue,
             text_style=TextStyle(size=12,
                                  color=colors.BLACK,
@@ -360,6 +398,7 @@ class ClinicModifyDeclineDetails:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
+            value=clinic_environment,
             read_only=True
         )
 
@@ -430,28 +469,27 @@ class ClinicModifyDeclineDetails:
             dialog.open = False
             page.update()
 
-        def addToDatabase(e):
-            createTable()
-            c = db.cursor()
-            if (
-                    clinic_name.value != "" and clinic_location.value != "" and clinic_area.value != "" and working_time.value != ""
+        def update_database():
+            if (clinic_name.value != "" and clinic_location.value != "" and clinic_area.value != "" and working_time.value != ""
                     and working_day.value != "" and clinic_closed.value != "" and description.value != "" and phoneNumber.value != "" and clinic_image_textField.value != ""
                     and clinic_map_textField.value != "" and clinic_environment_textField.value != "" and password.value != "" and email.value != ""):
-                c.execute(
-                    "INSERT INTO clinic (name, email, password, location, area, workingTime, workingDay, "
+
+                cursor.execute(
+                    "UPDATE clinic (name, email, password, location, area, workingTime, workingDay, "
                     "clinicDescription, phoneNumber, clinicImage, mapImage, environmentImage, approvalStatus, closed)"
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (clinic_name.value, email.value, password.value, clinic_location.value, clinic_area.value,
-                     working_time.value,
-                     working_day.value, description.value, phoneNumber.value, location_file.value, map_file.value,
+                    (clinic_name.value, email.value, password.value, clinic_location.value,
+                     clinic_area.value, working_time.value, working_day.value, description.value,
+                     phoneNumber.value, location_file.value, map_file.value,
                      environment_file.value, 0, clinic_closed.value))
+
                 db.commit()
                 open_dlg(alert_dialog)
             else:
                 open_dlg(error_dialog)
 
         return View(
-            "/clinicSignUp",
+            "/clinicModifyDeclineDetails/:clinic_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -473,8 +511,8 @@ class ClinicModifyDeclineDetails:
                                               on_click=lambda _: page.go(f"/loginUser")),
 
                                           Container(
-                                              margin=margin.only(top=20, bottom=10),
-                                              content=Text(value="Create an account - Clinic",
+                                              margin=margin.only(top=20),
+                                              content=Text(value="View Decline Reason\nModify Clinic Details",
                                                            size=18,
                                                            color="#3386C5",
                                                            font_family="RobotoSlab",
@@ -489,6 +527,31 @@ class ClinicModifyDeclineDetails:
                                       margin=margin.only(left=10, right=10),
                                       content=Column(
                                           controls=[
+                                              Container(
+                                                  content=Column(
+                                                      controls=[
+                                                          Container(
+                                                              content=
+                                                              Text(value="Declined Reason -",
+                                                                   size=16,
+                                                                   color=colors.BLACK,
+                                                                   font_family="RobotoSlab",
+                                                                   italic=True,
+                                                                   weight=FontWeight.W_500)
+                                                          ),
+                                                          Container(
+                                                              content=
+                                                              Text(value="This is the declined Reason",
+                                                                   size=14,
+                                                                   color=colors.BLACK,
+                                                                   font_family="RobotoSlab",
+                                                                   italic=True)
+                                                          )
+                                                      ]
+                                                  )
+
+                                              ),
+
                                               clinic_name,
 
                                               email,
@@ -520,7 +583,7 @@ class ClinicModifyDeclineDetails:
 
                                               Container(
                                                   margin=margin.only(top=10, bottom=20),
-                                                  content=TextButton(content=Text("Sign Up",
+                                                  content=TextButton(content=Text("Resubmit the details",
                                                                                   size=16,
                                                                                   font_family="RobotoSlab",
                                                                                   color=colors.WHITE,
@@ -532,7 +595,7 @@ class ClinicModifyDeclineDetails:
                                                                                            "": RoundedRectangleBorder(
                                                                                                radius=10)}),
 
-                                                                     on_click=addToDatabase
+                                                                     on_click=update_database
                                                                      )
                                               )
 
