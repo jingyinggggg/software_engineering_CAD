@@ -46,12 +46,13 @@ from doctorSetting import DoctorSettingPage
 from doctorPassword import DoctorPasswordPage
 from doctorAccountSetting import DoctorAccountSettingPage
 from doctorProfile import DoctorProfilePage
-from doctorViewStatus import DoctorViewStatus
+from prescriptionList import PrescriptionList
 from appointment import Appointment
 from doctorViewMedicalRecord import DoctorViewMedicalRecord
 from doctorViewMedicalRecordList import DoctorViewMedicalRecordList
 from doctorCallInterface import DoctorCallInterface
-
+from doctorGeneratePrescription import DoctorGeneratePrescription
+from editPrescription import EditPrescription
 
 # Clinic's interface
 from clinicSignUp import ClinicSignUpPage
@@ -105,8 +106,7 @@ def main(mainPage: Page):
         path(url="/viewDoctor/:user_id:doctor_id:previous_page", clear=False, view=ViewDoctorPage().view),
         path(url="/makeAppointment/:user_id:doctor_id:previous_page", clear=False, view=MakeAppointmentPage().view),
         path(url="/patientPrescription/:user_id", clear=False, view=PatientPrescriptionPage().view),
-        path(url="/viewPrescription/:user_id", clear=False, view=ViewPrescriptionPage().view),
-        # path(url="/viewPrescription/:prescription_id", clear=False, view=PatientPrescriptionPage().view),
+        path(url="/viewPrescription/:user_id/:prescription_id", clear=False, view=ViewPrescriptionPage().view),
         path(url="/healthTips/:user_id", clear=False, view=HealthTipsPage().view),
         path(url="/patientChatViewDoctor/:user_id", clear=False, view=PatientChatViewDoctorPage().view),
         path(url="/patientChat/:user_id:doctor_id", clear=False, view=PatientChatPage().view),
@@ -118,24 +118,27 @@ def main(mainPage: Page):
         # Doctor interface path
         path(url="/login/homepage/:user_id", clear=False, view=DoctorHomepage().view),
         path(url="/doctorNotification/:user_id", clear=False, view=DoctorNotification().view),
-        path(url="/history/:user_id/", clear=False, view=HistoryPage().view),
+        path(url="/history/:user_id", clear=False, view=HistoryPage().view),
         path(url="/schedule/:user_id", clear=False, view=Schedule().view),
         path(url="/appointmentDetail/:user_id:appointment_id", clear=False, view=AppointmentDetail().view),
         path(url="/chat/:user_id:patient_id", clear=False, view=Chat().view),
         path(url="/chat_info/:user_id:patient_id", clear=False, view=ChatInfo().view),
-        path(url="/prescription/:user_id:booking_id", clear=False, view=Prescription().view),
+        path(url="/prescription/:user_id/:prescription_id", clear=False, view=Prescription().view),
         path(url="/doctorSettingPage/:user_id", clear=False, view=DoctorSettingPage().view),
         path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
         path(url="/doctorAccountSetting/:user_id", clear=False, view=DoctorAccountSettingPage().view),
         path(url="/doctorPassword/:user_id", clear=False, view=DoctorPasswordPage().view),
         path(url="/doctorProfile/:user_id", clear=False, view=DoctorProfilePage().view),
-        path(url="/doctorViewStatus/:user_id", clear=False, view=DoctorViewStatus().view),
+        path(url="/prescriptionList/:user_id", clear=False, view=PrescriptionList().view),
         path(url="/appointment/:user_id", clear=False, view=Appointment().view),
         path(url="/doctorViewMedicalRecord/:medicalRecord_id:patient_id", clear=False,
              view=DoctorViewMedicalRecord().view),
         path(url="/doctorViewMedicalRecordList/:user_id:patient_id", clear=False,
              view=DoctorViewMedicalRecordList().view),
         path(url="/doctorCallInterface/:user_id:patient_id", clear=False, view=DoctorCallInterface().view),
+        path(url="/doctorGeneratePrescription/:user_id:booking_id", clear=False,
+             view=DoctorGeneratePrescription().view),
+        path(url="/editPrescription/:user_id/:prescription_id", clear=False, view=EditPrescription().view),
 
         # Clinic interface path
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),

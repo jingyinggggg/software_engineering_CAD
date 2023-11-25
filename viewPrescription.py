@@ -15,8 +15,8 @@ class ViewPrescriptionPage:
         pass
 
     def view(self, page: Page, params: Params, basket: Basket):
-        # prescription_id = int(params.prescription_id)
         user_id = int(params.user_id)
+        prescription_id = int(params.prescription_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -31,16 +31,32 @@ class ViewPrescriptionPage:
 
         blue = "#3386C5"
 
+        def get_prescription_details():
+            c = db.cursor()
+            c.execute(f"SELECT * FROM prescriptions INNER JOIN doctors ON doctors.id = prescriptions.doctorID WHERE prescriptions.prescriptionID = {prescription_id}")
+            record = c.fetchall()
+
+            patient_name = record[0][3]
+            medication = record[0][4]
+            quantity = record[0][5]
+            duration = record[0][6]
+            instructions = record[0][8]
+            doctor_name = record[0][11]
+            date_signed = record[0][7]
+
+            return patient_name,medication,quantity,duration,instructions,doctor_name,date_signed
+
+        patient_name, medication, quantity, duration, instructions, doctor_name, date_signed = get_prescription_details()
+
         name = TextField(
             label="Full Name",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            height=40,
             border_color=blue,
-            value="Patient Name",
+            value=patient_name,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -48,11 +64,10 @@ class ViewPrescriptionPage:
         )
 
         medical_name = TextField(
-            height=40,
             border_color=blue,
-            value="",
+            value=medication,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -60,11 +75,10 @@ class ViewPrescriptionPage:
         )
 
         dosage = TextField(
-            height=40,
             border_color=blue,
-            value="",
+            value=quantity,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -72,11 +86,10 @@ class ViewPrescriptionPage:
         )
 
         duration_treatment = TextField(
-            height=40,
             border_color=blue,
-            value="",
+            value=duration,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -88,11 +101,10 @@ class ViewPrescriptionPage:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            height=40,
             border_color=blue,
-            value="Doctor Name",
+            value=doctor_name,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -104,11 +116,10 @@ class ViewPrescriptionPage:
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            height=40,
             border_color=blue,
-            value="Date",
+            value=date_signed,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -116,11 +127,10 @@ class ViewPrescriptionPage:
         )
 
         instruction = TextField(
-            height=40,
             border_color=blue,
-            # value=fullName,
+            value=instructions,
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
+                                 color=colors.BLACK,
                                  weight=FontWeight.W_600,
                                  ),
             dense=True,
@@ -129,7 +139,7 @@ class ViewPrescriptionPage:
         )
 
         return View(
-            "/viewPrescription/:user_id",
+            "/viewPrescription/:user_id/:prescription_id",
             # "/viewPrescription/:prescription_id",
             controls=[
                 Container(width=350,
