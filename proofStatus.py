@@ -32,7 +32,7 @@ class ProofStatus:
 
         def get_request_proof():
             c = db.cursor()
-            c.execute("SELECT * FROM booking WHERE doctorID = ? AND proofStatus = ? ", (user_id, 0,))
+            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE booking.doctorID = ? AND proofStatus = ? ", (user_id, 0,))
             record = c.fetchall()
             return record
 
@@ -42,8 +42,8 @@ class ProofStatus:
             if records:
                 record_containers = []
                 for record in records:
-                    # def on_more_button_click(record_id=record[0]):
-                    #     return lambda _: page.go(f"/doctorGeneratePrescription/{user_id}{record_id}")
+                    def on_more_button_click(record_id=record[0]):
+                        return lambda _: page.go(f"/viewProof/{user_id}/{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -80,133 +80,7 @@ class ProofStatus:
                                                     Container(
                                                         margin=margin.only(left=-8),
                                                         content=Text(
-                                                            value=record[16],
-                                                            color=colors.BLACK,
-                                                            size=11,
-                                                            font_family="RobotoSlab",
-                                                            weight=FontWeight.W_600,  # Set the text to bold
-                                                            text_align=TextAlign.JUSTIFY,
-                                                        )
-                                                    )
-                                                ]
-                                            )
-                                        ),
-                                        Container(
-                                            margin=margin.only(bottom=-3),
-                                            width=220,
-                                            content=Text(
-                                                value=f"Appointment Date: {record[3]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(
-                                            width=220,
-                                            margin=margin.only(bottom=-3),
-                                            content=Text(
-                                                value=f"Appointment Time: {record[4]}",
-                                                color=colors.BLACK,
-                                                size=11,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        )
-                                    ]
-                                )
-                            ]
-                        ),
-
-                        # on_click=on_more_button_click()
-                    )
-                    record_containers.append(record_container)
-
-                return Column(controls=record_containers)
-
-            else:
-                return Container(
-                    padding=padding.only(top=140),
-                    content=Column(
-                        horizontal_alignment="center",
-                        controls=[
-                            Image(
-                                src="pic/icons8-proof-60.png",
-                                width=120,
-                                height=120
-                            ),
-
-                            Container(
-                                padding=padding.only(top=10, left=30, right=30),
-                                content=Text(
-                                    value="You do not have any submitted proof yet.",
-                                    text_align=TextAlign.CENTER,
-                                    size=12,
-                                    color=colors.BLACK,
-                                    font_family="RobotoSlab",
-                                    weight=FontWeight.W_500
-                                )
-                            ),
-
-                        ]
-                    )
-                )
-
-        def get_approved_proof():
-            c = db.cursor()
-            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE doctorID = ? AND proofStatus = ? ", (user_id, 1,))
-            record = c.fetchall()
-            # print(record)
-            return record
-
-        approve_proof = get_approved_proof()
-
-        def displayApprovedProof(records):
-            if records:
-                record_containers = []
-                for record in records:
-                    def on_more_button_click(booking_id=record[0][0]):
-                        return lambda _: page.go(f"/doctorGeneratePrescription/{user_id}{booking_id}")
-
-                    record_container = Container(
-                        margin=margin.only(left=15, right=15, top=20),
-                        border_radius=10,
-                        border=border.all(1, colors.BLACK),
-                        padding=padding.only(left=20, right=20, top=20, bottom=20),
-                        content=Row(
-                            controls=[
-                                Container(
-                                    padding=padding.only(top=-10),
-                                    content=Image(
-                                        src="pic/icons8-proof-60.png",
-                                        width=50,
-                                        height=50,
-                                    )
-
-                                ),
-
-                                Column(
-                                    controls=[
-                                        Container(
-                                            width=235,
-                                            content=Row(
-                                                controls=[
-                                                    Text(
-                                                        value="Patient Name: ",
-                                                        color=colors.BLACK,
-                                                        size=11,
-                                                        font_family="RobotoSlab",
-                                                        weight=FontWeight.W_500,
-                                                        text_align=TextAlign.JUSTIFY,
-                                                    ),
-
-                                                    Container(
-                                                        margin=margin.only(left=-8),
-                                                        content=Text(
-                                                            value=record[16],
+                                                            value=record[17],
                                                             color=colors.BLACK,
                                                             size=11,
                                                             font_family="RobotoSlab",
@@ -260,7 +134,7 @@ class ProofStatus:
                         horizontal_alignment="center",
                         controls=[
                             Image(
-                                src="pic/appointment_icon.png",
+                                src="pic/icons8-proof-60.png",
                                 width=120,
                                 height=120
                             ),
@@ -268,7 +142,7 @@ class ProofStatus:
                             Container(
                                 padding=padding.only(top=10, left=30, right=30),
                                 content=Text(
-                                    value="You do not have any completed appointment yet.",
+                                    value="You do not have any submitted proof yet.",
                                     text_align=TextAlign.CENTER,
                                     size=12,
                                     color=colors.BLACK,
@@ -281,20 +155,21 @@ class ProofStatus:
                     )
                 )
 
-        def get_rejected_proof():
+        def get_approved_proof():
             c = db.cursor()
-            c.execute("SELECT * FROM booking WHERE doctorID = ? AND proofStatus = ? ", (user_id, -1,))
+            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE doctorID = ? AND proofStatus = ? AND prescriptionStatus != NULL ", (user_id, 1,))
             record = c.fetchall()
+            # print(record)
             return record
 
-        rejected_proof = get_rejected_proof()
+        approve_proof = get_approved_proof()
 
-        def displayRejectedProof(records):
+        def displayApprovedProof(records):
             if records:
                 record_containers = []
                 for record in records:
-                    # def on_more_button_click(record_id=record[0]):
-                    #     return lambda _: page.go(f"/viewBooking/{user_id}{record_id}")
+                    def on_more_button_click(booking_id=record[0]):
+                        return lambda _: page.go(f"/viewProof/{user_id}/{booking_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -331,7 +206,7 @@ class ProofStatus:
                                                     Container(
                                                         margin=margin.only(left=-8),
                                                         content=Text(
-                                                            value=record[16],
+                                                            value=record[17],
                                                             color=colors.BLACK,
                                                             size=11,
                                                             font_family="RobotoSlab",
@@ -372,7 +247,131 @@ class ProofStatus:
                             ]
                         ),
 
-                        # on_click=on_more_button_click()
+                        on_click=on_more_button_click()
+                    )
+                    record_containers.append(record_container)
+
+                return Column(controls=record_containers)
+
+            else:
+                return Container(
+                    padding=padding.only(top=140),
+                    content=Column(
+                        horizontal_alignment="center",
+                        controls=[
+                            Image(
+                                src="pic/icons8-proof-60.png",
+                                width=120,
+                                height=120
+                            ),
+
+                            Container(
+                                padding=padding.only(top=10, left=30, right=30),
+                                content=Text(
+                                    value="You do not have any approved proof yet.",
+                                    text_align=TextAlign.CENTER,
+                                    size=12,
+                                    color=colors.BLACK,
+                                    font_family="RobotoSlab",
+                                    weight=FontWeight.W_500
+                                )
+                            ),
+
+                        ]
+                    )
+                )
+
+        def get_rejected_proof():
+            c = db.cursor()
+            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE doctorID = ? AND proofStatus = ? ", (user_id, -1,))
+            record = c.fetchall()
+            return record
+
+        rejected_proof = get_rejected_proof()
+
+        def displayRejectedProof(records):
+            if records:
+                record_containers = []
+                for record in records:
+                    def on_more_button_click(record_id=record[0]):
+                        return lambda _: page.go(f"/viewProof/{user_id}/{record_id}")
+
+                    record_container = Container(
+                        margin=margin.only(left=15, right=15, top=20),
+                        border_radius=10,
+                        border=border.all(1, colors.BLACK),
+                        padding=padding.only(left=20, right=20, top=20, bottom=20),
+                        content=Row(
+                            controls=[
+                                Container(
+                                    padding=padding.only(top=-10),
+                                    content=Image(
+                                        src="pic/icons8-proof-60.png",
+                                        width=50,
+                                        height=50,
+                                    )
+
+                                ),
+
+                                Column(
+                                    controls=[
+                                        Container(
+                                            width=235,
+                                            content=Row(
+                                                controls=[
+                                                    Text(
+                                                        value="Patient Name: ",
+                                                        color=colors.BLACK,
+                                                        size=11,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                    ),
+
+                                                    Container(
+                                                        margin=margin.only(left=-8),
+                                                        content=Text(
+                                                            value=record[17],
+                                                            color=colors.BLACK,
+                                                            size=11,
+                                                            font_family="RobotoSlab",
+                                                            weight=FontWeight.W_600,  # Set the text to bold
+                                                            text_align=TextAlign.JUSTIFY,
+                                                        )
+                                                    )
+                                                ]
+                                            )
+                                        ),
+                                        Container(
+                                            margin=margin.only(bottom=-3),
+                                            width=220,
+                                            content=Text(
+                                                value=f"Appointment Date: {record[3]}",
+                                                color=colors.BLACK,
+                                                size=11,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500,
+                                                text_align=TextAlign.JUSTIFY
+                                            )
+                                        ),
+
+                                        Container(
+                                            width=220,
+                                            margin=margin.only(bottom=-3),
+                                            content=Text(
+                                                value=f"Appointment Time: {record[4]}",
+                                                color=colors.BLACK,
+                                                size=11,
+                                                font_family="RobotoSlab",
+                                                weight=FontWeight.W_500,
+                                                text_align=TextAlign.JUSTIFY
+                                            )
+                                        )
+                                    ]
+                                )
+                            ]
+                        ),
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
