@@ -55,8 +55,12 @@ from doctorCallInterface import DoctorCallInterface
 from clinicSignUp import ClinicSignUpPage
 from addDoctorDetails import AddDoctorDetailsPage
 from clinicHomepage import ClinicHomepage
+from clinicProfile import ClinicProfile
 from clinicViewDoctorDetails import ClinicViewDoctorDetails
 from clinicModifyDeclineDetails import ClinicModifyDeclineDetails
+from clinicViewAppointment import ClinicViewAppointment
+from clinicViewPatient import ClinicViewPatient
+from createAdminAccount import CreateAdminAccount
 
 # Clinic admin interface
 from clinicAdminHomepage import AdminHomepage
@@ -129,8 +133,12 @@ def main(mainPage: Page):
         path(url="/clinicSignUp", clear=False, view=ClinicSignUpPage().view),
         path(url="/addDoctorDetails/:clinic_id", clear=False, view=AddDoctorDetailsPage().view),
         path(url="/clinicHomepage/:user_id", clear=False, view=ClinicHomepage().view),
+        path(url="/clinicProfile/:clinic_id", clear=False, view=ClinicProfile().view),
         path(url="/clinicViewDoctorDetails/:doctor_id:clinic_id", clear=False, view=ClinicViewDoctorDetails().view),
         path(url="/clinicModifyDeclineDetails/:clinic_id", clear=False, view=ClinicModifyDeclineDetails().view),
+        path(url="/clinicViewAppointment/:clinic_id", clear=False, view=ClinicViewAppointment().view),
+        path(url="/clinicViewPatient/:clinic_id", clear=False, view=ClinicViewPatient().view),
+        path(url="/createAdminAccount/:clinic_id", clear=False, view=CreateAdminAccount().view),
 
         # Clinic admin interface path
         path(url="/login/adminHomepage/:user_id", clear=False, view=AdminHomepage().view),

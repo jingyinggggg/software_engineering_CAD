@@ -7,30 +7,29 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
 
 
-# def addRow():
-#     try:
-#         cursor.execute(
-#             "INSERT INTO doctors (fullName, username, email, phoneNumber, password, experience, specialization, "
-#             "description, clinic, workingTime, workingDay, image, status)"
-#             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-#
-#             ("Johnson", "Johnson", "johnson@gmail.com", "0157778709", "123", "3 years experience",
-#              "Cardiologists",
-#              "Treat the patient this and that", "Bwell Clinic", "12:00pm - 5:00pm",
-#              "Tuesday to Saturday (except Thursday)",
-#              "pic/doctor.png",
-#              1)
-#         ),
-#         db.commit()
-#         print("1")
-#     except sqlite3.Error as e:
-#         print("SQLite error:", e)
+def addRow():
+    try:
+        cursor.execute(
+            "INSERT INTO doctors (fullName, username, email, clinicPhoneNumber, password, experience, specialization, "
+            "description, clinicID, workingTime, workingDay, image, STATUS)"
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 
+            ("Jamal O niel", "Jamal", "jamal@gmail.com", "0112345677", "123", "7 years experience",
+             "Cardiologists",
+             "Treat the patient this and that", 1, "12:00pm - 5:00pm",
+             "Tuesday to Saturday (except Thursday)",
+             "pic/doctor.png",
+             1)
+        ),
+        db.commit()
+    except sqlite3.Error as e:
+        print("SQLite error:", e)
+# addRow()
 
-def update_row():
-    c = db.cursor()
-    c.execute("UPDATE clinic SET approvalStatus = -1 WHERE id = ?", (1,))
-    db.commit()
+# def update_row():
+#     c = db.cursor()
+#     c.execute("UPDATE clinic SET approvalStatus =1 WHERE id = ?", (1,))
+#     db.commit()
 #
 #
 # def DeleteRow():
@@ -40,6 +39,7 @@ def update_row():
 #
 # DeleteRow()
 # update_row()
+
 
 class ClinicHomepage:
 
@@ -99,7 +99,7 @@ class ClinicHomepage:
 
         doctor_records = get_doctor_details()
 
-        def clinic_approval_status():
+        def display_approval_status():
             if approvalStatus == 0:
                 return Container(
                     width=300,
@@ -200,11 +200,12 @@ class ClinicHomepage:
 
         def clinic_decline_status():
             if approvalStatus == -1:
-                clinic_decline = Container(
+                return Container(
                     margin=margin.only(left=25),
                     content=Column(
                         controls=[
                             Container(
+                                margin=margin.only(top=5),
                                 content=Text(
                                     value="View Decline reason :",
                                     size=15,
@@ -218,6 +219,7 @@ class ClinicHomepage:
                             Container(
                                 width=200,
                                 height=40,
+                                margin=margin.only(top=5),
                                 alignment=alignment.center,
                                 content=Row(
                                     controls=[
@@ -246,13 +248,14 @@ class ClinicHomepage:
                                               right=BorderSide(1, colors.BLACK)
                                               ),
                                 border_radius=10,
-                                on_click=lambda _:page.go(f"/clinicModifyDeclineDetails/{clinic_id}")
+                                on_click=lambda _: page.go(f"/clinicModifyDeclineDetails/{clinic_id}")
                             ),
 
                         ]
                     )
                 )
-                return clinic_decline
+            else:
+                return Container()
 
         def get_doctor_status(doctor_status, doctor_id, doctor_name, doctor_specialization, clinic_id):
             if doctor_status == 1:
@@ -292,7 +295,6 @@ class ClinicHomepage:
                     )
                 )
 
-
         def display_doctor_list(records):
             if records:
                 record_containers = []
@@ -307,35 +309,163 @@ class ClinicHomepage:
                         margin=margin.only(left=25),
                         content=Column(
                             controls=[
-                                Container(
-                                    content=Text(
-                                        value="Doctor :",
-                                        size=15,
-                                        font_family="RobotoSlab",
-                                        color=dark_blue,
-                                        weight=FontWeight.BOLD,
-                                        text_align=TextAlign.LEFT,
-                                    ),
-                                ),
-
-                                Container(
-                                    content=Column(
-                                        controls=[
-                                          Container(
-                                              get_doctor_status(doctor_status, doctor_id
-                                                              , doctor_name, doctor_specialization
-                                                              , clinic_id),
-                                          ),
-                                        ]
-                                    )
-                                ),
-
+                              Container(
+                                  get_doctor_status(doctor_status, doctor_id,
+                                                    doctor_name, doctor_specialization,
+                                                    clinic_id),
+                              ),
                             ]
                         )
 
                     )
                     record_containers.append(record_container)
                 return Column(controls=record_containers)
+            else:
+                return Container()
+
+        def show_doctor():
+            if approvalStatus == 1:
+                return Container(
+                    content=Column(
+                        controls=[
+                            Container(
+                                margin=margin.only(left=25),
+                                content=Text(
+                                    value="Doctor :",
+                                    size=15,
+                                    font_family="RobotoSlab",
+                                    color=dark_blue,
+                                    weight=FontWeight.BOLD,
+                                    text_align=TextAlign.LEFT,
+                                ),
+                            ),
+                            display_doctor_list(doctor_records),
+                            Container(
+                                width=150,
+                                height=40,
+                                margin=margin.only(left=25),
+                                content=Row(
+                                    controls=[
+                                        Container(
+                                            content=IconButton(
+                                                icons.PERSON_ADD_ROUNDED,
+                                                icon_color=blue,
+                                                style=ButtonStyle(elevation={}),
+
+                                            ),
+                                        ),
+                                        Container(
+                                            content=Text(
+                                                value="Add A Doctor",
+                                                size=13,
+                                                color=colors.BLACK,
+                                                font_family="RobotoSlab",
+                                            ),
+
+                                        ),
+                                    ]
+                                ),
+                                border=Border(top=BorderSide(1, colors.BLACK),
+                                              left=BorderSide(1, colors.BLACK),
+                                              bottom=BorderSide(1,
+                                                                colors.BLACK),
+                                              right=BorderSide(1, colors.BLACK)
+                                              ),
+                                border_radius=10,
+                                on_click=lambda _: (
+                                    page.go(f"/addDoctorDetails/{clinic_id}")
+                                ),
+                            )
+                        ]
+                    )
+                )
+            else:
+                return Container()
+
+        def view_controls():
+            if approvalStatus == 1:
+                return [
+                    Container(padding=padding.only(top=10, left=25, bottom=10),
+                              content=TextButton(content=Text("View Patient",
+                                                              size=16,
+                                                              font_family="RobotoSlab",
+                                                              color="WHITE",
+                                                              text_align=TextAlign.CENTER),
+                                                 width=300,
+                                                 height=45,
+                                                 style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                   shape={"": RoundedRectangleBorder(radius=7)}),
+                                                 on_click=lambda _: page.go(f"/clinicViewPatient/{clinic_id}")
+                                                 )),
+                    Container(padding=padding.only(left=25, bottom=10),
+                              content=TextButton(content=Text("Create Account for Admin",
+                                                              size=16,
+                                                              font_family="RobotoSlab",
+                                                              color="WHITE",
+                                                              text_align=TextAlign.CENTER),
+                                                 width=300,
+                                                 height=45,
+                                                 style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                   shape={"": RoundedRectangleBorder(radius=7)}),
+                                                 on_click=lambda _: page.go(f"/createAdminAccount/{clinic_id}")
+                                                 )),
+                    Container(padding=padding.only(left=25, bottom=10),
+                              content=TextButton(content=Text("View Appointment",
+                                                              size=16,
+                                                              font_family="RobotoSlab",
+                                                              color="WHITE",
+                                                              text_align=TextAlign.CENTER),
+                                                 width=300,
+                                                 height=45,
+                                                 style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                   shape={"": RoundedRectangleBorder(radius=7)}),
+                                                 on_click=lambda _: page.go(f"/clinicViewAppointment/{clinic_id}")
+                                                 ))
+                ]
+            else:
+                return []
+
+        def sidebar_show_profile():
+            if approvalStatus == 1:
+                return Container(
+                        padding=padding.only(top=20, left=10, right=10),
+                        content=Column(
+                            controls=[
+                                Row(
+                                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                                    controls=[
+                                        Row(
+                                            controls=[
+                                                Icon(
+                                                    icons.ACCOUNT_CIRCLE_ROUNDED,
+                                                    size=20,
+                                                    color=grey
+                                                ),
+
+                                                Text(
+                                                    value="View Profile",
+                                                    size=12,
+                                                    color=colors.BLACK,
+                                                    text_align=TextAlign.LEFT,
+                                                    font_family="RobotoSlab",
+                                                )
+                                            ]
+                                        ),
+
+                                        Container(
+                                            content=Icon(
+                                                icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
+                                                size=14,
+                                                color=grey
+                                            ),
+                                            on_click=lambda _: page.go(f"/clinicProfile/{clinic_id}"),
+                                        )
+                                    ]
+                                )
+
+                            ]
+                        )
+                    )
             else:
                 return Container()
 
@@ -357,7 +487,6 @@ class ClinicHomepage:
                                             width=50,
                                             height=50
                                         ),
-
                                         Column(
                                             controls=[
                                                 Container(
@@ -394,44 +523,7 @@ class ClinicHomepage:
                                     ]
                                 ),
 
-                                Container(
-                                    padding=padding.only(top=20, left=10, right=10),
-                                    content=Column(
-                                        controls=[
-                                            Row(
-                                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                                controls=[
-                                                    Row(
-                                                        controls=[
-                                                            Icon(
-                                                                icons.SETTINGS,
-                                                                size=20,
-                                                                color=grey
-                                                            ),
-
-                                                            Text(
-                                                                value="Settings",
-                                                                size=12,
-                                                                color=colors.BLACK,
-                                                                text_align=TextAlign.LEFT,
-                                                                font_family="RobotoSlab",
-                                                            )
-                                                        ]
-                                                    ),
-
-                                                    Container(
-                                                        content=Icon(
-                                                            icons.KEYBOARD_ARROW_RIGHT_OUTLINED,
-                                                            size=14,
-                                                            color=grey
-                                                        )
-                                                    )
-                                                ]
-                                            )
-
-                                        ]
-                                    )
-                                ),
+                                sidebar_show_profile(),
 
                                 Container(
                                     padding=padding.only(top=20, left=10, right=10),
@@ -591,7 +683,7 @@ class ClinicHomepage:
 
                                                 ),
 
-                                                clinic_approval_status(),
+                                                display_approval_status(),
 
                                             ]
                                         )
@@ -599,46 +691,8 @@ class ClinicHomepage:
                                 ]
                             ),
                             clinic_decline_status(),
-                            display_doctor_list(doctor_records),
-
-                            Container(
-                                width=150,
-                                height=40,
-                                margin=margin.only(left=25),
-                                content=Row(
-                                    controls=[
-                                        Container(
-                                            content=IconButton(
-                                                icons.PERSON_ADD_ROUNDED,
-                                                icon_color=blue,
-                                                style=ButtonStyle(elevation={}),
-
-                                            ),
-
-                                        ),
-                                        Container(
-                                            content=Text(
-                                                value="Add A Doctor",
-                                                size=13,
-                                                color=colors.BLACK,
-                                                font_family="RobotoSlab",
-                                            ),
-
-                                        ),
-                                    ]
-                                ),
-                                border=Border(top=BorderSide(1, colors.BLACK),
-                                              left=BorderSide(1, colors.BLACK),
-                                              bottom=BorderSide(1,
-                                                                colors.BLACK),
-                                              right=BorderSide(1, colors.BLACK)
-                                              ),
-                                border_radius=10,
-                                on_click=lambda _: (
-                                    page.go(f"/addDoctorDetails/{clinic_id}")
-                                ),
-                            ),
-
+                            show_doctor(),
+                            *view_controls(),
                         ]
                     )
                 )

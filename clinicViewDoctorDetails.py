@@ -51,7 +51,7 @@ class ClinicViewDoctorDetails:
         def get_doctor_details():
             try:
                 cursor.execute("SELECT fullName, username, email, password, experience, "
-                               "specialization, description, workingTime, workingDay, nonWorkingDay,image "
+                               "specialization, description, workingTime, workingDay, image "
                                "FROM doctors WHERE id = ?", (doctor_id,))
                 doctor_records = cursor.fetchall()
 
@@ -64,14 +64,13 @@ class ClinicViewDoctorDetails:
                 doctor_desc = doctor_records[0][6]
                 doctor_working_time = doctor_records[0][7]
                 doctor_working_day = doctor_records[0][8]
-                doctor_non_working_day = doctor_records[0][9]
-                doctor_image = doctor_records[0][10]
+                doctor_image = doctor_records[0][9]
 
                 return (doctor_fullName, doctor_username,
                         doctor_email, doctor_password,
                         doctor_experience, doctor_specialization,
                         doctor_desc, doctor_working_time,
-                        doctor_working_day, doctor_non_working_day,
+                        doctor_working_day,
                         doctor_image)
 
             except sqlite3.Error as e:
@@ -81,10 +80,10 @@ class ClinicViewDoctorDetails:
          doctor_email, doctor_password,
          doctor_experience, doctor_specialization,
          doctor_desc, doctor_working_time,
-         doctor_working_day, doctor_non_working_day, doctor_image) = get_doctor_details()
+         doctor_working_day, doctor_image) = get_doctor_details()
 
         username = TextField(
-            label = "Doctor Username",
+            label="Doctor Username",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
@@ -258,36 +257,27 @@ class ClinicViewDoctorDetails:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
-            width=158,
             value=doctor_working_day,
             read_only=True
         )
 
-        non_working_day = TextField(
-            dense=True,
-            label="Non Working Day",
-            border_color=blue,
-            height=40,
+        doctor_image_textField = TextField(
+            label="Doctor Image",
+            width=230,
+            # value=f"{location_file}",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            text_style=TextStyle(color=grey,
-                                 size=12,
+            hint_text="Filename: clinic_name_doctor_name",
+            border_color=blue,
+            text_style=TextStyle(size=10,
+                                 color=colors.BLACK,
                                  font_family="RobotoSlab",
-                                 weight=FontWeight.W_500),
-            width=158,
-            value=doctor_non_working_day,
+                                 weight=FontWeight.W_500
+                                 ),
+            dense=True,
+            value=doctor_image,
             read_only=True
-        )
-
-        doctor_image_Field = Container(
-            height=80,
-            width=80,
-            border=border.all(1, "blue"),
-            border_radius=5,
-            content=Image(
-                src=doctor_image,
-            ),
         )
 
         return View(
@@ -298,7 +288,7 @@ class ClinicViewDoctorDetails:
                           bgcolor=colors.WHITE,
                           border_radius=30,
                           content=Column(
-                              scroll=True,
+                              scroll=ScrollMode.AUTO,
                               controls=[
                                   Container(width=350,
                                             height=70,
@@ -316,9 +306,9 @@ class ClinicViewDoctorDetails:
                                                               on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
                                                               ),
 
-                                                    Container(padding=padding.only(left=80, top=25),
+                                                    Container(padding=padding.only(left=30, top=25),
                                                               content=Text(
-                                                                  value="Add Doctor",
+                                                                  value="View Doctor Details",
                                                                   size=20,
                                                                   font_family="RobotoSlab",
                                                                   color=colors.WHITE,
@@ -363,27 +353,9 @@ class ClinicViewDoctorDetails:
 
                                               working_time,
 
-                                              Row(
-                                                  width=325,
-                                                  controls=[
-                                                      working_day,
-                                                      non_working_day
-                                                  ]
-                                              ),
+                                              working_day,
 
-                                              Column(
-                                                  controls=[
-                                                      Container(
-                                                          content=Text(
-                                                              "Doctor's image",
-                                                              font_family="RobotoSlab",
-                                                              size=12,
-                                                              color=colors.GREY_800
-                                                          )
-                                                      ),
-                                                      doctor_image_Field,
-                                                  ]
-                                              )
+                                              doctor_image_textField,
 
                                           ]
                                       )

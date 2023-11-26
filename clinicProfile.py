@@ -28,19 +28,7 @@ def createTable():
                      closed TEXT NOT NULL)""")
     db.commit()
 
-
-# def AddColumn():
-#     c = db.cursor()
-#     c.execute("ALTER TABLE clinic ADD COLUMN closed TEXT")
-#     db.commit()
-
-# def DropTable():
-#     c = db.cursor()
-#     c.execute('DROP TABLE clinic')
-#     db.commit()
-
-
-class ClinicModifyDeclineDetails:
+class ClinicProfile:
     def __init__(self):
         self.show_sidebar = False
 
@@ -425,7 +413,7 @@ class ClinicModifyDeclineDetails:
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
-            content=Text("You have successfully Resubmitted your details. Please wait for Approval!",
+            content=Text("You have successfully Updated your Profile!",
                          text_align=TextAlign.CENTER),
             actions=[TextButton("Done", on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}"))],
             actions_alignment=MainAxisAlignment.CENTER,
@@ -463,11 +451,11 @@ class ClinicModifyDeclineDetails:
                     cursor.execute(
                         "UPDATE clinic SET name = ?, email = ?, password = ?, location = ?, area = ?,"
                         "workingTime = ?, workingDay = ?, clinicDescription = ?, phoneNumber = ?,"
-                        "clinicImage = ?, mapImage = ?, environmentImage = ?, approvalStatus = ?, rejectReason = null "
+                        "clinicImage = ?, mapImage = ?, environmentImage = ?, rejectReason = null "
                         "WHERE id = ?",
                         (clinic_nameTextField.value, emailTextField.value, passwordTextField.value, clinic_locationTextField.value, clinic_areaDropDown.value,
                          working_timeTextField.value, working_dayTextField.value, descriptionTextField.value, phoneNumberTextField.value,
-                         "pic/"+clinic_image_textField.value, "pic/"+clinic_map_textField.value, "pic/"+clinic_environment_textField.value, 0,
+                         "pic/"+clinic_image_textField.value, "pic/"+clinic_map_textField.value, "pic/"+clinic_environment_textField.value,
                          clinic_id))
 
                     db.commit()
@@ -479,7 +467,7 @@ class ClinicModifyDeclineDetails:
                 print("SQLite error:", e)
 
         return View(
-            "/clinicModifyDeclineDetails/:clinic_id",
+            "/clinicProfile/:clinic_id",
             controls=[
                 Container(width=350,
                           height=700,
@@ -489,28 +477,35 @@ class ClinicModifyDeclineDetails:
                               horizontal_alignment=CrossAxisAlignment.CENTER,
                               scroll=ScrollMode.AUTO,
                               controls=[
-                                  Row(
-                                      vertical_alignment=CrossAxisAlignment.CENTER,
-                                      controls=[
-                                          Container(
-                                              margin=margin.only(left=10, top=20, bottom=10),
-                                              content=Image(src="pic/back.png",
-                                                            width=20,
-                                                            height=20),
-                                              alignment=alignment.top_left,
-                                              on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")),
+                                  Container(
+                                      width=350,
+                                      height=70,
+                                      bgcolor=blue,
+                                      alignment=alignment.top_center,
+                                      content=Row(
+                                          controls=[
+                                              Container(
+                                                  padding=padding.only(left=20, top=25),
+                                                  content=Image(
+                                                      src="pic/back.png",
+                                                      color=colors.WHITE,
+                                                      width=20,
+                                                      height=20),
+                                                  alignment=alignment.top_left,
+                                                  on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")),
 
-                                          Container(
-                                              margin=margin.only(top=20),
-                                              content=Text(value="View Reject Reason\nModify Clinic Details",
-                                                           size=18,
-                                                           color="#3386C5",
-                                                           font_family="RobotoSlab",
-                                                           italic=True,
-                                                           weight=FontWeight.W_500)
+                                              Container(
+                                                  padding=padding.only(top=5),
+                                                  content=Text(
+                                                      value="View Clinic Profile Details",
+                                                      size=20,
+                                                      font_family="RobotoSlab",
+                                                      color=colors.WHITE,
+                                                      text_align=TextAlign.CENTER, )
 
-                                          ),
-                                      ]
+                                              ),
+                                          ]
+                                      )
                                   ),
 
                                   Container(
@@ -522,21 +517,13 @@ class ClinicModifyDeclineDetails:
                                                       controls=[
                                                           Container(
                                                               content=
-                                                              Text(value="Rejected Reason -",
+                                                              Text(value="Clinic Details -",
                                                                    size=16,
                                                                    color=colors.BLACK,
                                                                    font_family="RobotoSlab",
                                                                    italic=True,
                                                                    weight=FontWeight.W_500)
                                                           ),
-                                                          Container(
-                                                              content=
-                                                              Text(value=reject_reason,
-                                                                   size=14,
-                                                                   color=colors.BLACK,
-                                                                   font_family="RobotoSlab",
-                                                                   italic=True)
-                                                          )
                                                       ]
                                                   )
 
@@ -568,7 +555,7 @@ class ClinicModifyDeclineDetails:
 
                                               Container(
                                                   margin=margin.only(top=10, bottom=20),
-                                                  content=TextButton(content=Text("Resubmit the details",
+                                                  content=TextButton(content=Text("Update Details",
                                                                                   size=16,
                                                                                   font_family="RobotoSlab",
                                                                                   color=colors.WHITE,
