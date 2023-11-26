@@ -75,7 +75,7 @@ class ClinicAdminPatientAppointmentList:
                                         spacing=2,
                                         controls=[
                                             Text(
-                                                value=f"Patient name: {records[16]}",
+                                                value=f"Patient name: {records[17]}",
                                                 color=colors.BLACK,
                                                 size=11,
                                                 weight=FontWeight.W_700,
@@ -85,7 +85,7 @@ class ClinicAdminPatientAppointmentList:
                                                 alignment=alignment.top_right,
                                                 content=
                                                 Text(
-                                                    value=f"Doctor {records[25]}",
+                                                    value=f"Doctor {records[26]}",
                                                     color=colors.BLACK,
                                                     weight=FontWeight.W_600,
                                                     size=12,

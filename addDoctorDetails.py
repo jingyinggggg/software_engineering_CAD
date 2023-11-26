@@ -10,6 +10,7 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
 
 
+
 def CreateTable():
     cursor.execute("""CREATE TABLE IF NOT EXISTS doctors(
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,6 +23,7 @@ def CreateTable():
                  specialization TEXT NOT NULL,
                  description TEXT NOT NULL,
                  clinicID INTEGER NOT NULL,
+                 workingStartTime TEXT NOT NULL,
                  workingTime TEXT NOT NULL,
                  workingDay TEXT NOT NULL,
                  image TEXT NOT NULL,
@@ -65,13 +67,15 @@ class AddDoctorDetailsPage:
 
         # CreateTable()
 
-        success_dialog = AlertDialog(
+        alert_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text(
-                "You have upload the doctor details successfully. Doctor will be able to log into their account after it is approved by admin. Please stay tuned to the doctor account approval status.",
+                "You have upload the doctor details successfully."
+                " Doctor will be able to log into their account after it is approved by admin. "
+                "Please stay tuned to the doctor account approval status.",
                 text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: close_dlg(success_dialog))],
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(alert_dialog))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
@@ -108,11 +112,11 @@ class AddDoctorDetailsPage:
                     "description, clinicID, workingTime, workingDay, nonWorkingDay, image, status)"
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                     (name.value, email.value, phoneNumber.value, experience.value + " years working experience",
-                     specialization.value,description.value, clinic_id, working_time.value, working_day.value,
-                     non_working_day.value, image_file.value,0)
+                     specialization.value, description.value, clinic_id, working_time.value, working_day.value,
+                     non_working_day.value, image_file.value, 0)
                 )
                 db.commit()
-                open_dlg(success_dialog)
+                open_dlg(alert_dialog)
             else:
                 open_dlg(error_dialog)
 
@@ -357,8 +361,6 @@ class AddDoctorDetailsPage:
             )
         )
 
-
-
         return View(
             "/addDoctorDetails/:clinic_id",
             controls=[
@@ -369,35 +371,38 @@ class AddDoctorDetailsPage:
                           # child control
                           content=Column(
                               # horizontal_alignment="center",
-                              scroll=True,
+                              scroll=ScrollMode.AUTO,
                               controls=[
-                                  Container(width=350,
-                                            height=70,
-                                            bgcolor=blue,
-                                            alignment=alignment.top_center,
-                                            content=Row(
-                                                controls=[
-                                                    Container(padding=padding.only(left=20, top=25),
-                                                              content=Image(
-                                                                  src="pic/back.png",
-                                                                  color=colors.WHITE,
-                                                                  width=20,
-                                                                  height=20
-                                                              ),
-                                                              on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
-                                                              ),
+                                  Container(
+                                      width=350,
+                                      height=70,
+                                      bgcolor=blue,
+                                      alignment=alignment.top_center,
+                                      content=Row(
+                                          controls=[
+                                              Container(
+                                                  padding=padding.only(left=20, top=25),
+                                                  content=Image(
+                                                      src="pic/back.png",
+                                                      color=colors.WHITE,
+                                                      width=20,
+                                                      height=20),
+                                                  alignment=alignment.top_left,
+                                                  on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
+                                              ),
 
-                                                    Container(padding=padding.only(left=80, top=25),
-                                                              content=Text(
-                                                                  value="Add Doctor",
-                                                                  size=20,
-                                                                  font_family="RobotoSlab",
-                                                                  color=colors.WHITE,
-                                                                  text_align=TextAlign.CENTER)
-                                                              ),
-                                                ]
-                                            )
-                                            ),
+                                              Container(
+                                                  padding=padding.only(left=80),
+                                                  content=Text(
+                                                      value="Add Doctor",
+                                                      size=20,
+                                                      font_family="RobotoSlab",
+                                                      color=colors.WHITE,
+                                                      text_align=TextAlign.CENTER)
+                                              ),
+                                          ]
+                                      )
+                                  ),
 
                                   Container(
                                       margin=margin.only(left=10, bottom=10, top=10),

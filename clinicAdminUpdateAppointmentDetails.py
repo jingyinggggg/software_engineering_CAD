@@ -124,7 +124,7 @@ class ClinicAdminUpdateAppointmentDetailsPage:
             c = db.cursor()
             if reject_reason.value != "":
                 c.execute(
-                    f"UPDATE booking SET proofStatus = ? AND proofRejectReason = ? WHERE bookingID = {booking_id}",
+                    f"UPDATE booking SET proofStatus = ?, proofRejectReason = ? WHERE bookingID = {booking_id}",
                     (-1,reject_reason.value))
                 db.commit()
                 updated = True

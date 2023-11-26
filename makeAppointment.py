@@ -24,7 +24,8 @@ def CreateTable():
                  proof TEXT,
                  proofStatus INTEGER,
                  proofRejectReason TEXT,
-                 reassignDoctorID INTEGER)""")
+                 reassignDoctorID INTEGER,
+                 prescriptionStatus INTEGER)""")
     db.commit()
 
 
@@ -110,7 +111,7 @@ class MakeAppointmentPage:
                             border=None,
                             alignment=alignment.center,
                             on_click=lambda control, date=day: self.date_clicked(date),
-                            content=Text(str(day), size=12, color=colors.BLACK),
+                            content=Text(str(day), size=12, color=colors.BLACK, weight=FontWeight.W_500),
                             margin=margin.only(right=10, bottom=-10),
                         )
 
@@ -125,7 +126,10 @@ class MakeAppointmentPage:
                         day_container.content.color = "#3386C5"
 
                     if day < current_date.day:
-                        day_container.disabled = True
+                        if day_container.content:
+                            # day_container.bgcolor = colors.GREY_800
+                            day_container.content.color = "#818589"
+                            day_container.disabled = True
 
                     week_container.controls.append(day_container)
 
@@ -374,15 +378,39 @@ class MakeAppointmentPage:
             open=True
         )
 
+        error_dialog = AlertDialog(
+            modal=False,
+            title=Text("Failes", text_align=TextAlign.CENTER),
+            content=Text(
+                f"Something went wrong! Please try again...",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=True
+        )
+
         def navigate_homepage():
             try:
                 page.go(f"/homepage/{user_id}")
+                self.chosen_date = None
+                self.selected_time_slot = None
+                page.update()
             except Exception as e:
                 print(f"Error navigating to homepage: {e}")
 
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
+            page.update()
+
+        def open_dlg1():
+            page.dialog = error_dialog
+            error_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = error_dialog
+            error_dialog.open = False
             page.update()
 
         def addToDatabase(e):
@@ -397,6 +425,13 @@ class MakeAppointmentPage:
                            clinic_id, reason_visit.value, "Requested",0))
                 db.commit()
                 open_dlg()
+            else:
+                open_dlg1()
+
+        def back_previous_page():
+            self.chosen_date = None
+            self.selected_time_slot = None
+            return page.go(f"/viewDoctor/{user_id}{doctor_id}{previous_page_route}")
 
         return View(
             "/makeAppointment/:user_id:doctor_id:previous_page",
@@ -423,8 +458,7 @@ class MakeAppointmentPage:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(
-                                                                  f"/viewDoctor/{user_id}{doctor_id}{previous_page_route}")
+                                                              on_click=lambda _: back_previous_page()
                                                               ),
 
                                                     Container(padding=padding.only(left=75, top=25),

@@ -9,7 +9,8 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 class AdminPatientRequestList:
     def __init__(self):
-        pass
+        self.availableDoctor = []
+        self.Doctor = ""
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
@@ -24,19 +25,35 @@ class AdminPatientRequestList:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        yes_dialog = AlertDialog(
+        submit_dialog = AlertDialog(
             modal=True,
             title=Text("Success"),
-            content=Text(f"You have scheduled the appointment successfully!"),
+            content=Text(f"You have accepted the appointment successfully!",text_align=TextAlign.JUSTIFY),
             actions=[
-                TextButton("Done", on_click=lambda _:page.go(f"/login/adminHomepage/{user_id}")),
+                TextButton("Done", on_click=lambda _: page.go(f"/login/adminHomepage/{user_id}")),
             ],
             actions_alignment=MainAxisAlignment.END,
         )
 
-        def open_dlg():
-            page.dialog = yes_dialog
-            yes_dialog.open = True
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed"),
+            content=Text(f"Something went wrong! Please make sure that you have filled in the reject reason and "
+                         f"reassign a new doctor."),
+            actions=[
+                TextButton("Done", on_click=lambda _: close_dlg(error_dialog)),
+            ],
+            actions_alignment=MainAxisAlignment.END,
+        )
+
+        def open_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+
+        def close_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
             page.update()
 
         a = "testing"
@@ -64,7 +81,7 @@ class AdminPatientRequestList:
             border_color=colors.BLACK,
             text_style=TextStyle(size=12,
                                  color=colors.BLACK,
-                                  weight=FontWeight.W_500),
+                                 weight=FontWeight.W_500),
             multiline=True
         )
 
@@ -76,14 +93,32 @@ class AdminPatientRequestList:
                 ("Scheduled", 1, bookingId)
             )
             db.commit()
-            open_dlg()
+            open_dlg(submit_dialog)
 
+        def SetOptionValue(change):
+            selected_option_value = available.value
+            if selected_option_value in self.availableDoctor:
+                self.Doctor = selected_option_value.split(".")[0]
+                # print(self.Doctor)
 
+        def update_booking_status_to_reject(bookingId):
+            c = db.cursor()
+            if reject_reason.value != "" and available.value is not None:
+                if available.value != "None":
+                    c.execute("UPDATE booking SET appointmentStatus = ?, bookingStatus = ?, rejectReason = ?, "
+                              "reassignDoctorID = ? WHERE bookingID = ?",
+                              ("Rejected", -1, reject_reason.value, self.Doctor, bookingId))
+                    db.commit()
+                    open_dlg(submit_dialog)
+                else:
+                    c.execute("UPDATE booking SET appointmentStatus = ?, bookingStatus = ?, rejectReason = ? "
+                              "WHERE bookingID = ?",
+                              ("Rejected", -1, reject_reason.value, bookingId))
+                    db.commit()
+                    open_dlg(submit_dialog)
+            else:
+                open_dlg(error_dialog)
 
-        # def update_booking_status_to_reject(recordID):
-        #     c = db.cursor()
-        #     c.execute("UPDATE booking SET appointmentStatus = ?, bookingStatus = ?, rejectReason = ?, "
-        #               "reassignDoctorID = ? WHERE bookingID = ?",("Rejected", -1, reject_reason.value, available.value, recordID))
 
         available = Dropdown(
             dense=True,
@@ -137,10 +172,14 @@ class AdminPatientRequestList:
                 available.options.clear()
 
                 if len(AvailableDoctorList) != 0:
+                    self.availableDoctor = []
                     available.options.append(dropdown.Option("None"))
                     for AvailableDoctorLists in AvailableDoctorList:
-                        available.options.append(dropdown.Option(AvailableDoctorLists[1]))
-                        # print(available.value)
+                        available.options.append(
+                            dropdown.Option(f"{AvailableDoctorLists[0]}. {AvailableDoctorLists[1]}"))
+                        self.availableDoctor.append(f"{AvailableDoctorLists[0]}. {AvailableDoctorLists[1]}")
+
+                    available.on_change = SetOptionValue
                 else:
                     available.options.append(dropdown.Option("None"))
 
@@ -201,7 +240,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=records[16], ),
+                                                                 value=records[17], ),
                                                             # Add more Text controls as needed
                                                         ),
                                                         Container(
@@ -215,7 +254,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=f"Dr. {records[25]}"),
+                                                                 value=f"Dr. {records[26]}"),
                                                             # Add more Text controls as needed
                                                         )
                                                     ]
@@ -355,7 +394,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=records[16], ),
+                                                                 value=records[17], ),
                                                             # Add more Text controls as needed
                                                         ),
                                                         Container(
@@ -369,7 +408,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=f"Dr. {records[25]}"),
+                                                                 value=f"Dr. {records[26]}"),
                                                             # Add more Text controls as needed
                                                         ),
 
@@ -425,7 +464,7 @@ class AdminPatientRequestList:
                                                                              "": RoundedRectangleBorder(
                                                                                  radius=7)}
                                                                          ),
-                                                       # on_click=update_booking_status_to_reject(record[0])
+                                                       on_click=lambda e: update_booking_status_to_reject(records[0])
                                                        )
                                 )
 
@@ -493,14 +532,14 @@ class AdminPatientRequestList:
                                                         height=100,
                                                         alignment=alignment.center,
                                                         content=Image(
-                                                            src="pic/male_patient.png" if records[21] == "Male" else "pic/female_patient.png",
+                                                            src="pic/male_patient.png" if records[23] == "Male" else "pic/female_patient.png",
                                                             width=65,
                                                         )
                                                     ),
                                                     Container(
                                                         alignment=alignment.bottom_center,
                                                         content=Text(
-                                                            value=records[16],
+                                                            value=records[17],
                                                             color=colors.BLACK,
                                                             size=12,
                                                             weight=FontWeight.W_600,
@@ -585,7 +624,7 @@ class AdminPatientRequestList:
                                                                     spacing=1.3,
                                                                     controls=[
                                                                         Text(
-                                                                            value=f"DR.{records[25]}",
+                                                                            value=f"Dr.{records[26]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,
@@ -603,25 +642,25 @@ class AdminPatientRequestList:
                                                                             weight=FontWeight.W_600,
                                                                         ),
                                                                         Text(
-                                                                            value=f"{records[21]}",
-                                                                            size=11,
-                                                                            color=colors.BLACK,
-                                                                            weight=FontWeight.W_600,
-                                                                        ),
-                                                                        Text(
-                                                                            value=f"{records[19]}",
-                                                                            size=11,
-                                                                            color=colors.BLACK,
-                                                                            weight=FontWeight.W_600,
-                                                                        ),
-                                                                        Text(
                                                                             value=f"{records[22]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,
                                                                         ),
                                                                         Text(
+                                                                            value=f"{records[20]}",
+                                                                            size=11,
+                                                                            color=colors.BLACK,
+                                                                            weight=FontWeight.W_600,
+                                                                        ),
+                                                                        Text(
                                                                             value=f"{records[23]}",
+                                                                            size=11,
+                                                                            color=colors.BLACK,
+                                                                            weight=FontWeight.W_600,
+                                                                        ),
+                                                                        Text(
+                                                                            value=f"{records[24]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,

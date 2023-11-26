@@ -472,12 +472,15 @@ class ProfilePage:
             return fullName, username, email, phoneNumber, password, dob, gender, address, emergencyContact
 
         def setTextFieldValue(textField, value):
-            if value != "":
+            if value is not None:
                 textField.value = value
 
         fullName, username, email, phoneNumber, password, dob, gender, address, emergencyContact = get_user_details()
 
-        dob_split = dob.split(" ")
+        if dob is not None:
+            dob_split = dob.split(" ")
+        else:
+            dob_split = ["","",""]
 
         def validate_day_input(value):
             try:
@@ -578,7 +581,7 @@ class ProfilePage:
         dobDayTextField = TextField(
             label="DOB (Day)",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=12,
+                                  size=10,
                                   color=colors.GREY_800),
             height=40,
             width=95,
@@ -603,7 +606,7 @@ class ProfilePage:
             dense=True,
             label="DOB (Month)",
             border_color=blue,
-            label_style=TextStyle(size=12,
+            label_style=TextStyle(size=10,
                                   weight=FontWeight.W_500,
                                   color=colors.GREY_800),
             hint_text="Month",
@@ -634,7 +637,7 @@ class ProfilePage:
         dobYearTextField = TextField(
             label="DOB (Year)",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=12,
+                                  size=10,
                                   color=colors.GREY_800),
             height=40,
             width=95,

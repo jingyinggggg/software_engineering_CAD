@@ -263,7 +263,7 @@ class PatientNotificationPage:
                                       margin=margin.only(bottom=10, left=10),
                                       alignment=alignment.top_left,
                                       content=Text(
-                                          value="Reminder (Upcoming Appointment)",
+                                          value="Reminder (Upcoming Appointment)" if len(notification_details) != 0 else "",
                                           size=16,
                                           font_family="RobotoSlab",
                                           color=colors.BLACK)

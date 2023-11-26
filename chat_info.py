@@ -44,11 +44,11 @@ class ChatInfo:
 
         def get_patient_name():
             c = db.cursor()
-            c.execute("SELECT fullName FROM users WHERE id = ?", (user_id,))
+            c.execute("SELECT fullName FROM users WHERE id = ?", (patient_id,))
             record = c.fetchone()
 
             name = record[0]
-            print(name)
+            # print(name)
             return name
 
         name = get_patient_name()
@@ -85,7 +85,7 @@ class ChatInfo:
                                         # width=220,
                                         content=Text(
                                             width=220,
-                                            value="Hi, Dr. Johnson, I am Ng Jing Ying who is a gastric person ...",
+                                            value=f"Hi, Dr. Johnson, I am {name} and I would like to ask you something...",
                                             size=12,
                                             text_align=TextAlign.JUSTIFY,
                                             color=colors.BLACK,

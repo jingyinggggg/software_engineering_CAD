@@ -6,15 +6,18 @@ import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
+
 class Prescription:
     def __init__(self):
-        self.selected_date = date.today()
-        self.show_confirmation = False
-        self.show_alert = False
+        pass
+        # self.selected_date = date.today()
+        # self.show_confirmation = False
+        # self.show_alert = False
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
-        booking_id = int(params.booking_id)
+        # booking_id = int(params.booking_id)
+        prescription_id = int(params.prescription_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -27,153 +30,108 @@ class Prescription:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        # Variables to store control values
-        # prescriptionID = int
-        # patientID = int
-        # bookingID = int
-        medicationName_value = ""
-        quantity_value = ""
-        duration_value = ""
-        instruction_value = ""
-        dateSigned = datetime.datetime.now().strftime('%Y-%m-%d')
-
-        def create_prescriptions_table():
+        def get_prescription_details(prescription_id):
             c = db.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS prescriptions (
-                    prescriptionID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    patientID INTEGER NOT NULL,
-                    bookingID INTEGER NOT NULL,
-                    patientName TEXT NOT NULL,
-                    medicationName TEXT NOT NULL,
-                    quantity TEXT NOT NULL,
-                    duration TEXT NOT NULL,
-                    date_signed DATE NOT NULL,
-                    instructions TEXT NOT NULL
-                )
-            ''')
-            db.commit()
+            c.execute(f"SELECT * FROM prescriptions WHERE prescriptionID = {prescription_id}")
+            prescription = c.fetchall()
 
-        # def DeleteRow():
-        #     c=db.cursor()
-        #     c.execute("DELETE FROM prescriptions WHERE id =?",(2,))
-        #     db.commit()
-        #
-        # DeleteRow()
+            # print(prescription[0])
 
-        def get_appointment_details():
-            c = db.cursor()
-            c.execute("SELECT booking.*, users.id, users.fullName FROM booking INNER JOIN users ON booking.patientID = users.id "
-                      "WHERE bookingID = ? AND doctorID = ?", (booking_id, user_id))
-            data = c.fetchall()
-            return data
+            patient_first_name = prescription[0][3].split()[-2:]
+            patient_last_name = prescription[0][3].split()[0]
+            prescription_id = prescription[0][0]
+            patient_id = prescription[0][2]
+            medication_name = prescription[0][4]
+            quantity = prescription[0][5]
+            duration = prescription[0][6]
+            date_signed = prescription[0][7]
+            instruction = prescription[0][8]
 
-        appointmentData = get_appointment_details()
-        patientID = appointmentData[0][15]
-        bookingID = appointmentData[0][0]
-        patientName = appointmentData[0][16]
-        patient_first_name = appointmentData[0][16].split()[-2:]
-        patient_last_name = appointmentData[0][16].split()[0]
+            # return prescription
+            return patient_first_name,patient_last_name,prescription_id,patient_id,medication_name,quantity,duration,date_signed,instruction
 
-        def update_database():
-            # Create the 'prescriptions' table if it doesn't exist
-            create_prescriptions_table()
+        patient_first_name,patient_last_name,prescription_id,patient_id,medication_name,quantity,duration,date_signed,instruction = get_prescription_details(prescription_id)
 
-            c = db.cursor()
+        def setTextFieldValue(textField, value):
+            if value != "":
+                textField.value = value
 
-            # # Print values for debugging
-            # print(f"patient_name: {patientName}")
-            # print(f"medication_name_value: {medicationName_value}")
-            # print(f"quantity_value: {quantity_value}")
-            # print(f"duration_value: {duration_value}")
-            # print(f"dateSigned: {dateSigned}")
-            # print(f"instruction_value: {instruction_value}")
+        paddingContainer = Container(padding=padding.only(bottom=1))
 
-            c.execute('''
-                INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration, dateSigned, instructions)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (patientID, bookingID, patientName, medicationName_value, quantity_value, duration_value, dateSigned, instruction_value))
-
-            db.commit()
-
-        def update():
-            c = db.cursor()
-            c.execute('''UPDATE ''')
-
-        def validate_all_fields(value1, value2, value3):
-            if value1 and value2 and value3:
-                return False  # All fields are not empty, validation successful
-            else:
-                return True
-
-        def close_error_dialog(_):
-            page.dialog = error_dialog
-            error_dialog.open = False
-            page.update()
-
-        error_dialog = AlertDialog(
-            modal=True,
-            title=Text("Alert", text_align=TextAlign.CENTER),
-            content=Text("Please enter all the field before submit.", text_align=TextAlign.CENTER),
-            actions=[TextButton("OK", on_click=close_error_dialog)],
-            actions_alignment=MainAxisAlignment.CENTER,
-            open=False
+        medicationName = TextField(
+            width=320,
+            read_only=True,
+            border_color=colors.BLUE,
+            hint_text="Example: Panadol",
+            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 weight=FontWeight.W_600,
+                                 ),
+            dense=True
         )
+        setTextFieldValue(medicationName, medication_name)
 
-        def open_error_dialog():
-            # error_dialog.content.text = message
-            page.dialog = error_dialog
-            error_dialog.open = True
-            page.update()
-
-        def close_alert_dialog(_):
-            page.dialog = alert_dialog
-            alert_dialog.open = False
-            # Trigger the navigation to the homepage
-            page.go(f"/login/homepage/{user_id}")
-
-        alert_dialog = AlertDialog(
-            modal=True,
-            title=Text("Alert", text_align=TextAlign.CENTER),
-            content=Text("Prescription generated successfully!",
-                         text_align=TextAlign.CENTER),
-            actions=[TextButton("OK", on_click=close_alert_dialog)],
-            actions_alignment=MainAxisAlignment.CENTER,
-            open=False
+        quantityTextField = TextField(
+            width=320,
+            read_only=True,
+            border_color=colors.BLUE,
+            hint_text="Example: 5mg",
+            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 weight=FontWeight.W_600,
+                                 ),
+            dense=True
         )
+        setTextFieldValue(quantityTextField, quantity)
 
-        def open_alert_dialog():
-            page.dialog = alert_dialog
-            # Show the success dialog
-            alert_dialog.open = True
-            page.update()
+        durationTextField = TextField(
+            width=320,
+            read_only=True,
+            border_color=colors.BLUE,
+            hint_text="Example: 1 month",
+            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 weight=FontWeight.W_600,
+                                 ),
+            dense=True
+        )
+        setTextFieldValue(durationTextField, duration)
 
-        def update_variable(value, variable_name):
-            nonlocal medicationName_value, quantity_value, duration_value, instruction_value
+        dateSignedTextField = TextField(
+            width=320,
+            read_only=True,
+            border_color=colors.BLUE,
+            hint_text="Example: 25/11/2023",
+            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 weight=FontWeight.W_600,
+                                 ),
+            # value=date_signed.strftime('%d/%m/%Y'),
+            dense=True
+        )
+        setTextFieldValue(dateSignedTextField, date_signed)
 
-            if variable_name == "medication_name":
-                medicationName_value = value
-            elif variable_name == "quantity":
-                quantity_value = value
-            elif variable_name == "duration":
-                duration_value = value
-            elif variable_name == "instruction":
-                instruction_value = value
-
-            page.update()
-
-        def on_generate_click():
-            # Validate all fields
-            if validate_all_fields(medicationName_value, quantity_value, duration_value):
-                open_error_dialog()
-            else:
-                # Update the database with the captured values
-                update_database()
-                # Show the success dialog
-                open_alert_dialog()
+        instructionTextField = TextField(
+            width=320,
+            multiline=True,
+            read_only=True,
+            border_color=colors.BLUE,
+            hint_text="Please take your medicine after meal.",
+            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            text_style=TextStyle(size=12,
+                                 color=colors.GREY_800,
+                                 weight=FontWeight.W_600,
+                                 ),
+            dense=True
+        )
+        setTextFieldValue(instructionTextField, instruction)
 
         return View(
-            "/prescription/:user_id:booking_id",
+            "/prescription/:user_id/:prescription_id",
             controls=[
                 Container(
                     width=350,
@@ -182,8 +140,9 @@ class Prescription:
                     border_radius=30,
                     # alignment=MainAxisAlignment.CENTER,
                     content=Column(
+                        scroll=True,
                         controls=[
-                            Row(alignment=MainAxisAlignment.CENTER,
+                            Row(alignment=MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
                                     Container(
                                         padding=padding.only(right=120),
@@ -198,14 +157,20 @@ class Prescription:
                                                           width=20,
                                                           height=20
                                                       ),
-                                                      on_click=lambda _: page.go(
-                                                          f"/login/homepage/{user_id}")),
-                                            Container(padding=padding.only(left=35),
-                                                      content=Text("Generate Prescription",
+                                                      on_click=lambda _: page.go(f"/prescriptionList/{user_id}")),
+                                            Container(padding=padding.only(left=50),
+                                                      content=Text("View Prescription",
                                                                    color="WHITE",
                                                                    text_align=TextAlign.CENTER,
                                                                    size=20,
-                                                                   font_family="RobotoSlab"))]
+                                                                   font_family="RobotoSlab")),
+                                            # Container(padding=padding.only(left=30),
+                                            #           content=Icon(icons.MODE_EDIT_OUTLINED,
+                                            #                        size=20,
+                                            #                        color=colors.WHITE),
+                                            #           on_click=lambda _: page.go(f"/editPrescription/{user_id}{booking_id}")
+                                            #           )
+                                        ]
                                         )
                                     )
                                 ]),
@@ -258,120 +223,64 @@ class Prescription:
                                             size=12,
                                             weight=FontWeight.W_600
                                         ),
-                                        Row(
-                                            alignment=MainAxisAlignment.START,
-                                            controls=[
-                                                TextField(
-                                                    value=medicationName_value,
-                                                    width=310,
-                                                    height=35,
-                                                    label_style=TextStyle(color="BLACK"),
-                                                    border_color=colors.BLACK,
-                                                    text_style=TextStyle(size=12, color=colors.BLACK),
-                                                    on_change=lambda event: update_variable(event.control.value,
-                                                                                            "medication_name")
-                                                )
-                                            ]
-                                        ),
+                                        medicationName,
+
                                         Text(
                                             "B: Quantity / Dosage Frequency",
                                             color="#666666",
                                             size=12,
                                             weight=FontWeight.W_600
                                         ),
-                                        Row(
-                                            alignment=MainAxisAlignment.START,
-                                            controls=[
-                                                TextField(
-                                                    value=quantity_value,
-                                                    width=310,
-                                                    height=35,
-                                                    label_style=TextStyle(color="BLACK"),
-                                                    border_color=colors.BLACK,
-                                                    text_style=TextStyle(size=12, color=colors.BLACK),
-                                                    on_change=lambda event: update_variable(event.control.value,
-                                                                                            "quantity")
-                                                )
-                                            ]
-                                        ),
+                                        quantityTextField,
+
                                         Text(
                                             "C: Duration of Treatment / Treatment Frequency",
                                             color="#666666",
                                             size=12,
                                             weight=FontWeight.W_600
                                         ),
-                                        Row(
-                                            alignment=MainAxisAlignment.START,
-                                            controls=[
-                                                TextField(
-                                                    value=duration_value,
-                                                    width=310,
-                                                    height=35,
-                                                    label_style=TextStyle(color="BLACK"),
-                                                    border_color=colors.BLACK,
-                                                    text_style=TextStyle(size=14, color=colors.BLACK),
-                                                    on_change=lambda event: update_variable(event.control.value,
-                                                                                            "duration"),
-                                                )
-                                            ]
-                                        ),
+                                        durationTextField,
+                                        paddingContainer,
+
                                         Text(
                                             "Date Signed",
                                             color="#666666",
                                             size=14,
                                             weight=FontWeight.BOLD
                                         ),
-                                        TextField(
-                                            label="Today's Date:",
-                                            width=310,
-                                            height=35,
-                                            label_style=TextStyle(color="BLACK"),
-                                            border_color=colors.BLACK,
-                                            text_style=TextStyle(size=12, color=colors.BLACK,
-                                                                 weight=FontWeight.W_600),
-                                            value=self.selected_date.strftime('%d/%m/%Y'),
-                                            read_only=True
-                                            # Display selected date in the TextField
-                                        ),
+                                        dateSignedTextField,
+                                        paddingContainer,
+
                                         Text(
                                             "Specific Instructions",
                                             color="#666666",
                                             size=14,
                                             weight=FontWeight.BOLD
                                         ),
-                                        Row(
-                                            alignment=MainAxisAlignment.START,
-                                            controls=[
-                                                TextField(
-                                                    value=instruction_value,
-                                                    multiline=True,
-                                                    width=310,
-                                                    label_style=TextStyle(color="BLACK"),
-                                                    border_color=colors.BLACK,
-                                                    text_style=TextStyle(size=12, color=colors.BLACK),
-                                                    on_change=lambda event: update_variable(event.control.value,
-                                                                                            "instruction")
-                                                )
-                                            ]
-                                        ),
-                                        Container(
-                                            padding=padding.only(left=70),
-                                            content=Column(
-                                                controls=[
-                                                    FilledButton(
-                                                        text="Generate",
-                                                        width=200,
-                                                        on_click=lambda _: on_generate_click()
-                                                    )
-                                                ]
-                                            )
-                                        )
+                                        instructionTextField,
+
+                                        Container(padding=padding.only(top=10, bottom=10),
+                                                  content=TextButton(content=Text("Edit",
+                                                                                  size=16,
+                                                                                  font_family="RobotoSlab",
+                                                                                  color="WHITE",
+                                                                                  text_align=TextAlign.CENTER),
+                                                                     width=320,
+                                                                     height=45,
+                                                                     style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                                       shape={
+                                                                                           "": RoundedRectangleBorder(
+                                                                                               radius=7)}
+                                                                                       ),
+                                                                     on_click=lambda _: page.go(
+                                                                         f"/editPrescription/{user_id}/{prescription_id}")
+                                                                     ),
+
+                                                  ),
                                     ]
                                 )
                             )
                         ]
                     )
-                ),
-                alert_dialog,
-                error_dialog
+                )
             ])

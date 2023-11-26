@@ -28,18 +28,9 @@ class Chat:
         blue = "#3386C5"
         grey = "#71839B"
 
-        def get_doctor_details():
-            c = db.cursor()
-            c.execute("SELECT doctorID, doctors.fullName from booking INNER JOIN doctors ON booking.doctorID = doctors.id WHERE doctors.id = ?", (user_id,))
-            record = c.fetchall()
-
-            return record
-
-        doctor = get_doctor_details()
-
         def get_patient_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName FROM users WHERE id = ?", (patient_id,))
+            c.execute("SELECT id, fullName FROM users")
             record = c.fetchall()
             return record
 
@@ -50,7 +41,7 @@ class Chat:
                 record_containers = []
                 for record in records:
                     def chat_button_click(record_id=record[0]):
-                        # print("123")
+                        # print(record_id)
                         return lambda _: page.go(f"/chat_info/{user_id}{record_id}")
 
                     record_container = Container(
@@ -74,6 +65,7 @@ class Chat:
 
                                 Container(
                                     # margin=margin.only(top=10),
+                                    alignment=alignment.top_right,
                                     content=Column(
                                         controls=[
                                             Text(
@@ -81,30 +73,8 @@ class Chat:
                                                 size=14,
                                                 font_family="RobotoSlab",
                                                 weight=FontWeight.W_600,
-                                                color=colors.BLACK
-                                            ),
-
-                                            Row(
-                                                controls=[
-                                                    Text(
-                                                        value="🩺",
-                                                        size=10
-                                                    ),
-
-                                                    Container(
-                                                        width=170,
-                                                        content=Text(
-                                                            value=f"Dr. {doctor[0][1]}",
-                                                            size=10,
-                                                            font_family="RobotoSlab",
-                                                            color=grey,
-                                                            text_align=TextAlign.JUSTIFY
-
-                                                        )
-                                                    )
-
-                                                ]
-
+                                                color=colors.BLACK,
+                                                width=180
                                             ),
                                         ]
                                     )

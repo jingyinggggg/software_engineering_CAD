@@ -51,7 +51,10 @@ class AccountSettingPage:
 
         fullName, username, email, phoneNumber, password, dob, gender, address, emergencyContact = get_user_details()
 
-        dob_split = dob.split(" ")
+        if dob is not None:
+            dob_split = dob.split(" ")
+        else:
+            dob_split = ["", "", ""]
 
         def validate_day_input(value):
             try:
@@ -147,27 +150,10 @@ class AccountSettingPage:
 
         setTextFieldValue(phoneNumberTextField, phoneNumber)
 
-        # dobTextField = TextField(
-        #     label="Date Of Birth",
-        #     label_style=TextStyle(font_family="RobotoSlab",
-        #                           size=12,
-        #                           color=colors.GREY_800),
-        #     border_color=blue,
-        #     hint_text="Example: 26 October 2003",
-        #     hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-        #     text_style=TextStyle(size=12,
-        #                          color=colors.GREY_800,
-        #                          weight=FontWeight.W_600,
-        #                          ),
-        #     dense=True
-        # )
-        #
-        # setTextFieldValue(dobTextField, dob)
-
         dobDayTextField = TextField(
             label="DOB (Day)",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=12,
+                                  size=10,
                                   color=colors.GREY_800),
             height=40,
             width=102,
@@ -192,7 +178,7 @@ class AccountSettingPage:
             dense=True,
             label="DOB (Month)",
             border_color=blue,
-            label_style=TextStyle(size=12,
+            label_style=TextStyle(size=10,
                                   weight=FontWeight.W_500,
                                   color=colors.GREY_800),
             hint_text="Month",
@@ -223,7 +209,7 @@ class AccountSettingPage:
         dobYearTextField = TextField(
             label="DOB (Year)",
             label_style=TextStyle(font_family="RobotoSlab",
-                                  size=12,
+                                  size=10,
                                   color=colors.GREY_800),
             height=40,
             width=102,
@@ -242,19 +228,25 @@ class AccountSettingPage:
 
         setTextFieldValue(dobYearTextField, dob_split[2])
 
-        genderTextField = TextField(
+        genderTextField = Dropdown(
+            height=40,
+            dense=True,
             label="Gender",
-            label_style=TextStyle(font_family="RobotoSlab",
-                                  size=12,
-                                  color=colors.GREY_800),
             border_color=blue,
-            hint_text="Example: Female",
-            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+            label_style=TextStyle(size=12,
+                                  weight=FontWeight.W_500,
+                                  color=colors.GREY_800),
+            hint_text="Please select your gender",
+            hint_style=TextStyle(color=grey,
+                                 size=12,
+                                 italic=True),
+            options=[
+                dropdown.Option("Male"),
+                dropdown.Option("Female"),
+            ],
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
-                                 weight=FontWeight.W_600,
-                                 ),
-            dense=True
+                                 color=grey,
+                                 weight=FontWeight.W_500),
         )
 
         setTextFieldValue(genderTextField, gender)

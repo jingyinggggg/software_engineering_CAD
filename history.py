@@ -18,7 +18,7 @@ class HistoryPage:
         FROM booking
         INNER JOIN users
         ON booking.patientID = users.id
-        WHERE users.id = ? AND booking.bookingStatus = 2;
+        WHERE booking.doctorID = ? AND booking.bookingStatus = 2;
         '''
         c.execute(sql, (user_id,))
         result = c.fetchall()
@@ -85,7 +85,7 @@ class HistoryPage:
                     print(patient)
 
                     def on_more_button_click(record_id=patient[4]):
-                        return lambda _: page.go(f"/appointmentDetail/{user_id}{record_id}")
+                        return lambda _: page.go(f"/historyDetail/{user_id}{record_id}")
 
                     record_container = Container(
                         alignment=alignment.center,
