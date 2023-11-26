@@ -33,7 +33,7 @@ class ViewDoctorPage:
         def get_doctor_details():
             c = db.cursor()
             c.execute("SELECT fullName, email, clinicPhoneNumber, experience, specialization, description, clinicID, "
-                      "workingTime, workingDay, image  FROM doctors WHERE id = ?", (doctor_id,))
+                      "workingTime, workingDay, image, nonWorkingDay  FROM doctors WHERE id = ?", (doctor_id,))
             record = c.fetchall()
             return record
 
@@ -54,6 +54,7 @@ class ViewDoctorPage:
             if records:
                 record_containers = []
                 for record in records:
+
                     record_container = Column(
                         horizontal_alignment="center",
                         controls=[
@@ -194,7 +195,7 @@ class ViewDoctorPage:
 
                                                             Container(
                                                                 content=Text(
-                                                                    value=f"{record[8]}",
+                                                                    value=f"{record[8]} (Except {record[10]})" if record[10] != "None" else record[8],
                                                                     size=12,
                                                                     font_family="RobotoSlab",
                                                                     color=colors.BLACK,

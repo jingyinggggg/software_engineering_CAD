@@ -66,16 +66,17 @@ class ClinicProfile:
             image = clinic_record[0][10]
             map_image = clinic_record[0][11]
             environment_image = clinic_record[0][12]
-            reject_reason = clinic_record[0][14]
+            reject_reason = clinic_record[0][15]
+            closed = clinic_record[0][14]
 
             return (name, email, password, location, area, working_time,
                     working_day, desc, phone_no, image, map_image,
-                    environment_image, reject_reason)
+                    environment_image, reject_reason, closed)
 
         (clinic_name, clinic_email, clinic_password,
          clinic_location, clinic_area, clinic_working_time,
          clinic_working_day, clinic_desc, clinic_phone_no,
-         clinic_image, clinic_map_image, clinic_environment, reject_reason,) = get_clinic_details()
+         clinic_image, clinic_map_image, clinic_environment, reject_reason,closed) = get_clinic_details()
 
         def setTextFieldValue(textField, value):
             if value != "":
@@ -171,6 +172,33 @@ class ClinicProfile:
         )
 
         setTextFieldValue(working_dayTextField, clinic_working_day)
+
+        clinic_closed = Dropdown(
+            dense=True,
+            label="Clinic Closed",
+            border_color=blue,
+            height=40,
+            label_style=TextStyle(font_family="RobotoSlab",
+                                  size=12,
+                                  color=colors.GREY_800),
+            options=[
+                dropdown.Option("None"),
+                dropdown.Option("Monday"),
+                dropdown.Option("Tuesday"),
+                dropdown.Option("Wednesday"),
+                dropdown.Option("Thursday"),
+                dropdown.Option("Friday"),
+                dropdown.Option("Saturday"),
+                dropdown.Option("Sunday"),
+            ],
+            text_style=TextStyle(color=grey,
+                                 size=12,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
+            width=158,
+        )
+
+        setTextFieldValue(clinic_closed,closed)
 
         working_timeTextField = TextField(
             label="Working Time",
@@ -451,11 +479,11 @@ class ClinicProfile:
                     cursor.execute(
                         "UPDATE clinic SET name = ?, email = ?, password = ?, location = ?, area = ?,"
                         "workingTime = ?, workingDay = ?, clinicDescription = ?, phoneNumber = ?,"
-                        "clinicImage = ?, mapImage = ?, environmentImage = ?, rejectReason = null "
+                        "clinicImage = ?, mapImage = ?, environmentImage = ?, rejectReason = null, closed = ? "
                         "WHERE id = ?",
                         (clinic_nameTextField.value, emailTextField.value, passwordTextField.value, clinic_locationTextField.value, clinic_areaDropDown.value,
                          working_timeTextField.value, working_dayTextField.value, descriptionTextField.value, phoneNumberTextField.value,
-                         "pic/"+clinic_image_textField.value, "pic/"+clinic_map_textField.value, "pic/"+clinic_environment_textField.value,
+                         "pic/"+clinic_image_textField.value, "pic/"+clinic_map_textField.value, "pic/"+clinic_environment_textField.value,clinic_closed.value,
                          clinic_id))
 
                     db.commit()
@@ -539,7 +567,13 @@ class ClinicProfile:
 
                                               clinic_areaDropDown,
 
-                                              working_dayTextField,
+                                              Row(
+                                                  controls=[
+                                                      working_dayTextField,
+
+                                                      clinic_closed
+                                                  ]
+                                              ),
 
                                               working_timeTextField,
 

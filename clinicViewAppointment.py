@@ -47,7 +47,7 @@ class ClinicViewAppointment:
             patient_containers = []
             for appointment in appointments:
                 patient_container = Container(
-                    margin=margin.only(left=10),
+                    margin=margin.only(left=10, right=10),
                     width=330,
                     border_radius=10,
                     border=border.all(1, color=blue),
@@ -71,7 +71,7 @@ class ClinicViewAppointment:
                                             alignment=MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
                                                 Text("Patient Name", color="BLACK", size=12, weight=FontWeight.BOLD,
-                                                     width=100),
+                                                     width=90),
                                                 Text(" :   ", color="BLACK", size=12),
                                                 Text(value=appointment[4], color="BLACK", size=12,
                                                      text_align=TextAlign.JUSTIFY,
@@ -85,7 +85,7 @@ class ClinicViewAppointment:
                                             alignment=MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
                                                 Text("Gender", color="BLACK", size=12, weight=FontWeight.BOLD,
-                                                     width=100),
+                                                     width=90),
                                                 Text(" :   ", color="BLACK", size=12),
                                                 Text(value=appointment[5], color="BLACK", size=12,
                                                      text_align=TextAlign.JUSTIFY,
@@ -99,11 +99,11 @@ class ClinicViewAppointment:
                                             alignment=MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
                                                 Text("Reason Visit", color="BLACK", size=12, weight=FontWeight.BOLD,
-                                                     width=100),
+                                                     width=90),
                                                 Text(" :   ", color="BLACK", size=12),
                                                 Text(value=appointment[2], color="BLACK", size=12,
                                                      text_align=TextAlign.JUSTIFY,
-                                                     weight=FontWeight.W_600, width=160)
+                                                     weight=FontWeight.W_600, width=110)
                                             ]
                                         )
                                     ),
@@ -112,8 +112,9 @@ class ClinicViewAppointment:
                                         content=Row(
                                             alignment=MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
-                                                Text("Appointment Status", color="BLACK", size=12, weight=FontWeight.BOLD,
-                                                     width=100),
+                                                Text("Appointment Status", color="BLACK", size=12,
+                                                     weight=FontWeight.BOLD,
+                                                     width=90),
                                                 Text(" :   ", color="BLACK", size=12),
                                                 Text(value=appointment[3], color="BLACK", size=12,
                                                      text_align=TextAlign.JUSTIFY,
@@ -122,12 +123,13 @@ class ClinicViewAppointment:
                                         )
                                     ),
                                     Container(
-                                        padding=padding.only(left=10, right=20, bottom=10),  # Add padding to the entire container
+                                        padding=padding.only(left=10, right=20, bottom=10),
+                                        # Add padding to the entire container
                                         content=Row(
                                             alignment=MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
                                                 Text("Doctor name", color="BLACK", size=12, weight=FontWeight.BOLD,
-                                                     width=100),
+                                                     width=90),
                                                 Text(" :   ", color="BLACK", size=12),
                                                 Text(value=appointment[6], color="BLACK", size=12,
                                                      weight=FontWeight.W_600,
@@ -155,35 +157,106 @@ class ClinicViewAppointment:
                         scroll=ScrollMode.AUTO,
                         controls=[
                             Row(
-                                alignment=MainAxisAlignment.CENTER,
                                 controls=[
-                                    Container(
-                                        padding=padding.only(right=120),
-                                        width=350,
-                                        height=80,
-                                        bgcolor="#3386C5",
-                                        content=Row(controls=[
-                                            Container(padding=padding.only(left=10, top=5),
-                                                      content=Image(
-                                                          src="pic/back.png",
-                                                          color=colors.WHITE,
-                                                          width=20,
-                                                          height=20
+                                    Container(width=350,
+                                              height=70,
+                                              bgcolor=blue,
+                                              alignment=alignment.top_center,
+                                              content=Row(
+                                                  width=340,
+                                                  alignment="spaceBetween",
+                                                  controls=[
+                                                      Container(
+                                                          padding=padding.only(left=10, top=15),
+                                                          content=Image(
+                                                              src="pic/back.png",
+                                                              color=colors.WHITE,
+                                                              width=20,
+                                                              height=20
+                                                          ),
+                                                          on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
                                                       ),
-                                                      on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")),
-                                            Container(padding=padding.only(left=60),
-                                                      content=Text("Appointment List",
-                                                                   color="WHITE",
-                                                                   text_align=TextAlign.CENTER,
-                                                                   size=20,
-                                                                   font_family="RobotoSlab"
-                                                                   ))
-                                        ])
 
-                                    )
+                                                      Container(
+                                                          padding=padding.only(top=15),
+                                                          content=Text("Appointment List",
+                                                                       color="WHITE",
+                                                                       text_align=TextAlign.CENTER,
+                                                                       size=20,
+                                                                       font_family="RobotoSlab"
+                                                                       )
+                                                                       ),
+
+                                                      Container(
+                                                          padding=padding.only(top=15),
+                                                          content=IconButton(
+                                                              icons.ADD_CHART,
+                                                              icon_size=25,
+                                                              icon_color=colors.WHITE,
+                                                              on_click=lambda _: page.go(
+                                                                  f"/clinicViewAppointmentChart/{clinic_id}"),
+
+                                                          ),
+                                                      ),
+                                                  ]
+                                              ))
                                 ]
-                            ),
+                            )
+
+                            # Row(
+                            #     alignment=MainAxisAlignment.CENTER,
+                            #     controls=[
+                            #         Container(
+                            #             padding=padding.only(right=120),
+                            #             width=350,
+                            #             height=80,
+                            #             bgcolor="#3386C5",
+                            #             content=Row(
+                            #                 width=340,
+                            #                 alignment="center",
+                            #                 controls=[
+                            #                     Container(
+                            #                         padding=padding.only(left=10, top=5),
+                            #                         content=Image(
+                            #                             src="pic/back.png",
+                            #                             color=colors.WHITE,
+                            #                             width=20,
+                            #                             height=20
+                            #                         ),
+                            #                         on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
+                            #                     ),
+                            #
+                            #                     Container(
+                            #                         padding=padding.only(left=0),
+                            #                         content=Text("Appointment List",
+                            #                                      color="WHITE",
+                            #                                      text_align=TextAlign.CENTER,
+                            #                                      size=20,
+                            #                                      font_family="RobotoSlab"
+                            #                                      )
+                            #                                      ),
+                            #                     Container(
+                            #                         # padding=padding.only(left=20),
+                            #                         content=IconButton(
+                            #                             icons.ADD_CHART,
+                            #                             icon_size=25,
+                            #                             icon_color=colors.WHITE,
+                            #                             on_click=lambda _: page.go(
+                            #                                 f"/clinicViewAppointmentChart/{clinic_id}"),
+                            #
+                            #                         ),
+                            #                     )
+                            #                 ])
+                            #
+                            #         )
+                            #     ]
+                            # )
+                            ,
                             display_patient(appointments),
+
+                            Container(
+                                margin=margin.only(bottom=20)
+                            )
                         ])
                 )
             ])

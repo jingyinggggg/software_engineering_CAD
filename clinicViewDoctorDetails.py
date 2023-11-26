@@ -51,7 +51,7 @@ class ClinicViewDoctorDetails:
         def get_doctor_details():
             try:
                 cursor.execute("SELECT fullName, username, email, password, experience, "
-                               "specialization, description, workingTime, workingDay, image "
+                               "specialization, description, workingTime, workingDay, image, nonWorkingDay "
                                "FROM doctors WHERE id = ?", (doctor_id,))
                 doctor_records = cursor.fetchall()
 
@@ -65,13 +65,14 @@ class ClinicViewDoctorDetails:
                 doctor_working_time = doctor_records[0][7]
                 doctor_working_day = doctor_records[0][8]
                 doctor_image = doctor_records[0][9]
+                nonWorkingDay = doctor_records[0][10]
 
                 return (doctor_fullName, doctor_username,
                         doctor_email, doctor_password,
                         doctor_experience, doctor_specialization,
                         doctor_desc, doctor_working_time,
                         doctor_working_day,
-                        doctor_image)
+                        doctor_image,nonWorkingDay)
 
             except sqlite3.Error as e:
                 print("SQLite error:", e)
@@ -80,7 +81,7 @@ class ClinicViewDoctorDetails:
          doctor_email, doctor_password,
          doctor_experience, doctor_specialization,
          doctor_desc, doctor_working_time,
-         doctor_working_day, doctor_image) = get_doctor_details()
+         doctor_working_day, doctor_image,nonWorkingDay) = get_doctor_details()
 
         username = TextField(
             label="Doctor Username",
@@ -257,7 +258,8 @@ class ClinicViewDoctorDetails:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
-            value=doctor_working_day,
+            value=f"{doctor_working_day} (Except {nonWorkingDay})" if nonWorkingDay != "None" else doctor_working_day,
+            # value=doctor_working_day,
             read_only=True
         )
 
@@ -355,7 +357,35 @@ class ClinicViewDoctorDetails:
 
                                               working_day,
 
-                                              doctor_image_textField,
+                                              # doctor_image_textField,
+
+                                              Container(
+                                                  margin=margin.only(top=20),
+                                                  alignment=alignment.top_left,
+                                                  content=
+                                                  Text(
+                                                      "Doctor Image",
+                                                      color=colors.BLACK,
+                                                      size=14,
+                                                      italic=True,
+                                                      font_family="RobotoSlab",
+                                                      weight=FontWeight.W_500)
+                                              ),
+
+                                              Container(
+                                                  margin=margin.only(bottom=20),
+                                                  padding=padding.only(left=10, right=10, top=10, bottom=10),
+                                                  border_radius=0,
+                                                  # width=320,
+                                                  border=border.all(2, "#D3D3D3"),
+                                                  content=Column(
+                                                      controls=[
+                                                          Image(
+                                                              src=f"{doctor_image}"
+                                                          )
+                                                      ]
+                                                  )
+                                              )
 
                                           ]
                                       )

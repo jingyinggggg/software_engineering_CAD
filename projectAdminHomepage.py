@@ -161,7 +161,7 @@ class ProjectAdminHomepage:
                             Container(
                                 padding=padding.only(top=10, left=30, right=30),
                                 content=Text(
-                                    value="You do not have any clinic request yet.",
+                                    value="The system do not have any clinic request yet.",
                                     text_align=TextAlign.CENTER,
                                     size=12,
                                     color=colors.BLACK,

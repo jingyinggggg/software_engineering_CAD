@@ -45,61 +45,75 @@ class ClinicViewAppointmentChart:
         formatted_start_date = start_of_week.strftime("%d %B %Y")
         formatted_end_date = end_of_week.strftime("%d %B %Y")
 
-        def get_requested_appointment(start_date, end_date):
+        print(formatted_start_date)
+        print(formatted_end_date)
+        print(clinic_id)
+
+        def get_requested_appointment():
             c = db.cursor()
             c.execute(
-                f"SELECT COUNT(*) FROM booking WHERE (appointmentDate BETWEEN ? AND ?) AND bookingStatus = ? AND clinicID = ?",
-                (start_date, end_date, 0, clinic_id))
+                f"SELECT COUNT(*) FROM booking WHERE bookingStatus = ? AND clinicID = ?",
+                (0, clinic_id))
             record = c.fetchone()
+
+            print(record)
 
             if record:
                 requested_count = record[0]
+            else:
+                requested_count = 0
 
             return requested_count
 
-        requested_count = get_requested_appointment(formatted_start_date, formatted_end_date)
+        requested_count = get_requested_appointment()
 
-        def get_scheduled_appointment(start_date, end_date):
+        def get_scheduled_appointment():
             c = db.cursor()
             c.execute(
-                f"SELECT COUNT(*) FROM booking WHERE (appointmentDate BETWEEN ? AND ?) AND bookingStatus = ? AND clinicID = ?",
-                (start_date, end_date, 1, clinic_id))
+                f"SELECT COUNT(*) FROM booking WHERE bookingStatus = ? AND clinicID = ?",
+                (1, clinic_id))
             record = c.fetchone()
 
             if record:
                 scheduled_count = record[0]
+            else:
+                scheduled_count = 0  # Set a default value if no records are found
 
             return scheduled_count
 
-        scheduled_count = get_scheduled_appointment(formatted_start_date, formatted_end_date)
+        scheduled_count = get_scheduled_appointment()
 
-        def get_completed_appointment(start_date, end_date):
+        def get_completed_appointment():
             c = db.cursor()
             c.execute(
-                f"SELECT COUNT(*) FROM booking WHERE (appointmentDate BETWEEN ? AND ?) AND bookingStatus = ? AND clinicID = ?",
-                (start_date, end_date, 2, clinic_id))
+                f"SELECT COUNT(*) FROM booking WHERE bookingStatus = ? AND clinicID = ?",
+                (2, clinic_id))
             record = c.fetchone()
 
             if record:
                 completed_count = record[0]
+            else:
+                completed_count = 0
 
             return completed_count
 
-        completed_count = get_completed_appointment(formatted_start_date, formatted_end_date)
+        completed_count = get_completed_appointment()
 
-        def get_rejected_appointment(start_date, end_date):
+        def get_rejected_appointment():
             c = db.cursor()
             c.execute(
-                f"SELECT COUNT(*) FROM booking WHERE (appointmentDate BETWEEN ? AND ?) AND bookingStatus = ? AND clinicID = ?",
-                (start_date, end_date, -1, clinic_id))
+                f"SELECT COUNT(*) FROM booking WHERE bookingStatus = ? AND clinicID = ?",
+                (-1, clinic_id))
             record = c.fetchone()
 
             if record:
                 rejected_count = record[0]
+            else:
+                rejected_count = 0
 
             return rejected_count
 
-        rejected_count = get_rejected_appointment(formatted_start_date, formatted_end_date)
+        rejected_count = get_rejected_appointment()
 
         def generateChart(request, schedule, complete, reject):
             labels = ["Requested", "Scheduled", "Completed", "Rejected"]
@@ -111,8 +125,6 @@ class ClinicViewAppointmentChart:
             fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='percent',
                                          marker=dict(colors=custom_colors))])
             fig.update_layout(
-                # title="Chart of clinic's appointment for current week",  # Set the title of the chart
-                # title_font=dict(size=13),  # Adjust the title font size
                 margin=dict(l=0, r=0, t=10, b=20),  # Adjust margins for the chart
                 height=220,  # Set the height of the chart
                 width=350,  # Set the width of the chart
@@ -120,11 +132,15 @@ class ClinicViewAppointmentChart:
 
             fig.update_traces(
                 textfont=dict(size=13,
-                              # family="RobotoSlab",
                               color=colors.BLACK),  # Set text font size for hover labels
             )
 
             return PlotlyChart(figure=fig, expand=True)
+
+        print(f"Request:{requested_count}")
+        print(f"Schedule:{scheduled_count}")
+        print(f"Complete:{completed_count}")
+        print(f"Reject:{rejected_count}")
 
         return View(
             "/clinicViewAppointmentChart/:clinic_id",
@@ -183,13 +199,11 @@ class ClinicViewAppointmentChart:
                                                       text_align=TextAlign.JUSTIFY
                                                   )
                                               ),
-                                              # generateChart(5, 3, 2, 7)
                                               generateChart(requested_count, scheduled_count, completed_count,
                                                             rejected_count),
 
                                           ]
                                       )
-                                      # content=generateChart(requested_count,scheduled_count,completed_count,rejected_count)
                                   ),
 
                                   Container(
@@ -212,7 +226,7 @@ class ClinicViewAppointmentChart:
                                                           color=colors.BLACK,
                                                           font_family="RobotoSlab",
                                                           weight=FontWeight.W_500,
-                                                          width=310,
+                                                          width=300,
                                                           text_align=TextAlign.JUSTIFY)
                                                   ]
                                               ),
@@ -262,16 +276,6 @@ class ClinicViewAppointmentChart:
                                               )
                                           ]
                                       )
-                                      # Text(
-                                      #     value=f"Based on the current appointment in the system:\n"
-                                      #           f"- There are {requested_count} requested appointment awaiting for clinic admin to review.\n"
-                                      #           f"- There are {scheduled_count} scheduled appointment.\n"
-                                      #           f"- There are {completed_count} completed appointment.\n"
-                                      #           f"- There are {rejected_count} rejected appointment.",
-                                      #     size=12,
-                                      #     font_family="RobotoSlab",
-                                      #     color=colors.BLACK
-                                      # )
                                   )
 
                               ]

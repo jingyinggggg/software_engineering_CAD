@@ -392,7 +392,7 @@ class AddDoctorDetailsPage:
                                               ),
 
                                               Container(
-                                                  padding=padding.only(left=80, top=25),
+                                                  padding=padding.only(left=80),
                                                   content=Text(
                                                       value="Add Doctor",
                                                       size=20,

@@ -9,37 +9,6 @@ import sqlite3
 db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
 
-def createTable():
-    cursor.execute("""CREATE TABLE IF NOT EXISTS clinic(
-                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                     name TEXT NOT NULL,
-                     email TEXT NOT NULL,
-                     password TEXT NOT NULL,
-                     location TEXT NOT NULL,
-                     area TEXT NOT NULL,
-                     workingTime TEXT NOT NULL,
-                     workingDay Text NOT NULL,
-                     clinicDescription TEXT NOT NULL,
-                     phoneNumber TEXT NOT NULL,
-                     clinicImage TEXT NOT NULL,
-                     mapImage TEXT NOT NULL,
-                     environmentImage TEXT NOT NULL,
-                     approvalStatus INTEGER NOT NULL,
-                     closed TEXT NOT NULL)""")
-    db.commit()
-
-
-# def AddColumn():
-#     c = db.cursor()
-#     c.execute("ALTER TABLE clinic ADD COLUMN closed TEXT")
-#     db.commit()
-
-# def DropTable():
-#     c = db.cursor()
-#     c.execute('DROP TABLE clinic')
-#     db.commit()
-
-
 class ClinicModifyDeclineDetails:
     def __init__(self):
         self.show_sidebar = False
@@ -78,7 +47,7 @@ class ClinicModifyDeclineDetails:
             image = clinic_record[0][10]
             map_image = clinic_record[0][11]
             environment_image = clinic_record[0][12]
-            reject_reason = clinic_record[0][14]
+            reject_reason = clinic_record[0][15]
 
             return (name, email, password, location, area, working_time,
                     working_day, desc, phone_no, image, map_image,
@@ -278,10 +247,14 @@ class ClinicModifyDeclineDetails:
         map_file = clinic_map_image
         environment_file = clinic_environment
 
+        new_location_file = Text("")
+        new_map_file = Text("")
+        new_environment_file = Text("")
+
         def saveUpload(e: FilePickerResultEvent):
             # Get path of the image
             for x in e.files:
-                location_file = f"pic/{x.name}"
+                new_location_file.value = f"pic/{x.name}"
                 setTextFieldValue(clinic_image_textField, x.name)
 
                 # This is to get current location
@@ -336,7 +309,7 @@ class ClinicModifyDeclineDetails:
         def saveUploadMap(e: FilePickerResultEvent):
             # Get path of the image
             for x in e.files:
-                map_file = f"pic/{x.name}"
+                new_map_file.value = f"pic/{x.name}"
                 setTextFieldValue(clinic_map_textField, x.name)
 
                 # This is to get current location
@@ -369,7 +342,7 @@ class ClinicModifyDeclineDetails:
         )
 
         clinic_environment_textField = TextField(
-            label="Clinic Map",
+            label="Clinic Environment",
             width=242,
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -389,7 +362,7 @@ class ClinicModifyDeclineDetails:
         def saveUploadEnvironment(e: FilePickerResultEvent):
             # Get path of the image
             for x in e.files:
-                environment_file = f"pic/{x.name}"
+                new_environment_file.value = f"pic/{x.name}"
                 setTextFieldValue(clinic_environment_textField, x.name)
 
                 # This is to get current location
@@ -427,7 +400,7 @@ class ClinicModifyDeclineDetails:
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text("You have successfully Resubmitted your details. Please wait for Approval!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}"))],
+            actions=[TextButton("Done", on_click=lambda _: close_dlg1(alert_dialog))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
@@ -453,13 +426,19 @@ class ClinicModifyDeclineDetails:
             dialog.open = False
             page.update()
 
+        def close_dlg1(dialog):
+            dialog.open = False
+            page.dialog = dialog
+            # page.views.pop()  # Remove the current view from the stack
+            page.go(f"/clinicHomepage/{clinic_id}")  # Navigate to the homepage after closing the dialog
+            page.update()
+
         def update_database(e):
             try:
                 if (
                         clinic_nameTextField.value != "" and clinic_locationTextField.value != "" and clinic_areaDropDown.value != "" and working_timeTextField.value != ""
                         and working_dayTextField.value != "" and descriptionTextField.value != "" and phoneNumberTextField.value != "" and clinic_image_textField.value != ""
                         and clinic_map_textField.value != "" and clinic_environment_textField.value != "" and passwordTextField.value != "" and emailTextField.value != ""):
-
                     cursor.execute(
                         "UPDATE clinic SET name = ?, email = ?, password = ?, location = ?, area = ?,"
                         "workingTime = ?, workingDay = ?, clinicDescription = ?, phoneNumber = ?,"
@@ -467,10 +446,12 @@ class ClinicModifyDeclineDetails:
                         "WHERE id = ?",
                         (clinic_nameTextField.value, emailTextField.value, passwordTextField.value, clinic_locationTextField.value, clinic_areaDropDown.value,
                          working_timeTextField.value, working_dayTextField.value, descriptionTextField.value, phoneNumberTextField.value,
-                         "pic/"+clinic_image_textField.value, "pic/"+clinic_map_textField.value, "pic/"+clinic_environment_textField.value, 0,
+                         new_location_file.value if new_location_file.value != "" else clinic_image_textField.value, new_map_file.value if new_map_file.value != "" else clinic_map_textField.value, new_environment_file.value if new_environment_file.value != "" else clinic_environment_textField.value, 0,
                          clinic_id))
 
                     db.commit()
+
+                    page.views.pop(len(page.views)-1)
                     open_dlg(alert_dialog)
                 else:
                     open_dlg(error_dialog)

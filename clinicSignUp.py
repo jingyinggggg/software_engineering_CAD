@@ -26,7 +26,8 @@ def createTable():
                      mapImage TEXT NOT NULL,
                      environmentImage TEXT NOT NULL,
                      approvalStatus INTEGER NOT NULL,
-                     closed TEXT NOT NULL)""")
+                     closed TEXT NOT NULL,
+                     rejectReason TEXT)""")
     db.commit()
 
 
@@ -252,10 +253,11 @@ class ClinicSignUpPage:
                                  weight=FontWeight.W_500
                                  ),
             dense=True,
+            # value="123",
             read_only=True
         )
 
-        location_file = Text("")
+        location_file = Text("123")
         map_file = Text("")
         environment_file = Text("")
 

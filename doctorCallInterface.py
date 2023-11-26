@@ -29,22 +29,9 @@ class DoctorCallInterface:
         blue = "#3386C5"
         grey = "#71839B"
 
-        def get_user_name():
-            c = db.cursor()
-            c.execute("SELECT fullName FROM doctors WHERE id = ?", (user_id,))
-            record = c.fetchone()
-
-            username = record[0]
-            return username
-
-        username = get_user_name()
-
-        def get_initials(name):
-            return name[:1].capitalize()
-
         def get_patient_name():
             c = db.cursor()
-            c.execute("SELECT fullName FROM users WHERE id = ?", (user_id,))
+            c.execute("SELECT fullName FROM users WHERE id = ?", (patient_id,))
             record = c.fetchone()
 
             name = record[0]

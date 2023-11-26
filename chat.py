@@ -11,6 +11,7 @@ class Chat:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        patient_id = int(params.patient_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -29,7 +30,7 @@ class Chat:
 
         def get_patient_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName FROM users WHERE id = ?", (1,))
+            c.execute("SELECT id, fullName FROM users")
             record = c.fetchall()
             return record
 
@@ -40,7 +41,7 @@ class Chat:
                 record_containers = []
                 for record in records:
                     def chat_button_click(record_id=record[0]):
-                        # print("123")
+                        # print(record_id)
                         return lambda _: page.go(f"/chat_info/{user_id}{record_id}")
 
                     record_container = Container(
@@ -54,10 +55,8 @@ class Chat:
                                 Container(
                                     margin=margin.only(top=10, bottom=10, right=15),
                                     # padding=padding.only(top=10, bottom=10),
-                                    bgcolor=lightBlue,
-                                    border_radius=10,
                                     content=Image(
-                                        src=f"{record[0]}",
+                                        src=f"pic/avatar.png",
                                         width=60,
                                         height=60,
 
@@ -66,6 +65,7 @@ class Chat:
 
                                 Container(
                                     # margin=margin.only(top=10),
+                                    alignment=alignment.top_right,
                                     content=Column(
                                         controls=[
                                             Text(
@@ -73,30 +73,8 @@ class Chat:
                                                 size=14,
                                                 font_family="RobotoSlab",
                                                 weight=FontWeight.W_600,
-                                                color=colors.BLACK
-                                            ),
-
-                                            Row(
-                                                controls=[
-                                                    Text(
-                                                        value="🩺",
-                                                        size=10
-                                                    ),
-
-                                                    Container(
-                                                        width=170,
-                                                        content=Text(
-                                                            value=f"{record[1]}",
-                                                            size=10,
-                                                            font_family="RobotoSlab",
-                                                            color=grey,
-                                                            text_align=TextAlign.JUSTIFY
-
-                                                        )
-                                                    )
-
-                                                ]
-
+                                                color=colors.BLACK,
+                                                width=180
                                             ),
                                         ]
                                     )
@@ -116,7 +94,7 @@ class Chat:
                 return Column(controls=record_containers)
 
         return View(
-            "/chat/:user_id",
+            "/chat/:user_id:patient_id",
             controls=[
                 Container(width=350,
                           height=700,

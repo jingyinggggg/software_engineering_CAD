@@ -24,22 +24,6 @@ def addRow():
         db.commit()
     except sqlite3.Error as e:
         print("SQLite error:", e)
-# addRow()
-
-# def update_row():
-#     c = db.cursor()
-#     c.execute("UPDATE clinic SET approvalStatus =1 WHERE id = ?", (1,))
-#     db.commit()
-#
-#
-# def DeleteRow():
-#     cursor.execute("DELETE FROM doctors WHERE id = ?", (6,))
-#     db.commit()
-#
-#
-# DeleteRow()
-# update_row()
-
 
 class ClinicHomepage:
 
@@ -268,6 +252,8 @@ class ClinicHomepage:
                                 )
                             ),
                             Container(
+                                width=280,
+                                alignment=alignment.top_left,
                                 content=TextButton(
                                     f"Doctor {doctor_name} ({doctor_specialization})",
                                     on_click=lambda _: (

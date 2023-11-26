@@ -51,7 +51,7 @@ class ClinicViewPatient:
                         displayed_patients.add(patient_id)
 
                         patient_container = Container(
-                            margin=margin.only(left=10),
+                            margin=margin.only(left=10, right=10),
                             width=330,
                             border_radius=10,
                             border=border.all(1, color=blue),
@@ -200,6 +200,10 @@ class ClinicViewPatient:
                                 ]
                             ),
                             displayPatient(patient),
+
+                            Container(
+                                margin=margin.only(bottom=10)
+                            )
 
                         ])
                 )

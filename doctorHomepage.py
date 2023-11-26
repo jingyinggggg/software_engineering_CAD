@@ -12,6 +12,7 @@ class DoctorHomepage:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        print(user_id)
         # prescription_id = int(params.prescription_id)
         # booking_id = int(params.booking_id)
 
@@ -40,23 +41,35 @@ class DoctorHomepage:
             sidebar.offset = transform.Offset(-205, 0)
             page.update()
 
-        def get_doctor_details():
+        for x in range(len(page.views)):
+            if x > 3:
+                page.views.pop()
+
+        def get_patient():
             c = db.cursor()
-            c.execute("SELECT fullName,username,clinicPhoneNumber,image ,booking.bookingID FROM doctors INNER JOIN booking ON "
-                      "doctors.id = booking.doctorID WHERE id = ?", (user_id,))
+            c.execute("SELECT bookingID, users.id, users.fullName FROM booking INNER JOIN users ON booking.patientID "
+                      "= users.id WHERE doctorID = ? ", (user_id,))
             record = c.fetchall()
 
-            fullName = record[0][0]
-            username = record[0][1]
-            phoneNumber = record[0][2]
-            image = record[0][3]
-            booking_id = record[0][4]
+            return record
 
-            print(booking_id)
+        record = get_patient()
 
-            return fullName, username, phoneNumber, image, booking_id
+        def get_doctor_details():
+            c = db.cursor()
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
+            record = c.fetchall()
 
-        fullName, username, phoneNumber, image, booking_id = get_doctor_details()
+            fullName = record[0][1]
+            username = record[0][2]
+            phoneNumber = record[0][4]
+            image = record[0][12]
+            # booking_id = record[0][15]
+
+            return fullName, username, phoneNumber, image
+            # return fullName, username, phoneNumber, image, booking_id
+
+        fullName, username, phoneNumber, image = get_doctor_details()
 
         # Sidebar
         sidebar = Container(
@@ -466,7 +479,7 @@ class DoctorHomepage:
                                                         ),
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
-                                                        on_click=lambda _: page.go(f"/chat/{user_id}")
+                                                        on_click=lambda _: page.go(f"/chat/{user_id}{record[0][1]}")
 
                                                     ),
 
@@ -499,11 +512,46 @@ class DoctorHomepage:
                                                         ),
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
-                                                        on_click=lambda _: page.go(f"/prescriptionList/{user_id}{booking_id}")
+                                                        on_click=lambda _: page.go(f"/prescriptionList/{user_id}")
 
                                                     )
 
-                                                ]))
+                                                ])),
+                                        Container(
+                                            margin=margin.only(top=10, left=30, right=10),
+                                            content=Row(
+                                                controls=[
+                                                    Container(
+                                                        padding=padding.only(top=20),
+                                                        alignment=alignment.center,
+                                                        height=120,
+                                                        width=120,
+                                                        content=Column(
+                                                            controls=[
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Image(
+                                                                        src="pic/icons8-proof-60.png",
+                                                                        width=50,
+                                                                    )
+                                                                ),
+                                                                Container(
+                                                                    alignment=alignment.center,
+                                                                    content=Text(
+                                                                        "Proof Status",
+                                                                        size=14,
+                                                                        color="BLACK",
+                                                                        weight=FontWeight.W_500
+                                                                    )
+
+                                                                )
+                                                            ]
+                                                        ),
+                                                        border=border.all(width=2, color="BLACK"),
+                                                        border_radius=10,
+                                                        on_click=lambda _: page.go(f"/proofStatus/{user_id}")
+
+                                                    )]))
                                     ]
                                 )
                             ), sidebar

@@ -69,24 +69,34 @@ class AddMedicalRecordPage:
 
         fullName = get_user_details()
 
-        alert_dialog = AlertDialog(
+        success_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text("You have added your medical record successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(success_dialog))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
 
-        def open_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = True
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text("Something went wrong! Please make sure that you have filled in the details completely.",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
             page.update()
 
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
+        def close_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
             page.update()
 
         paddingContainer = Container(padding=padding.only(bottom=1))
@@ -231,8 +241,9 @@ class AddMedicalRecordPage:
                                   currentMedicationTextField.value, dosageTextField.value, current_date))
                     db.commit()
                     page.update()
-                    open_dlg()
-                    print("success")
+                    open_dlg(success_dialog)
+                else:
+                    open_dlg(error_dialog)
             except Exception as e:
                 print(e)
 

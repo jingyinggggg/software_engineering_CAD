@@ -32,8 +32,7 @@ class PatientPrescriptionPage:
             # pass
             c = db.cursor()
             c.execute(
-                "SELECT id, allergies, pastMedicalCondition, currentMedicalCondition, date FROM medicalRecordHistory "
-                "WHERE patientUserID = ? ORDER BY date DESC", (user_id,))
+                "SELECT * FROM prescriptions INNER JOIN doctors ON doctors.id = prescriptions.doctorID WHERE patientID = ? ORDER BY date_signed DESC", (user_id,))
             record = c.fetchall()
             return record
 
@@ -44,8 +43,7 @@ class PatientPrescriptionPage:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewPrescription/{user_id}")
-                        # return lambda _: page.go(f"/viewPrescription/{record_id}")
+                        return lambda _: page.go(f"/viewPrescription/{user_id}/{record_id}")
 
                     record_container = Container(
                         margin=margin.only(left=15, right=15, top=20),
@@ -73,56 +71,115 @@ class PatientPrescriptionPage:
                                     controls=[
                                         Container(
                                             width=220,
-                                            content=Text(
-                                                value=f"Assigned by: ",
-                                                color=colors.BLACK,
-                                                size=12,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
+                                            content=Row(
+                                                alignment="spaceBetween",
+                                                controls=[
+                                                    Text(
+                                                        value=f"Assigned by: ",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=90
+                                                    ),
+                                                    Text(
+                                                        value=f": ",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY
+                                                    ),
+                                                    Text(
+                                                        value=f"Dr. {record[11]}",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=120
+                                                    )
+                                                ]
+                                            )
+
+                                        ),
+
+                                        Container(
+                                            width=220,
+                                            content=Row(
+                                                alignment="spaceBetween",
+                                                controls=[
+                                                    Text(
+                                                        value=f"Assigned date",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=90
+                                                    ),
+                                                    Text(
+                                                        value=f": ",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY
+                                                    ),
+                                                    Text(
+                                                        value=f"{record[7]}",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=120
+                                                    )
+                                                ]
                                             )
                                         ),
 
                                         Container(
                                             width=220,
-                                            content=Text(
-                                                value=f"Assigned date: ",
-                                                color=colors.BLACK,
-                                                size=12,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
+                                            content=Row(
+                                                alignment="spaceBetween",
+                                                controls=[
+                                                    Text(
+                                                        value=f"Medication",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=90
+                                                    ),
+                                                    Text(
+                                                        value=f": ",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                    ),
+                                                    Text(
+                                                        value=f"{record[4]}",
+                                                        color=colors.BLACK,
+                                                        size=12,
+                                                        font_family="RobotoSlab",
+                                                        weight=FontWeight.W_500,
+                                                        text_align=TextAlign.JUSTIFY,
+                                                        width=120
+                                                    )
+                                                ]
                                             )
+
                                         ),
-
-                                        Container(
-                                            width=220,
-                                            content=Text(
-                                                value=f"Treatment: ",
-                                                color=colors.BLACK,
-                                                size=12,
-                                                font_family="RobotoSlab",
-                                                weight=FontWeight.W_500,
-                                                text_align=TextAlign.JUSTIFY
-                                            )
-                                        ),
-
-                                        Container(padding=padding.only(left=150, bottom=-10, top=-10),
-                                                  content=TextButton(
-                                                      content=Text(
-                                                          "More >>",
-                                                          size=10,
-                                                          font_family="RobotoSlab",
-                                                          color=blue),
-                                                      on_click=lambda _: page.go(f"/viewPrescription/{user_id}")
-                                                      # on_click=on_more_button_click()
-                                                  )
-
-                                                  ),
                                     ]
                                 )
                             ]
-                        )
+                        ),
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 

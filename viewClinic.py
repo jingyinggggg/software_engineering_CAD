@@ -33,11 +33,17 @@ class ViewClinicPage:
         def get_clinic_details():
             c = db.cursor()
             c.execute("SELECT id, name, location, area, workingTime, workingDay, clinicDescription, "
-                      "phoneNumber, clinicImage, mapImage, EnvironmentImage FROM clinic WHERE id = ?", (clinic_id,))
+                      "phoneNumber, clinicImage, mapImage, EnvironmentImage, closed FROM clinic WHERE id = ?", (clinic_id,))
             record = c.fetchall()
             return record
 
         clinic = get_clinic_details()
+
+        def check_clinic_working_day(workingDay, clinicClosed):
+            if clinicClosed == "None":
+                return f"{workingDay}"
+            else:
+                return f"{workingDay} ({clinicClosed} Closed)"
 
         def displayClinic(records):
             if records:
@@ -106,7 +112,7 @@ class ViewClinicPage:
 
                                                             Container(
                                                                 content=Text(
-                                                                    value=f"{record[5]}",
+                                                                    value=check_clinic_working_day(record[5], record[11]),
                                                                     size=10,
                                                                     font_family="RobotoSlab",
                                                                     color=colors.BLACK,
