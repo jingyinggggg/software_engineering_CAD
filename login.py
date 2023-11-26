@@ -172,7 +172,7 @@ class LoginPage:
                     admin = c.fetchone()
 
                     if admin is not None:
-                        page.go(f"/")
+                        page.go(f"/projectAdminHomepage/{admin[0]}")
                     else:
                         c.execute("SELECT id FROM clinic WHERE email = ? AND password = ?",
                                   (email.value, password.value))

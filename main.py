@@ -68,6 +68,10 @@ from clinicAdminPatientRequestList import AdminPatientRequestList
 from clinicAdminUpdateAppointment import ClinicAdminUpdateAppointmentPage
 from clinicAdminUpdateAppointmentDetails import ClinicAdminUpdateAppointmentDetailsPage
 
+# Project admin interface
+from projectAdminHomepage import ProjectAdminHomepage
+from projectAdminViewClinicDetail import ProjectAdminViewClinicDetail
+
 def main(mainPage: Page):
     mainPage.theme_mode = "dark"
 
@@ -146,6 +150,9 @@ def main(mainPage: Page):
         path(url="/admin/clinicAdminUpdateAppointment/:user_id", clear=False, view=ClinicAdminUpdateAppointmentPage().view),
         path(url="/admin/clinicAdminUpdateAppointmentDetails/:user_id:booking_id", clear=False, view=ClinicAdminUpdateAppointmentDetailsPage().view),
 
+        # Project admin interface path
+        path(url="/projectAdminHomepage/:user_id", clear=False, view=ProjectAdminHomepage().view),
+        path(url="/projectAdminViewClinicDetail/:user_id:clinic_id", clear=False, view=ProjectAdminViewClinicDetail().view),
     ]
     Routing(page=mainPage, app_routes=app_routes)
     mainPage.go(mainPage.route)
