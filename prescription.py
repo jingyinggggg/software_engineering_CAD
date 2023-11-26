@@ -16,7 +16,8 @@ class Prescription:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
-        booking_id = int(params.booking_id)
+        # booking_id = int(params.booking_id)
+        prescription_id = int(params.prescription_id)
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -29,71 +30,27 @@ class Prescription:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
-        # def update_database():
-        #     c = db.cursor()
-        #     c.execute("""UPDATE prescriptions SET medicationName = ?, quantity = ?, duration = ?, instructions = ?"""
-        #               , (medication_name, quantity, duration, instruction,))
-        #     db.commit()
-
-        # def close_dialog(_):
-        #     page.dialog = dialog
-        #     dialog.open = False
-        #     # Trigger the navigation to the homepage
-        #     page.go(f"/login/homepage/{user_id}")
-        #
-        # dialog = AlertDialog(
-        #     modal=True,
-        #     title=Text("Alert", text_align=TextAlign.CENTER),
-        #     content=Text("Prescription updated successfully!",
-        #                  text_align=TextAlign.CENTER),
-        #     actions=[TextButton("OK", on_click=close_dialog)],
-        #     actions_alignment=MainAxisAlignment.CENTER,
-        #     open=False
-        # )
-        #
-        # def open_dialog():
-        #     page.dialog = dialog
-        #     # Show the success dialog
-        #     dialog.open = True
-        #     page.update()
-        #     update_database()
-
-        # def validate_all_fields(medicationName, quantity, duration):
-        #     if medicationName and quantity and duration:
-        #         return False  # All fields are not empty, validation successful
-        #     else:
-        #         return True
-        #
-        # def validate():
-        #     # Validate all fields
-        #     if validate_all_fields(medication_name, quantity, duration):
-        #         # open_error_dialog()
-        #             pass
-        #     else:
-        #         # Update the database with the captured values
-        #         update_database()
-        #         # Show the success dialog
-        #         open_dialog()
-
-        def get_prescription_details():
+        def get_prescription_details(prescription_id):
             c = db.cursor()
-            c.execute('''SELECT * FROM prescriptions INNER JOIN booking ON prescriptions.bookingID = booking.bookingID 
-            WHERE prescriptions.bookingID = ?''', (booking_id,))
-            record = c.fetchall()
+            c.execute(f"SELECT * FROM prescriptions WHERE prescriptionID = {prescription_id}")
+            prescription = c.fetchall()
 
-            return record
+            # print(prescription[0])
 
-        prescription = get_prescription_details()
+            patient_first_name = prescription[0][3].split()[-2:]
+            patient_last_name = prescription[0][3].split()[0]
+            prescription_id = prescription[0][0]
+            patient_id = prescription[0][2]
+            medication_name = prescription[0][4]
+            quantity = prescription[0][5]
+            duration = prescription[0][6]
+            date_signed = prescription[0][7]
+            instruction = prescription[0][8]
 
-        patient_first_name = prescription[0][3].split()[-2:]
-        patient_last_name = prescription[0][3].split()[0]
-        prescription_id = prescription[0][0]
-        patient_id = prescription[0][2]
-        medication_name = prescription[0][4]
-        quantity = prescription[0][5]
-        duration = prescription[0][6]
-        date_signed = prescription[0][7]
-        instruction = prescription[0][8]
+            # return prescription
+            return patient_first_name,patient_last_name,prescription_id,patient_id,medication_name,quantity,duration,date_signed,instruction
+
+        patient_first_name,patient_last_name,prescription_id,patient_id,medication_name,quantity,duration,date_signed,instruction = get_prescription_details(prescription_id)
 
         def setTextFieldValue(textField, value):
             if value != "":
@@ -174,7 +131,7 @@ class Prescription:
         setTextFieldValue(instructionTextField, instruction)
 
         return View(
-            "/prescription/:user_id:booking_id",
+            "/prescription/:user_id/:prescription_id",
             controls=[
                 Container(
                     width=350,
@@ -200,8 +157,7 @@ class Prescription:
                                                           width=20,
                                                           height=20
                                                       ),
-                                                      on_click=lambda _: page.go(
-                                                          f"/login/homepage/{user_id}")),
+                                                      on_click=lambda _: page.go(f"/prescriptionList/{user_id}")),
                                             Container(padding=padding.only(left=50),
                                                       content=Text("View Prescription",
                                                                    color="WHITE",
@@ -317,7 +273,7 @@ class Prescription:
                                                                                                radius=7)}
                                                                                        ),
                                                                      on_click=lambda _: page.go(
-                                                                         f"/editPrescription/{user_id}{booking_id}{prescription_id}")
+                                                                         f"/editPrescription/{user_id}/{prescription_id}")
                                                                      ),
 
                                                   ),

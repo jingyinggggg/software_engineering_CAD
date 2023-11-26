@@ -66,11 +66,11 @@ class DoctorGeneratePrescription:
             return data
 
         appointmentData = get_appointment_details()
-        patientID = appointmentData[0][15]
+        patientID = appointmentData[0][16]
         bookingID = appointmentData[0][0]
-        patientName = appointmentData[0][16]
-        patient_first_name = appointmentData[0][16].split()[-2:]
-        patient_last_name = appointmentData[0][16].split()[0]
+        patientName = appointmentData[0][17]
+        patient_first_name = appointmentData[0][17].split()[-2:]
+        patient_last_name = appointmentData[0][17].split()[0]
 
         def update_database():
             # Create the 'prescriptions' table if it doesn't exist
@@ -79,9 +79,9 @@ class DoctorGeneratePrescription:
             c = db.cursor()
 
             c.execute('''
-                INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration, dateSigned, instructions)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (patientID, bookingID, patientName, medicationName_value, quantity_value, duration_value, dateSigned, instruction_value))
+                INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration, date_signed, instructions, doctorID)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (patientID, bookingID, patientName, medicationName_value, quantity_value, duration_value, dateSigned, instruction_value, user_id))
 
             db.commit()
 
@@ -92,11 +92,11 @@ class DoctorGeneratePrescription:
 
         # Assuming you have the bookingID when generating the prescription
         # You can call Update function after inserting into prescriptions
-        update_database()
-        Update(bookingID)
+        # update_database()
+        # Update(bookingID)
 
-        def validate_all_fields(value1, value2, value3):
-            if value1 and value2 and value3:
+        def validate_all_fields(value1, value2, value3, value4):
+            if value1 and value2 and value3 and value4:
                 return False  # All fields are not empty, validation successful
             else:
                 return True
@@ -110,7 +110,7 @@ class DoctorGeneratePrescription:
             modal=True,
             title=Text("Alert", text_align=TextAlign.CENTER),
             content=Text("Please enter all the field before submit.", text_align=TextAlign.CENTER),
-            actions=[TextButton("OK", on_click=close_error_dialog)],
+            actions=[TextButton("OK", on_click=lambda _:close_error_dialog)],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
@@ -121,18 +121,18 @@ class DoctorGeneratePrescription:
             error_dialog.open = True
             page.update()
 
-        def close_alert_dialog(_):
-            page.dialog = alert_dialog
-            alert_dialog.open = False
-            # Trigger the navigation to the homepage
-            page.go(f"/login/homepage/{user_id}")
+        # def close_alert_dialog(_):
+        #     page.dialog = alert_dialog
+        #     alert_dialog.open = False
+        #     # Trigger the navigation to the homepage
+        #     page.go(f"/login/homepage/{user_id}")
 
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Alert", text_align=TextAlign.CENTER),
             content=Text("Prescription generated successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("OK", on_click=close_alert_dialog)],
+            actions=[TextButton("OK", on_click=lambda _:page.go(f"/login/homepage/{user_id}"))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
@@ -159,16 +159,20 @@ class DoctorGeneratePrescription:
 
         def on_generate_click():
             # Validate all fields
-            if validate_all_fields(medicationName_value, quantity_value, duration_value):
+            if validate_all_fields(medicationName_value, quantity_value, duration_value, instruction_value):
                 open_error_dialog()
             else:
                 # Update the database with the captured values
+                # c = db.cursor
+                # c.execute("INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration, date_signed, instructions, doctorID)"
+                #           "VALUES (?,?,?,?,?,?,?,?,?)",())
                 update_database()
+                Update(booking_id)
                 # Show the success dialog
                 open_alert_dialog()
 
         return View(
-            "/doctorGeneratePrescription/:user_id:booking_id",
+            "/doctorGeneratePrescription/:user_id/:booking_id",
             controls=[
                 Container(
                     width=350,
@@ -194,7 +198,7 @@ class DoctorGeneratePrescription:
                                                           height=20
                                                       ),
                                                       on_click=lambda _: page.go(
-                                                          f"/login/homepage/{user_id}")),
+                                                          f"/viewProof/{user_id}/{booking_id}")),
                                             Container(padding=padding.only(left=35),
                                                       content=Text("Generate Prescription",
                                                                    color="WHITE",
