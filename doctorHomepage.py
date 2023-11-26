@@ -12,6 +12,7 @@ class DoctorHomepage:
 
     def view(self, page: Page, params: Params, basket: Basket):
         user_id = int(params.user_id)
+        print(user_id)
         # prescription_id = int(params.prescription_id)
         # booking_id = int(params.booking_id)
 
@@ -45,26 +46,26 @@ class DoctorHomepage:
             c.execute("SELECT bookingID, users.id, users.fullName FROM booking INNER JOIN users ON booking.patientID "
                       "= users.id WHERE doctorID = ? ", (user_id,))
             record = c.fetchall()
-            print(record)
+
             return record
 
         record = get_patient()
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT *, booking.bookingID FROM doctors INNER JOIN booking ON "
-                      "doctors.id = booking.doctorID WHERE doctors.id = ?", (user_id,))
+            c.execute("SELECT * FROM doctors WHERE id = ?", (user_id,))
             record = c.fetchall()
 
             fullName = record[0][1]
             username = record[0][2]
             phoneNumber = record[0][4]
             image = record[0][12]
-            booking_id = record[0][14]
+            # booking_id = record[0][15]
 
-            return fullName, username, phoneNumber, image, booking_id
+            return fullName, username, phoneNumber, image
+            # return fullName, username, phoneNumber, image, booking_id
 
-        fullName, username, phoneNumber, image, booking_id = get_doctor_details()
+        fullName, username, phoneNumber, image = get_doctor_details()
 
         # Sidebar
         sidebar = Container(
@@ -405,7 +406,42 @@ class DoctorHomepage:
                                                                 )
                                                             ]
                                                         )
-                                                    )
+                                                    ),
+
+
+                                                    # Container(
+                                                    #     margin=margin.only(left=30),
+                                                    #     padding=padding.only(top=20),
+                                                    #     alignment=alignment.center,
+                                                    #     height=120,
+                                                    #     width=120,
+                                                    #     content=Column(
+                                                    #         controls=[
+                                                    #             Container(
+                                                    #                 alignment=alignment.center,
+                                                    #                 content=Image(
+                                                    #                     src="pic/icons8-schedule-100.png",
+                                                    #                     width=50,
+                                                    #                 )
+                                                    #             ),
+                                                    #             Container(
+                                                    #                 alignment=alignment.center,
+                                                    #                 content=Text(
+                                                    #                     "Schedule",
+                                                    #                     size=14,
+                                                    #                     color="BLACK",
+                                                    #                     weight=FontWeight.W_500
+                                                    #                 )
+                                                    #
+                                                    #             )
+                                                    #         ]
+                                                    #     ),
+                                                    #     border=border.all(width=2, color="BLACK"),
+                                                    #     border_radius=10,
+                                                    #     on_click=lambda _: page.go(f"/schedule/{user_id}")
+                                                    #
+                                                    # )
+
                                                 ])),
                                         Container(
                                             margin=margin.only(top=10, left=30, right=10),
@@ -472,12 +508,11 @@ class DoctorHomepage:
                                                         ),
                                                         border=border.all(width=2, color="BLACK"),
                                                         border_radius=10,
-                                                        on_click=lambda _: page.go(f"/prescriptionList/{user_id}{booking_id}{record[0][1]}")
+                                                        on_click=lambda _: page.go(f"/prescriptionList/{user_id}")
 
                                                     )
 
                                                 ])),
-
                                         Container(
                                             margin=margin.only(top=10, left=30, right=10),
                                             content=Row(

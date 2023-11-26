@@ -52,6 +52,17 @@ class DoctorAccountSettingPage:
 
         fullName, username, email, phoneNumber, password, experience, specialization, description, clinic = get_user_details()
 
+        def get_clinic_name(clinic_id):
+            c = db.cursor()
+            c.execute(f"SELECT name FROM clinic WHERE id = {clinic_id}")
+            record = c.fetchone()
+
+            clinic_name = record[0]
+
+            return clinic_name
+
+        clinic_name = get_clinic_name(clinic)
+
         container_padding = Container(margin=margin.only(top=3))
 
         fullNameTextField = TextField(
@@ -95,41 +106,62 @@ class DoctorAccountSettingPage:
                                  color=colors.GREY_800,
                                  weight=FontWeight.W_600,
                                  ),
-            dense=True
+            dense=True,
+            read_only=True
         )
 
         setTextFieldValue(phoneNumberTextField,phoneNumber)
 
+        # experienceTextField = TextField(
+        #     label="Experience",
+        #     label_style=TextStyle(font_family="RobotoSlab",
+        #                           size=12,
+        #                           color=colors.GREY_800),
+        #     border_color=blue,
+        #     hint_text="Example: 8 years working experience",
+        #     hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
+        #     text_style=TextStyle(size=12,
+        #                          color=colors.GREY_800,
+        #                          weight=FontWeight.W_600,
+        #                          ),
+        #     dense=True
+        # )
+
         experienceTextField = TextField(
-            label="Experience",
+            label="Working Experience",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
             border_color=blue,
-            hint_text="Example: 8 years working experience",
-            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
             text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
-                                 weight=FontWeight.W_600,
+                                 color=colors.BLACK,
+                                 font_family="RobotoSlab",
                                  ),
-            dense=True
+            # hint_text="Example: 3 years working experience",
+            hint_style=TextStyle(size=12, color=colors.BLACK),
+            dense=True,
         )
 
         setTextFieldValue(experienceTextField, experience)
 
-        specializationTextField = TextField(
+        specializationTextField = Dropdown(
+            dense=True,
             label="Specialization",
+            border_color=blue,
+            height=40,
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
-            border_color=blue,
-            hint_text="Example: Female",
-            hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            text_style=TextStyle(size=12,
-                                 color=colors.GREY_800,
-                                 weight=FontWeight.W_600,
-                                 ),
-            dense=True
+            options=[
+                dropdown.Option("General Practitioner"),
+                dropdown.Option("Cardiologists"),
+                dropdown.Option("Pediatrician"),
+                dropdown.Option("Obstetrician and Gynecologist"),
+            ],
+            text_style=TextStyle(color=grey,
+                                 size=12,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
         )
 
         setTextFieldValue(specializationTextField, specialization)
@@ -146,7 +178,8 @@ class DoctorAccountSettingPage:
                                  color=colors.GREY_800,
                                  weight=FontWeight.W_600,
                                  ),
-            dense=True
+            dense=True,
+            multiline=True
         )
 
         setTextFieldValue(descriptionTextField, description)
@@ -163,48 +196,62 @@ class DoctorAccountSettingPage:
                                  color=colors.GREY_800,
                                  weight=FontWeight.W_600,
                                  ),
-            dense=True
+            dense=True,
+            read_only=True
         )
 
-        setTextFieldValue(clinicTextField, clinic)
+        setTextFieldValue(clinicTextField, clinic_name)
 
-        alert_dialog = AlertDialog(
+        success_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
             content=Text("You have updated your personal information successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(success_dialog))],
             actions_alignment=MainAxisAlignment.CENTER,
             open=False
         )
 
-        def open_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = True
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text("Something went wrong! Please try again ...",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
             page.update()
 
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
+        def close_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
             page.update()
 
         def updateProfile(e):
             c = db.cursor()
-            if fullNameTextField.value != "" and emailTextField.value != "" and phoneNumberTextField.value != "" and experienceTextField.value != "" and specializationTextField.value != "" and descriptionTextField.value != "" and clinicTextField != "":
+            if fullNameTextField.value != "" and emailTextField.value != "" and phoneNumberTextField.value != "" and experienceTextField.value != "" and specializationTextField.value != "" and descriptionTextField.value != "":
                 c.execute(
-                    f"UPDATE doctors SET experience = ?, specialization = ?, description = ?, clinic = ? WHERE id = {user_id}",
-                    (
-                    experienceTextField.value, specializationTextField.value, descriptionTextField.value, clinicTextField.value))
-                open_dlg()
+                    f"UPDATE doctors SET fullName = ?, email = ?, experience = ?, specialization = ?, description = ? "
+                    f"WHERE id = {user_id}",
+                    (fullNameTextField.value, emailTextField.value, experienceTextField.value, specializationTextField.value, descriptionTextField.value))
+                open_dlg(success_dialog)
                 db.commit()
                 fullName, username, email, phoneNumber, password, experience, specialization, description, clinic = get_user_details()
+                clinic_name = get_clinic_name(clinic)
                 setTextFieldValue(fullNameTextField, fullName)
                 setTextFieldValue(emailTextField, email)
                 setTextFieldValue(phoneNumberTextField,phoneNumber)
                 setTextFieldValue(experienceTextField, experience)
                 setTextFieldValue(specializationTextField, specialization)
                 setTextFieldValue(descriptionTextField, description)
-                setTextFieldValue(clinicTextField, clinic)
+                setTextFieldValue(clinicTextField, clinic_name)
+            else:
+                open_dlg(error_dialog)
 
         password_container = Container(
             padding=padding.only(left=10, right=10),
