@@ -21,7 +21,16 @@ class AppointmentDetail:
 
             return record
 
+        # appointment_detail = get_appointment_detail()
+
         appointment_detail = get_appointment_detail()
+
+        # Check the length of appointment_detail and rejected_appointment_detail lists
+        if appointment_detail and len(appointment_detail) > 0:
+            appointment_info = appointment_detail[0]
+        else:
+            # Handle case when appointment_detail is empty or has no elements
+            appointment_info = None  # or any default value you want
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -50,7 +59,7 @@ class AppointmentDetail:
                         controls=[
                             Text("Full Name", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                             Text(": ", color="BLACK", size=12),
-                            Text(appointment_detail[0][6], text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
+                            Text(appointment_info[6], text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
                                  weight=FontWeight.W_600, width=100)
                         ]
                     ),
@@ -59,7 +68,7 @@ class AppointmentDetail:
                         controls=[
                             Text("Date of Birth", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                             Text(": ", color="BLACK", size=12),
-                            Text(appointment_detail[0][7], color="BLACK", text_align=TextAlign.JUSTIFY, size=12,
+                            Text(appointment_info[7], color="BLACK", text_align=TextAlign.JUSTIFY, size=12,
                                  weight=FontWeight.W_600,
                                  width=100)
                         ]
@@ -69,7 +78,7 @@ class AppointmentDetail:
                         controls=[
                             Text("Gender", color="BLACK", size=12, weight=FontWeight.BOLD, width=100),
                             Text(": ", color="BLACK", size=12),
-                            Text(appointment_detail[0][8], text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
+                            Text(appointment_info[8], text_align=TextAlign.JUSTIFY, color="BLACK", size=12,
                                  weight=FontWeight.W_600, width=100)
                         ]
                     ),
@@ -81,7 +90,7 @@ class AppointmentDetail:
                             Container(content=Text("view", font_family="RobotoSlab", size=12, color="lightblue"
                                                    ),
                                       on_click=lambda _: page.go(
-                                          f"/doctorViewMedicalRecordList/{user_id}{appointment_detail[0][5]}")
+                                          f"/doctorViewMedicalRecordList/{user_id}{appointment_info[5]}")
                                       )
 
                         ]
@@ -101,7 +110,7 @@ class AppointmentDetail:
                             controls=[
                                 Text("Appointment Date", color="BLACK", size=12, weight=FontWeight.BOLD, width=130),
                                 Text(" :   ", color="BLACK", size=12),
-                                Text(f"{appointment_detail[0][1]}", color="BLACK", size=12,
+                                Text(f"{appointment_info[1]}", color="BLACK", size=12,
                                      text_align=TextAlign.JUSTIFY,
                                      weight=FontWeight.W_600, width=160)
                             ]
@@ -114,7 +123,7 @@ class AppointmentDetail:
                             controls=[
                                 Text("Appointment Time", color="BLACK", size=12, weight=FontWeight.BOLD, width=130),
                                 Text(" :   ", color="BLACK", size=12),
-                                Text(f"{appointment_detail[0][2]}", color="BLACK", size=12, weight=FontWeight.W_600,
+                                Text(f"{appointment_info[2]}", color="BLACK", size=12, weight=FontWeight.W_600,
                                      text_align=TextAlign.JUSTIFY, width=160)
                             ]
                         )
@@ -128,7 +137,7 @@ class AppointmentDetail:
                                 Text("Type of appointment", color="BLACK", size=12, weight=FontWeight.BOLD,
                                      width=130),
                                 Text(" :   ", color="BLACK", size=12),
-                                Text(f"{appointment_detail[0][3]}", color="BLACK", size=12,
+                                Text(f"{appointment_info[3]}", color="BLACK", size=12,
                                      text_align=TextAlign.JUSTIFY,
                                      weight=FontWeight.W_600, width=160)
                             ]
@@ -141,7 +150,7 @@ class AppointmentDetail:
                             controls=[
                                 Text("Reason for visit", color="BLACK", size=12, weight=FontWeight.BOLD, width=130),
                                 Text(" :   ", color="BLACK", size=12),
-                                Text(appointment_detail[0][4], color="BLACK", size=12, text_align=TextAlign.JUSTIFY,
+                                Text(appointment_info[4], color="BLACK", size=12, text_align=TextAlign.JUSTIFY,
                                      weight=FontWeight.W_600, width=160)
                             ]
                         )
@@ -162,7 +171,15 @@ class AppointmentDetail:
 
             return record
 
+        # rejected_appointment_detail = get_rejected_appointment_detail()
         rejected_appointment_detail = get_rejected_appointment_detail()
+
+        if rejected_appointment_detail and len(rejected_appointment_detail) > 0:
+            rejected_appointment_info = rejected_appointment_detail[0]
+        else:
+            # Handle case when rejected_appointment_detail is empty or has no elements
+            rejected_appointment_info = None  # or any default value you want
+
 
         # Function to display rejected appointment details
         def display_rejected_appointment_details():
@@ -186,7 +203,7 @@ class AppointmentDetail:
                                   height=80,
                                   margin=margin.only(left=10),
                                   content=Text(
-                                      value=f"{rejected_appointment_detail[0][9]}",
+                                      value=f"{rejected_appointment_info[9]}",
                                       size=12,
                                       font_family="RobotoSlab",
                                       color=colors.RED,
