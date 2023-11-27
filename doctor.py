@@ -14,14 +14,14 @@ class DoctorPage:
         c = db.cursor()
         if selected_speciality:
             if selected_speciality == "All":
-                c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                          "STATUS = ? ", (1,))
+                c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
             else:
-                c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                          "STATUS = ? AND specialization = ?", (1,selected_speciality))
+                c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND doctors.specialization = ? AND clinic.approvalStatus = 1", (1,selected_speciality))
         else:
-            c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                      "STATUS = ? ", (1,))
+            c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
         record = c.fetchall()
         return record
 

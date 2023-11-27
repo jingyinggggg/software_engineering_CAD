@@ -29,8 +29,9 @@ class PatientChatViewDoctorPage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                      "STATUS = ?", (1,))
+            c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, "
+                      "doctors.description, doctors.image FROM doctors INNER JOIN clinic ON doctors.clinicID = "
+                      "clinic.id WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
             record = c.fetchall()
             return record
 
