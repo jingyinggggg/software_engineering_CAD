@@ -24,7 +24,8 @@ def CreateTable():
                  proof TEXT,
                  proofStatus INTEGER,
                  proofRejectReason TEXT,
-                 reassignDoctorID INTEGER)""")
+                 reassignDoctorID INTEGER,
+                 prescriptionStatus INTEGER)""")
     db.commit()
 
 
@@ -377,17 +378,39 @@ class MakeAppointmentPage:
             open=True
         )
 
+        error_dialog = AlertDialog(
+            modal=False,
+            title=Text("Failes", text_align=TextAlign.CENTER),
+            content=Text(
+                f"Something went wrong! Please try again...",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=True
+        )
+
         def navigate_homepage():
             try:
                 page.go(f"/homepage/{user_id}")
                 self.chosen_date = None
                 self.selected_time_slot = None
+                page.update()
             except Exception as e:
                 print(f"Error navigating to homepage: {e}")
 
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
+            page.update()
+
+        def open_dlg1():
+            page.dialog = error_dialog
+            error_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = error_dialog
+            error_dialog.open = False
             page.update()
 
         def addToDatabase(e):
@@ -402,6 +425,8 @@ class MakeAppointmentPage:
                            clinic_id, reason_visit.value, "Requested",0))
                 db.commit()
                 open_dlg()
+            else:
+                open_dlg1()
 
         def back_previous_page():
             self.chosen_date = None

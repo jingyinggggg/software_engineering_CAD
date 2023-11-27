@@ -46,16 +46,32 @@ class Homepage:
             if x > 3:
                 page.views.pop()
 
-        def get_notification_count():
-            c = db.cursor()
-            c.execute("SELECT COUNT(*) FROM booking WHERE patientID = ? AND bookingStatus = ? AND appointmentDate >= ?",(user_id,1, formatted_date))
-            record = c.fetchone()
+        def get_notification_count(user_id, formatted_date):
+            try:
+                # Assuming 'db' is your SQLite database connection
+                c = db.cursor()
 
-            count = record[0]
+                # Check if the 'booking' table exists
+                c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking'")
+                table_exists = c.fetchone()
 
-            return count
+                if table_exists:
+                    c.execute(
+                        "SELECT COUNT(*) FROM booking WHERE patientID = ? AND (bookingStatus = ? OR bookingStatus = ?) AND appointmentDate >= ?",
+                        (user_id, 1, -1, formatted_date))
+                    record = c.fetchone()
+                    count = record[0]
+                    return count
+                else:
+                    # Handle case where 'booking' table doesn't exist
+                    return 0  # Or any other default value or action you prefer
 
-        notification_count = get_notification_count()
+            except sqlite3.Error as e:
+                # Handle other potential errors accessing the database
+                print("SQLite error:", e)
+                return -1  # Return a specific value indicating an error occurred
+
+        notification_count = get_notification_count(user_id, formatted_date)
 
         if notification_count > 0:
             notification_icon = "pic/notification_with_content.png"
@@ -484,7 +500,7 @@ class Homepage:
                             ),
 
                             Container(
-                                padding=padding.only(top=15, bottom=10),
+                                padding=padding.only(top=15),
                                 content=Row(
                                     controls=[
                                         Container(padding=padding.only(left=8),

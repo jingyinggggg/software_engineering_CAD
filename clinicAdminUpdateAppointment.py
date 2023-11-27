@@ -147,8 +147,8 @@ class ClinicAdminUpdateAppointmentPage:
                                 content=Text(
                                     value="There are no appointment pending updated the appointment status currently.",
                                     color=colors.BLACK,
-                                    # font_family="RobotoSlab",
-                                    text_align=TextAlign.CENTER
+                                    text_align=TextAlign.CENTER,
+                                    weight=FontWeight.W_500
                                 )
                             )
                             ,
@@ -168,7 +168,7 @@ class ClinicAdminUpdateAppointmentPage:
                         controls=[
                             Container(
                                 padding=padding.only(top=25, left=10, bottom=10),
-                                content=Row(
+                                content=Column(
                                     controls=[
                                         Container(
                                             content=Image(

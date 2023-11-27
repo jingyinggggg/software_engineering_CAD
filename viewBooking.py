@@ -534,6 +534,17 @@ class ViewBookingPage:
             open=False
         )
 
+        noted_dialog = AlertDialog(
+            modal=False,
+            title=Text("Noted", text_align=TextAlign.CENTER),
+            content=Text(
+                f"You may make another appointment in the appointment page. Thank you",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(noted_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
         def open_dlg(dialog):
             page.dialog = dialog
             dialog.open = True
@@ -549,7 +560,8 @@ class ViewBookingPage:
             if callfrom == "accept":
                 # print(new_doctor_id)
                 d.execute(f"UPDATE booking SET doctorID = ? , appointmentStatus = ? , bookingStatus = ? , "
-                          f"rejectReason = NULL , reassignDoctorID = NULL WHERE bookingID = ?", (new_doctor_id, "Scheduled", 1, booking_id, ))
+                          f"rejectReason = NULL , reassignDoctorID = NULL WHERE bookingID = ?",
+                          (new_doctor_id, "Scheduled", 1, booking_id,))
                 db.commit()
                 updated = True
                 if updated:
@@ -562,6 +574,14 @@ class ViewBookingPage:
                 updated = True
                 if updated:
                     open_dlg(decline_dialog)
+                else:
+                    open_dlg(error_dialog)
+            elif callfrom == "noted":
+                d.execute(f"DELETE FROM booking WHERE bookingID = {booking_id}")
+                db.commit()
+                updated = True
+                if updated:
+                    open_dlg(noted_dialog)
                 else:
                     open_dlg(error_dialog)
 
@@ -640,7 +660,8 @@ class ViewBookingPage:
                                                          "": RoundedRectangleBorder(
                                                              radius=7)}
                                                  ),
-                                                 on_click=lambda e: update_appointment_status("accept",appointmentData[0][14])
+                                                 on_click=lambda e: update_appointment_status("accept",
+                                                                                              appointmentData[0][14])
                                                  )
                               ),
 
@@ -657,7 +678,36 @@ class ViewBookingPage:
                                                          "": RoundedRectangleBorder(
                                                              radius=7)}
                                                  ),
-                                                 on_click=lambda e: update_appointment_status("decline",appointmentData[0][14])
+                                                 on_click=lambda e: update_appointment_status("decline",
+                                                                                              appointmentData[0][14])
+                                                 )
+                              )
+                ]
+            )
+        )
+
+        noted = Container(
+            margin=margin.only(right=10, bottom=20),
+            alignment=alignment.center,
+            visible=False,
+            content=Row(
+                controls=[
+                    Container(margin=margin.only(right=5),
+                              content=IconButton(content=Text("Noted",
+                                                              size=12,
+                                                              color=colors.WHITE,
+                                                              text_align=TextAlign.CENTER,
+                                                              weight=FontWeight.W_700),
+                                                 width=100,
+                                                 height=40,
+                                                 style=ButtonStyle(
+                                                     bgcolor={"": blue},
+                                                     shape={
+                                                         "": RoundedRectangleBorder(
+                                                             radius=7)}
+                                                 ),
+                                                 on_click=lambda e: update_appointment_status("noted",
+                                                                                              appointmentData[0][14])
                                                  )
                               )
                 ]
@@ -683,6 +733,7 @@ class ViewBookingPage:
                                                      "time. You may make another appointment in the appointment page.")
                             action_required.visible = True
                             action.visible = False
+                            noted.visible = True
                     else:
                         reject_reason.visible = False
                         action.visible = False
@@ -738,7 +789,7 @@ class ViewBookingPage:
                                             border_radius=10,
                                             bgcolor=lightBlue,
                                             content=Image(
-                                                src=f"{appointmentData[0][27]}",
+                                                src=f"{appointmentData[0][28]}",
                                                 width=150,
                                                 height=150,
 
@@ -754,7 +805,7 @@ class ViewBookingPage:
                                                             alignment=alignment.center,
                                                             width=170,
                                                             content=Text(
-                                                                value=f"DR. {appointmentData[0][16]}",
+                                                                value=f"Dr. {appointmentData[0][17]}",
                                                                 size=15,
                                                                 font_family="RobotoSlab",
                                                                 color=colors.BLACK,
@@ -775,9 +826,9 @@ class ViewBookingPage:
                                                         ),
 
                                                         Container(
-                                                            width=300,
+                                                            width=130,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][22]}",
+                                                                value=f"{appointmentData[0][23]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -800,7 +851,7 @@ class ViewBookingPage:
                                                         Container(
                                                             width=120,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][21]}",
+                                                                value=f"{appointmentData[0][22]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -819,7 +870,7 @@ class ViewBookingPage:
                                                         Container(
                                                             width=130,
                                                             content=Text(
-                                                                value=f"{appointmentData[0][23]}",
+                                                                value=f"{appointmentData[0][24]}",
                                                                 size=12,
                                                                 font_family="RobotoSlab",
                                                                 color=grey,
@@ -931,7 +982,11 @@ class ViewBookingPage:
                                             content=action_required
                                         ),
 
-                                        action
+                                        noted,
+
+                                        action,
+
+                                        # noted
 
                                     ]
                                 )

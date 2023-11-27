@@ -28,7 +28,7 @@ class AdminPatientRequestList:
         submit_dialog = AlertDialog(
             modal=True,
             title=Text("Success"),
-            content=Text(f"You have rejected the appointment successfully!",text_align=TextAlign.JUSTIFY),
+            content=Text(f"You have accepted the appointment successfully!",text_align=TextAlign.JUSTIFY),
             actions=[
                 TextButton("Done", on_click=lambda _: page.go(f"/login/adminHomepage/{user_id}")),
             ],
@@ -93,7 +93,7 @@ class AdminPatientRequestList:
                 ("Scheduled", 1, bookingId)
             )
             db.commit()
-            open_dlg()
+            open_dlg(submit_dialog)
 
         def SetOptionValue(change):
             selected_option_value = available.value
@@ -111,7 +111,7 @@ class AdminPatientRequestList:
                     db.commit()
                     open_dlg(submit_dialog)
                 else:
-                    c.execute("UPDATE booking SET appointmentStatus = ?, bookingStatus = ?, rejectReason = ?, "
+                    c.execute("UPDATE booking SET appointmentStatus = ?, bookingStatus = ?, rejectReason = ? "
                               "WHERE bookingID = ?",
                               ("Rejected", -1, reject_reason.value, bookingId))
                     db.commit()
@@ -240,7 +240,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=records[16], ),
+                                                                 value=records[17], ),
                                                             # Add more Text controls as needed
                                                         ),
                                                         Container(
@@ -254,7 +254,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=f"Dr. {records[25]}"),
+                                                                 value=f"Dr. {records[26]}"),
                                                             # Add more Text controls as needed
                                                         )
                                                     ]
@@ -394,7 +394,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=records[16], ),
+                                                                 value=records[17], ),
                                                             # Add more Text controls as needed
                                                         ),
                                                         Container(
@@ -408,7 +408,7 @@ class AdminPatientRequestList:
                                                             alignment=alignment.top_right,
                                                             content=
                                                             Text(color=colors.BLACK, weight=FontWeight.W_600,
-                                                                 value=f"Dr. {records[25]}"),
+                                                                 value=f"Dr. {records[26]}"),
                                                             # Add more Text controls as needed
                                                         ),
 
@@ -532,15 +532,14 @@ class AdminPatientRequestList:
                                                         height=100,
                                                         alignment=alignment.center,
                                                         content=Image(
-                                                            src="pic/male_patient.png" if records[
-                                                                                              21] == "Male" else "pic/female_patient.png",
+                                                            src="pic/male_patient.png" if records[23] == "Male" else "pic/female_patient.png",
                                                             width=65,
                                                         )
                                                     ),
                                                     Container(
                                                         alignment=alignment.bottom_center,
                                                         content=Text(
-                                                            value=records[16],
+                                                            value=records[17],
                                                             color=colors.BLACK,
                                                             size=12,
                                                             weight=FontWeight.W_600,
@@ -625,7 +624,7 @@ class AdminPatientRequestList:
                                                                     spacing=1.3,
                                                                     controls=[
                                                                         Text(
-                                                                            value=f"DR.{records[25]}",
+                                                                            value=f"Dr.{records[26]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,
@@ -643,25 +642,25 @@ class AdminPatientRequestList:
                                                                             weight=FontWeight.W_600,
                                                                         ),
                                                                         Text(
-                                                                            value=f"{records[21]}",
-                                                                            size=11,
-                                                                            color=colors.BLACK,
-                                                                            weight=FontWeight.W_600,
-                                                                        ),
-                                                                        Text(
-                                                                            value=f"{records[19]}",
-                                                                            size=11,
-                                                                            color=colors.BLACK,
-                                                                            weight=FontWeight.W_600,
-                                                                        ),
-                                                                        Text(
                                                                             value=f"{records[22]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,
                                                                         ),
                                                                         Text(
+                                                                            value=f"{records[20]}",
+                                                                            size=11,
+                                                                            color=colors.BLACK,
+                                                                            weight=FontWeight.W_600,
+                                                                        ),
+                                                                        Text(
                                                                             value=f"{records[23]}",
+                                                                            size=11,
+                                                                            color=colors.BLACK,
+                                                                            weight=FontWeight.W_600,
+                                                                        ),
+                                                                        Text(
+                                                                            value=f"{records[24]}",
                                                                             size=11,
                                                                             color=colors.BLACK,
                                                                             weight=FontWeight.W_600,

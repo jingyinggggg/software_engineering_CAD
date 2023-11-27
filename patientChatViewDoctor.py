@@ -115,6 +115,33 @@ class PatientChatViewDoctorPage:
                     record_containers.append(record_container)
 
                 return Column(controls=record_containers)
+            else:
+                return Container(
+                    padding=padding.only(top=120),
+                    content=Column(
+                        horizontal_alignment="center",
+                        controls=[
+                            Icon(
+                                icons.CHAT_ROUNDED,
+                                size=100,
+                                color=blue
+                            ),
+
+                            Container(
+                                padding=padding.only(top=10),
+                                content=Text(
+                                    value="There is no doctors in the system currently.",
+                                    text_align=TextAlign.CENTER,
+                                    size=18,
+                                    weight=FontWeight.W_500,
+                                    color=colors.BLACK,
+                                    font_family="RobotoSlab"
+                                )
+                            ),
+
+                        ]
+                    )
+                )
 
         return View(
             "/patientChatViewDoctor/:user_id",

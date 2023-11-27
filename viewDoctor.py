@@ -50,16 +50,11 @@ class ViewDoctorPage:
 
         clinic_name = get_clinic_id()
 
-        def check_doctor_working_day(workingDay, nonWorkingDay):
-            if nonWorkingDay == "None":
-                return f"{workingDay}"
-            else:
-                return f"{workingDay} ({nonWorkingDay} Not Available)"
-
         def displayDoctor(records):
             if records:
                 record_containers = []
                 for record in records:
+
                     record_container = Column(
                         horizontal_alignment="center",
                         controls=[
@@ -200,7 +195,7 @@ class ViewDoctorPage:
 
                                                             Container(
                                                                 content=Text(
-                                                                    value=check_doctor_working_day(record[8], record[10]),
+                                                                    value=f"{record[8]} (Except {record[10]})" if record[10] != "None" else record[8],
                                                                     size=12,
                                                                     font_family="RobotoSlab",
                                                                     color=colors.BLACK,

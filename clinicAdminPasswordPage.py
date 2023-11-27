@@ -161,7 +161,7 @@ class ClinicAdminPasswordPage:
                     controls=[
                         Container(
                             padding=padding.only(top=25, left=10, bottom=10),
-                            content=Row(
+                            content=Column(
                                 controls=[
                                     Container(
                                         content=Image(

@@ -102,7 +102,7 @@ class ViewPrescriptionPage:
                                   size=12,
                                   color=colors.GREY_800),
             border_color=blue,
-            value=doctor_name,
+            value=f"Dr. {doctor_name}",
             text_style=TextStyle(size=12,
                                  color=colors.BLACK,
                                  weight=FontWeight.W_600,
