@@ -8,78 +8,70 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 
 def CreateTable():
     c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS doctors(
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 fullName TEXT NOT NULL,
-                 username TEXT ,
-                 email TEXT NOT NULL,
-                 phoneNumber TEXT NOT NULL,
-                 password TEXT ,
-                 experience TEXT NOT NULL,
-                 specialization TEXT NOT NULL,
-                 description TEXT NOT NULL,
+    c.execute("""CREATE TABLE IF NOT EXISTS booking(
+                 bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
+                 patientID INTEGER NOT NULL,
+                 doctorID INTEGER NOT NULL,
+                 appointmentDate TEXT NOT NULL,
+                 appointmentTime TEXT NOT NULL,
+                 appointmentType TEXT NOT NULL, 
                  clinicID INTEGER NOT NULL,
-                 workingTime TEXT NOT NULL,
-                 workingDay TEXT NOT NULL,
-                 image TEXT NOT NULL,
-                 STATUS INTEGER NOT NULL)""")
+                 reasonVisit TEXT NOT NULL,
+                 appointmentStatus TEXT,
+                 bookingStatus INTEGER NOT NULL,
+                 rejectReason TEXT,
+                 proof TEXT,
+                 proofStatus INTEGER,
+                 proofRejectReason TEXT,
+                 reassignDoctorID INTEGER)""")
     db.commit()
 
 
-# def update():
+# def create_prescriptions_table():
 #     c = db.cursor()
-#     c.execute("UPDATE clinic SET approvalStatus = 0 WHERE id = 4")
+#     c.execute('''
+#         CREATE TABLE IF NOT EXISTS prescriptions (
+#             prescriptionID INTEGER PRIMARY KEY AUTOINCREMENT,
+#             patientID INTEGER NOT NULL,
+#             bookingID INTEGER NOT NULL,
+#             patientName TEXT NOT NULL,
+#             medicationName TEXT NOT NULL,
+#             quantity TEXT NOT NULL,
+#             duration TEXT NOT NULL,
+#             date_signed DATE NOT NULL,
+#             instructions TEXT NOT NULL
+#         )
+#     ''')
 #     db.commit()
-#
-#
-# update()
-
-
-# def DeleteTable():
-#     c = db.cursor()
-#     c.execute("DROP TABLE prescriptions")
-#     db.commit()
-#
-#
-# DeleteTable()
-
-# def AddColumn():
-#     c = db.cursor()
-#     c.execute("ALTER TABLE booking ADD COLUMN prescriptionStatus INTEGER")
-#     db.commit()
-#
-#
-# AddColumn()
 
 
 # def update():
 #     c = db.cursor()
 #     c.execute(
-#         f"UPDATE booking SET bookingStatus = ?, appointmentStatus = ?, proofStatus = ? WHERE bookingID = ?",
-#         (1, "Scheduled", "", 1))
+#         f"UPDATE clinic SET approvalStatus = ? WHERE id = ?",
+#         (0, 2))
 #     db.commit()
 
+def UpdateTable():
+    c = db.cursor()
+    c.execute("ALTER TABLE booking "
+              "ADD prescriptionStatus INTEGER")
+    db.commit()
 
-# def createTable():
-#     c = db.cursor()
-#     c.execute("""CREATE TABLE IF NOT EXISTS clinicAdmin(
-#                      id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                      fullName TEXT NOT NULL,
-#                      username TEXT NOT NULL,
-#                      email TEXT NOT NULL,
-#                      password TEXT NOT NULL,
-#                      clinicID INTEGER NOT NULL)""")
-#     db.commit()
-#
 # def addToDatabase():
 #     c = db.cursor()
-#     c.execute("INSERT INTO clinicAdmin (fullName, username, email, password, clinicID) VALUES (?,?,?,?,?)",
-#               ("Bwell Clinic admin", "Bwell Clinic admin", "bwelladmin@gmail.com", "123", 1))
+#     c.execute("INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration,date_signed, instructions, doctorID) VALUES (?,?,?,?,?,?,?,?,?)",
+#               (1, 36,"Ng Jing Ying", "Flecainide", "50mg", "Two weeks", "2023-11-25", "Take the medicine twice per day.", 1))
 #     db.commit()
 #
-# def drop():
+def drop():
+    c= db.cursor()
+    c.execute("DROP TABLE booking")
+    db.commit()
+
+# def delete():
 #     c= db.cursor()
-#     c.execute("DROP TABLE clinicAdmin")
+#     c.execute("DELETE FROM booking")
 #     db.commit()
 
 class LoginPage:
@@ -90,10 +82,12 @@ class LoginPage:
         # print(params)
 
         # drop()
-        # createTable()
+        # CreateTable()
         # addToDatabase()
         # update()
-        # AddColumn()
+        # UpdateTable()
+        # delete()
+        # create_prescriptions_table()
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -108,7 +102,6 @@ class LoginPage:
         }
 
         email = TextField(label="Enter Email",
-                          value="",
                           label_style=TextStyle(font_family="RobotoSlab",
                                                 size=14,
                                                 color=colors.GREY_800),
@@ -118,7 +111,6 @@ class LoginPage:
                                                color=colors.BLACK))
 
         password = TextField(label="Enter Password",
-                             value="",
                              password=True,
                              can_reveal_password=True,
                              label_style=TextStyle(font_family="RobotoSlab",

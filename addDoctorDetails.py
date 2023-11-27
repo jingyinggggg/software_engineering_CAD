@@ -10,6 +10,7 @@ db = sqlite3.connect("cad.db", check_same_thread=False)
 cursor = db.cursor()
 
 
+
 def CreateTable():
     cursor.execute("""CREATE TABLE IF NOT EXISTS doctors(
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,11 +23,12 @@ def CreateTable():
                  specialization TEXT NOT NULL,
                  description TEXT NOT NULL,
                  clinicID INTEGER NOT NULL,
+                 workingStartTime TEXT NOT NULL,
                  workingTime TEXT NOT NULL,
                  workingDay TEXT NOT NULL,
                  image TEXT NOT NULL,
-                 STATUS INTEGER NOT NULL)
-                 """)
+                 STATUS INTEGER NOT NULL,
+                 nonWorkingDay TEXT NOT NULL)""")
     db.commit()
 
 
@@ -43,7 +45,6 @@ def CreateTable():
 class AddDoctorDetailsPage:
     def __init__(self):
         self.show_sidebar = False
-
 
     def view(self, page: Page, params: Params, basket: Basket):
 
@@ -66,35 +67,58 @@ class AddDoctorDetailsPage:
 
         # CreateTable()
 
-        def open_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = True
+        alert_dialog = AlertDialog(
+            modal=True,
+            title=Text("Success", text_align=TextAlign.CENTER),
+            content=Text(
+                "You have upload the doctor details successfully."
+                " Doctor will be able to log into their account after it is approved by admin. "
+                "Please stay tuned to the doctor account approval status.",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(alert_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text(
+                "Somthing went wrong! Please make sure that you have filled in the details completely.",
+                text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg(error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
             page.update()
 
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
+        def close_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
             page.update()
 
         def addToDatabase(e):
             CreateTable()
             if (name.value != "" and email.value != "" and phoneNumber.value != "" and experience.value != ""
                     and specialization.value != "" and description.value != "" and working_clinic.value != ""
-                    and working_time.value != "" and working_day.value != "" and image_file.value != ""):
+                    and working_time.value != "" and working_day.value != "" and non_working_day.value != ""
+                    and image_file.value != ""):
                 cursor.execute(
                     "INSERT INTO doctors (fullName, email, clinicPhoneNumber, experience, specialization, "
-                    "description, clinicID, workingTime, workingDay, image, status)"
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                    (name.value, email.value, phoneNumber.value, experience.value + " years working experience", specialization.value,
-                     description.value, clinic_id, working_time.value, working_day.value, image_file.value,
-                     0)
-                    # ('John Doe', 'johndoe123', 'johndoe@example.com',
-                    #              '1234567890', '123', '3 years experience', 'Cardiologists',
-                    #              'Providing medical services', 'Bwell Clinic', '9:00 am - 5:00 pm',
-                    #              'Monday - Friday (except Thursday)', 'pic/doctor.png', 1)
+                    "description, clinicID, workingTime, workingDay, nonWorkingDay, image, status)"
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (name.value, email.value, phoneNumber.value, experience.value + " years working experience",
+                     specialization.value, description.value, clinic_id, working_time.value, working_day.value,
+                     non_working_day.value, image_file.value, 0)
                 )
-            db.commit()
-            open_dlg()
+                db.commit()
+                open_dlg(alert_dialog)
+            else:
+                open_dlg(error_dialog)
 
         def get_clinic_details():
             c = db.cursor()
@@ -122,7 +146,7 @@ class AddDoctorDetailsPage:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
-            dense=True
+            dense=True,
         )
 
         email = TextField(
@@ -170,7 +194,6 @@ class AddDoctorDetailsPage:
             hint_style=TextStyle(size=12, color=colors.BLACK),
             dense=True,
             suffix_text="years working experience"
-
         )
 
         specialization = Dropdown(
@@ -227,7 +250,7 @@ class AddDoctorDetailsPage:
         )
 
         working_time = TextField(
-            label="Working Time",
+            label="Working Start Time",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
                                   color=colors.GREY_800),
@@ -237,9 +260,9 @@ class AddDoctorDetailsPage:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
-            hint_text="Example: 12:00 pm - 8:00 pm",
+            hint_text="Example: 7:00 am - 8:00 pm",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            dense=True
+            dense=True,
         )
 
         working_day = TextField(
@@ -253,9 +276,35 @@ class AddDoctorDetailsPage:
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
                                  ),
-            hint_text="Example: Monday - Sunday (except Wednesday)",
+            hint_text="E.g. Monday - Sunday",
             hint_style=TextStyle(size=12, color=colors.GREY_500, italic=True),
-            dense=True
+            dense=True,
+            width=158
+        )
+
+        non_working_day = Dropdown(
+            dense=True,
+            label="Non Working Day",
+            border_color=blue,
+            height=40,
+            label_style=TextStyle(font_family="RobotoSlab",
+                                  size=12,
+                                  color=colors.GREY_800),
+            options=[
+                dropdown.Option("None"),
+                dropdown.Option("Monday"),
+                dropdown.Option("Tuesday"),
+                dropdown.Option("Wednesday"),
+                dropdown.Option("Thursday"),
+                dropdown.Option("Friday"),
+                dropdown.Option("Saturday"),
+                dropdown.Option("Sunday"),
+            ],
+            text_style=TextStyle(color=grey,
+                                 size=12,
+                                 font_family="RobotoSlab",
+                                 weight=FontWeight.W_500),
+            width=158,
         )
 
         doctor_image_textField = TextField(
@@ -267,7 +316,7 @@ class AddDoctorDetailsPage:
                                   color=colors.GREY_800),
             value="Filename: clinic_name_doctor_name",
             border_color=blue,
-            text_style=TextStyle(size=12,
+            text_style=TextStyle(size=10,
                                  color=colors.BLACK,
                                  font_family="RobotoSlab",
                                  weight=FontWeight.W_500
@@ -312,19 +361,6 @@ class AddDoctorDetailsPage:
             )
         )
 
-        alert_dialog = AlertDialog(
-            modal=True,
-            title=Text("Success", text_align=TextAlign.CENTER),
-            content=Text(
-                "You have upload the doctor details successfully. Doctor will be able to log into their account after it is approved by admin. Please stay tuned to the doctor account approval status.",
-                text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
-            actions_alignment=MainAxisAlignment.CENTER,
-            open=False
-        )
-
-
-
         return View(
             "/addDoctorDetails/:clinic_id",
             controls=[
@@ -335,35 +371,38 @@ class AddDoctorDetailsPage:
                           # child control
                           content=Column(
                               # horizontal_alignment="center",
-                              scroll=True,
+                              scroll=ScrollMode.AUTO,
                               controls=[
-                                  Container(width=350,
-                                            height=70,
-                                            bgcolor=blue,
-                                            alignment=alignment.top_center,
-                                            content=Row(
-                                                controls=[
-                                                    Container(padding=padding.only(left=20, top=25),
-                                                              content=Image(
-                                                                  src="pic/back.png",
-                                                                  color=colors.WHITE,
-                                                                  width=20,
-                                                                  height=20
-                                                              ),
-                                                              on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
-                                                              ),
+                                  Container(
+                                      width=350,
+                                      height=70,
+                                      bgcolor=blue,
+                                      alignment=alignment.top_center,
+                                      content=Row(
+                                          controls=[
+                                              Container(
+                                                  padding=padding.only(left=20, top=25),
+                                                  content=Image(
+                                                      src="pic/back.png",
+                                                      color=colors.WHITE,
+                                                      width=20,
+                                                      height=20),
+                                                  alignment=alignment.top_left,
+                                                  on_click=lambda _: page.go(f"/clinicHomepage/{clinic_id}")
+                                              ),
 
-                                                    Container(padding=padding.only(left=80, top=25),
-                                                              content=Text(
-                                                                  value="Add Doctor",
-                                                                  size=20,
-                                                                  font_family="RobotoSlab",
-                                                                  color=colors.WHITE,
-                                                                  text_align=TextAlign.CENTER)
-                                                              ),
-                                                ]
-                                            )
-                                            ),
+                                              Container(
+                                                  padding=padding.only(left=80),
+                                                  content=Text(
+                                                      value="Add Doctor",
+                                                      size=20,
+                                                      font_family="RobotoSlab",
+                                                      color=colors.WHITE,
+                                                      text_align=TextAlign.CENTER)
+                                              ),
+                                          ]
+                                      )
+                                  ),
 
                                   Container(
                                       margin=margin.only(left=10, bottom=10, top=10),
@@ -395,7 +434,13 @@ class AddDoctorDetailsPage:
 
                                               working_time,
 
-                                              working_day,
+                                              Row(
+                                                  width=325,
+                                                  controls=[
+                                                      working_day,
+                                                      non_working_day
+                                                  ]
+                                              ),
 
                                               doctor_image,
 
@@ -426,4 +471,3 @@ class AddDoctorDetailsPage:
                           )
             ]
         )
-

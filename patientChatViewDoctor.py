@@ -29,8 +29,9 @@ class PatientChatViewDoctorPage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                      "STATUS = ?", (1,))
+            c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, "
+                      "doctors.description, doctors.image FROM doctors INNER JOIN clinic ON doctors.clinicID = "
+                      "clinic.id WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
             record = c.fetchall()
             return record
 
@@ -115,6 +116,33 @@ class PatientChatViewDoctorPage:
                     record_containers.append(record_container)
 
                 return Column(controls=record_containers)
+            else:
+                return Container(
+                    padding=padding.only(top=120),
+                    content=Column(
+                        horizontal_alignment="center",
+                        controls=[
+                            Icon(
+                                icons.CHAT_ROUNDED,
+                                size=100,
+                                color=blue
+                            ),
+
+                            Container(
+                                padding=padding.only(top=10),
+                                content=Text(
+                                    value="There is no doctors in the system currently.",
+                                    text_align=TextAlign.CENTER,
+                                    size=18,
+                                    weight=FontWeight.W_500,
+                                    color=colors.BLACK,
+                                    font_family="RobotoSlab"
+                                )
+                            ),
+
+                        ]
+                    )
+                )
 
         return View(
             "/patientChatViewDoctor/:user_id",

@@ -42,18 +42,36 @@ class Homepage:
             sidebar.offset = transform.Offset(-5, 0)
             page.update()
 
-        def get_notification_count():
-            c = db.cursor()
-            c.execute("SELECT COUNT(*) FROM booking WHERE patientID = ? AND bookingStatus = ? AND appointmentDate >= ?",(user_id,1, formatted_date))
-            record = c.fetchone()
+        for x in range(len(page.views)):
+            if x > 3:
+                page.views.pop()
 
-            count = record[0]
-            print(f"count: {count}")
-            print(f"formatted_date: {formatted_date}")
+        def get_notification_count(user_id, formatted_date):
+            try:
+                # Assuming 'db' is your SQLite database connection
+                c = db.cursor()
 
-            return count
+                # Check if the 'booking' table exists
+                c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking'")
+                table_exists = c.fetchone()
 
-        notification_count = get_notification_count()
+                if table_exists:
+                    c.execute(
+                        "SELECT COUNT(*) FROM booking WHERE patientID = ? AND (bookingStatus = ? OR bookingStatus = ?) AND appointmentDate >= ?",
+                        (user_id, 1, -1, formatted_date))
+                    record = c.fetchone()
+                    count = record[0]
+                    return count
+                else:
+                    # Handle case where 'booking' table doesn't exist
+                    return 0  # Or any other default value or action you prefer
+
+            except sqlite3.Error as e:
+                # Handle other potential errors accessing the database
+                print("SQLite error:", e)
+                return -1  # Return a specific value indicating an error occurred
+
+        notification_count = get_notification_count(user_id, formatted_date)
 
         if notification_count > 0:
             notification_icon = "pic/notification_with_content.png"
@@ -74,7 +92,7 @@ class Homepage:
 
         def get_clinic_details():
             c = db.cursor()
-            c.execute("SELECT id, name, location FROM clinic")
+            c.execute("SELECT id, name, location FROM clinic WHERE approvalStatus = 1")
             record = c.fetchall()
             return record
 
@@ -141,7 +159,7 @@ class Homepage:
 
         def get_doctor_details():
             c = db.cursor()
-            c.execute("SELECT id, fullName, specialization, image FROM doctors")
+            c.execute("SELECT id, fullName, specialization, image FROM doctors WHERE STATUS = 1")
             record = c.fetchall()
             return record
 
@@ -482,7 +500,7 @@ class Homepage:
                             ),
 
                             Container(
-                                padding=padding.only(top=15, bottom=10),
+                                padding=padding.only(top=15),
                                 content=Row(
                                     controls=[
                                         Container(padding=padding.only(left=8),

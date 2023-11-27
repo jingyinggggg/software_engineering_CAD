@@ -44,21 +44,21 @@ class DoctorLoginPage:
                                     font_family="RobotoSlab",
                                     text_align=TextAlign.CENTER,
                                     color="#3386C5"),
-
+                                
                                 TextField(
-                                        label="Username",
+                                        label="Username", 
                                         hint_text="Enter username",
                                         ),
-
+                                
                                 TextField(
-                                            label="Password",
-                                            password=True,
+                                            label="Password", 
+                                            password=True, 
                                             hint_text="Enter password",
                                             ),
-
+                                
                                 Checkbox(label="Remember Me",
                                          value=False),
-
+                                
                                 IconButton(content=Text("Login",
                                                          size=16,
                                                          font_family="RobotoSlab",
@@ -71,15 +71,15 @@ class DoctorLoginPage:
                                                                ),
                                               on_click=lambda _:page.go(f"/login/homepage")
                                              ),
-
+                                
                                 Text(disabled=False,
                                      spans=[
                                          TextSpan("forget password?",
                                          TextStyle(decoration=TextDecoration.UNDERLINE),
                                          on_click=lambda _:page.go(f"/login/resetPassword")
                                          ),
-
-                                        ]
+                                                                                  
+                                        ]  
                                     ),
                                 ]
                             )

@@ -15,18 +15,18 @@ class ClinicPage:
         if selected_area:
             if selected_area == "All":
                 c.execute(
-                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
-                    "clinicImage FROM clinic WHERE approvalStatus = ?",
+                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber,"
+                    "clinicImage, closed FROM clinic WHERE approvalStatus = ?",
                     (1,))
             else:
                 c.execute(
-                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
-                    "clinicImage FROM clinic WHERE approvalStatus = ? AND area = ?",
+                    "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber,"
+                    "clinicImage, closed FROM clinic WHERE approvalStatus = ? AND area = ?",
                     (1, selected_area,))
         else:
             c.execute(
-                "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber, "
-                "clinicImage FROM clinic WHERE approvalStatus = ?",
+                "SELECT id, name, location, area, workingTime, workingDay, clinicDescription, phoneNumber,"
+                "clinicImage, closed FROM clinic WHERE approvalStatus = ?",
                 (1,))
         record = c.fetchall()
         return record
@@ -88,6 +88,12 @@ class ClinicPage:
         )
 
         clinic = self.get_clinic_details(area_dropdown.value)
+
+        def check_clinic_working_day(workingDay, clinicClosed):
+            if clinicClosed == "None":
+                return f"{workingDay}"
+            else:
+                return f"{workingDay} ({clinicClosed} Closed)"
 
         def displayClinic(records):
             if records:
@@ -155,7 +161,7 @@ class ClinicPage:
 
                                                     Container(
                                                         content=Text(
-                                                            value=f"{record[5]}",
+                                                            value=check_clinic_working_day(record[5],record[9]),
                                                             size=10,
                                                             font_family="RobotoSlab",
                                                             color=grey,

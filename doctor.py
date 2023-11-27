@@ -10,6 +10,21 @@ class DoctorPage:
     def __init__(self):
         self.show_sidebar = False
 
+    def get_doctor_details(self, selected_speciality):
+        c = db.cursor()
+        if selected_speciality:
+            if selected_speciality == "All":
+                c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
+            else:
+                c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND doctors.specialization = ? AND clinic.approvalStatus = 1", (1,selected_speciality))
+        else:
+            c.execute("SELECT doctors.id, doctors.fullName, doctors.specialization, doctors.experience, doctors.description, doctors.image FROM doctors INNER "
+                          "JOIN clinic ON clinic.id = doctors.clinicID WHERE doctors.STATUS = ? AND clinic.approvalStatus = 1", (1,))
+        record = c.fetchall()
+        return record
+
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
         user_id = int(params.user_id)
@@ -29,9 +44,22 @@ class DoctorPage:
         blue = "#3386C5"
         grey = "#71839B"
 
-        area_dropdown = Dropdown(
+        def refresh_clinic_list(e):
+            updated_clinic_list = self.get_doctor_details(specialization_dropdown.value)
+
+            # Update the clinic_list control with the updated data
+            # Clear the controls first
+            doctorList.controls.clear()
+
+            # Append the controls with the data retrieved from database
+            doctorList.controls.append(displayDoctor(updated_clinic_list))
+
+            # Update the page to reflect the changes
+            page.update()
+
+        specialization_dropdown = Dropdown(
             dense=True,
-            label="Speciality",
+            label="Specialization",
             border_color=blue,
             label_style=TextStyle(size=14,
                                   weight=FontWeight.W_500,
@@ -41,8 +69,9 @@ class DoctorPage:
                                  size=14,
                                  italic=True),
             options=[
+                dropdown.Option("All"),
                 dropdown.Option("General Practitioner"),
-                dropdown.Option("Cardiologist"),
+                dropdown.Option("Cardiologists"),
                 dropdown.Option("Pediatrician"),
                 dropdown.Option("Obstetrician and Gynecologist"),
             ],
@@ -50,23 +79,20 @@ class DoctorPage:
                                  weight=FontWeight.W_500),
             autofocus=True,
             focused_color=grey,
+            on_change=refresh_clinic_list
         )
 
-        def get_doctor_details():
-            c = db.cursor()
-            c.execute("SELECT id, fullName, specialization, experience, description, image FROM doctors WHERE "
-                      "STATUS = ?", (1,))
-            record = c.fetchall()
-            return record
+        doctor = self.get_doctor_details(specialization_dropdown.value)
 
-        doctor = get_doctor_details()
+        split_current_route = page.route.split("/")
+        previous_route = split_current_route[1]
 
         def displayDoctor(records):
             if records:
                 record_containers = []
                 for record in records:
                     def on_more_button_click(record_id=record[0]):
-                        return lambda _: page.go(f"/viewDoctor/{user_id}{record_id}")
+                        return lambda _: page.go(f"/viewDoctor/{user_id}{record_id}{previous_route}")
 
                     record_container = Container(
                         margin=margin.only(left=10, right=10, top=10),
@@ -170,27 +196,31 @@ class DoctorPage:
 
                                                     ]
                                                 )
-                                            ),
-
-                                            Container(
-                                                margin=margin.only(left=160, top=-15, bottom=-5),
-                                                content=TextButton(
-                                                    content=Text(value="More >>",
-                                                                 size=9,
-                                                                 font_family="RobotoSlab",
-                                                                 color=blue),
-                                                    on_click=on_more_button_click()
-                                                )
                                             )
                                         ]
                                     )
                                 )
                             ]
-                        )
+                        ),
+
+                        on_click=on_more_button_click()
                     )
                     record_containers.append(record_container)
 
                 return Column(controls=record_containers)
+
+            else:
+                return Container(
+                    content=Text(
+                        width=300,
+                        value="There are no doctor in the selected specialization.",
+                        color=colors.BLACK,
+                        font_family="RobotoSlab",
+                        text_align=TextAlign.CENTER
+                    )
+                )
+
+        doctorList = displayDoctor(doctor)
 
         return View(
             "/doctor/:user_id",
@@ -201,6 +231,7 @@ class DoctorPage:
                           border_radius=30,
                           # child control
                           content=Column(
+                              scroll=True,
                               horizontal_alignment="center",
                               controls=[
                                   Container(width=350,
@@ -234,37 +265,11 @@ class DoctorPage:
                                             ),
 
                                   Container(
-                                      padding=padding.only(left=10, right=10, top=10),
-                                      content=area_dropdown
+                                      padding=padding.only(left=10, right=10, top=10, bottom=10),
+                                      content=specialization_dropdown
                                   ),
 
-                                  displayDoctor(doctor),
-
-                                  # Container(
-                                  #     margin=margin.only(left=10, right=10, top=10),
-                                  #     # padding=padding.only(left=10, right=10, top=10, bottom=5),
-                                  #     content=Row(
-                                  #         controls=[
-                                  #             TextField(
-                                  #                 bgcolor=lightBlue,
-                                  #                 height=40,
-                                  #                 width=325,
-                                  #                 dense=True,
-                                  #                 border_color=blue,
-                                  #                 border_radius=10,
-                                  #                 label="Search Clinic",
-                                  #                 label_style=TextStyle(color=colors.BLACK,
-                                  #                                       size=14,
-                                  #                                       italic=True,
-                                  #                                       weight=FontWeight.W_400),
-                                  #                 text_style=TextStyle(color=colors.BLACK,
-                                  #                                      size=12,
-                                  #                                      weight=FontWeight.W_400)
-                                  #             ),
-                                  #
-                                  #         ]
-                                  #     )
-                                  # ),
+                                  doctorList
 
                               ]
                           )

@@ -52,10 +52,29 @@ class ViewMedicalRecordPage:
 
         user_id, bloodType, allergies, pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, currentMedication, dosage = get_user_details()
 
+        alert_dialog = AlertDialog(
+            modal=True,
+            title=Text("Success", text_align=TextAlign.CENTER),
+            content=Text("You have updated your medical record successfully!",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Done", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = True
+            page.update()
+
+        def close_dlg():
+            page.dialog = alert_dialog
+            alert_dialog.open = False
+            page.update()
+
         paddingContainer = Container(padding=padding.only(bottom=1))
 
         bloodTypeTextField = TextField(
-            read_only=True,
             label="Blood Type",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -72,7 +91,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(bloodTypeTextField, bloodType)
 
         allergiesTextField = TextField(
-            read_only=True,
             label="Allergies",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -90,7 +108,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(allergiesTextField, allergies)
 
         pastMedicalConditionTextField = TextField(
-            read_only=True,
             label="Past Medical Condition and Diagnoses",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -108,7 +125,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(pastMedicalConditionTextField, pastMedicalCondition)
 
         surgicalHistoryTextField = TextField(
-            read_only=True,
             label="Surgical History",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -126,7 +142,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(surgicalHistoryTextField, surgicalHistory)
 
         familyMedicalHistoryTextField = TextField(
-            read_only=True,
             label="Family Medical History",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -144,7 +159,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(familyMedicalHistoryTextField, familyMedicalHistory)
 
         currentMedicalConditionTextField = TextField(
-            read_only=True,
             label="Current Medical Condition",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -162,7 +176,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(currentMedicalConditionTextField, currentMedicalCondition)
 
         currentMedicationTextField = TextField(
-            read_only=True,
             label="Current Medication",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -180,7 +193,6 @@ class ViewMedicalRecordPage:
         setTextFieldValue(currentMedicationTextField, currentMedication)
 
         dosageTextField = TextField(
-            read_only=True,
             label="Dosage and Frequency",
             label_style=TextStyle(font_family="RobotoSlab",
                                   size=12,
@@ -196,6 +208,32 @@ class ViewMedicalRecordPage:
         )
 
         setTextFieldValue(dosageTextField, dosage)
+
+        def updateRecord(e):
+            if (
+                    bloodTypeTextField.value != "" and allergiesTextField.value != "" and pastMedicalConditionTextField.value != "" and
+                    surgicalHistoryTextField.value != "" and familyMedicalHistoryTextField.value != "" and currentMedicalConditionTextField.value != "" and
+                    currentMedicationTextField.value != "" and dosageTextField.value != ""):
+                c = db.cursor()
+                c.execute(f'UPDATE medicalRecordHistory SET bloodType = ?, allergies = ?, pastMedicalCondition = '
+                          f'?, surgicalHistory = ?, familyMedicalHistory = ?, currentMedicalCondition = ?, '
+                          f'currentMedication = ?, dosage = ? WHERE id = {medicalRecord_id}',
+                          (
+                              bloodTypeTextField.value, allergiesTextField.value, pastMedicalConditionTextField.value,
+                              surgicalHistoryTextField.value, familyMedicalHistoryTextField.value,
+                              currentMedicalConditionTextField.value,
+                              currentMedicationTextField.value, dosageTextField.value))
+                db.commit()
+                open_dlg()
+                user_id, bloodType, allergies, pastMedicalCondition, surgicalHistory, familyMedicalHistory, currentMedicalCondition, currentMedication, dosage = get_user_details()
+                setTextFieldValue(bloodTypeTextField, bloodType)
+                setTextFieldValue(allergiesTextField, allergies)
+                setTextFieldValue(pastMedicalConditionTextField, pastMedicalCondition)
+                setTextFieldValue(surgicalHistoryTextField, surgicalHistory)
+                setTextFieldValue(familyMedicalHistoryTextField, familyMedicalHistory)
+                setTextFieldValue(currentMedicalConditionTextField, currentMedicalCondition)
+                setTextFieldValue(currentMedicationTextField, currentMedication)
+                setTextFieldValue(dosageTextField, dosage)
 
         return View(
             "/viewMedicalRecord/:medicalRecord_id",
@@ -273,7 +311,25 @@ class ViewMedicalRecordPage:
                                               paddingContainer,
 
                                               dosageTextField,
-                                              paddingContainer
+                                              paddingContainer,
+
+                                              Container(
+                                                  content=TextButton(content=Text("Update",
+                                                                                  size=16,
+                                                                                  font_family="RobotoSlab",
+                                                                                  color="WHITE",
+                                                                                  text_align=TextAlign.CENTER),
+                                                                     width=305,
+                                                                     height=45,
+                                                                     style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                                       shape={
+                                                                                           "": RoundedRectangleBorder(
+                                                                                               radius=7)}
+                                                                                       ),
+                                                                     ),
+                                                  on_click=updateRecord
+                                              ),
+
                                           ]
 
                                       )

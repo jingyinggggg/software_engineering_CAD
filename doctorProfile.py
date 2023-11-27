@@ -55,6 +55,17 @@ class DoctorProfilePage:
 
         fullName, username, email, phoneNumber, password, experience, specialization, description, clinic, workingTime, workingDate = get_user_details()
 
+        def get_clinic_name(clinic_id):
+            c = db.cursor()
+            c.execute(f"SELECT name FROM clinic WHERE id = {clinic_id}")
+            record = c.fetchone()
+
+            clinic_name = record[0]
+
+            return clinic_name
+
+        clinic_name = get_clinic_name(clinic)
+
         fullNameTextField = TextField(
             label="Full Name",
             label_style=TextStyle(font_family="RobotoSlab",
@@ -182,7 +193,7 @@ class DoctorProfilePage:
             dense=True
         )
 
-        setTextFieldValue(clinicTextField, clinic)
+        setTextFieldValue(clinicTextField, clinic_name)
 
         return View(
             "/doctorProfile/:user_id",

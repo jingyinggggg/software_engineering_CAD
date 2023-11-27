@@ -41,6 +41,10 @@ class DoctorHomepage:
             sidebar.offset = transform.Offset(-205, 0)
             page.update()
 
+        for x in range(len(page.views)):
+            if x > 3:
+                page.views.pop()
+
         def get_patient():
             c = db.cursor()
             c.execute("SELECT bookingID, users.id, users.fullName FROM booking INNER JOIN users ON booking.patientID "

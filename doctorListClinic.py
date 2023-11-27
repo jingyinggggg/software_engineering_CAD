@@ -166,17 +166,31 @@ class DoctorListBasedOnClinic:
 
             else:
                 return Container(
-                    padding=padding.only(top=250),
+                    padding=padding.only(top=150),
                     content=Column(
                         horizontal_alignment="center",
                         controls=[
+
                             Container(
-                                padding=padding.only(top=10, left=30, right=30),
+                                bgcolor=lightBlue,
+                                border_radius=50,
+                                content=Image(
+                                    src="pic/doctorManage.png",
+                                    width=100,
+                                    height=100,
+
+                                )
+                            )
+                            ,
+
+                            Container(
+                                padding=padding.only(left=30, right=30),
                                 content=Text(
-                                    value="There is no any doctor in the selected clinic currently.",
+                                    width=250,
+                                    value="There are no doctor in the selected clinic currently.",
                                     text_align=TextAlign.CENTER,
                                     size=12,
-                                    color=colors.BLACK,
+                                    color=grey,
                                     font_family="RobotoSlab"
                                 )
                             ),
@@ -210,7 +224,8 @@ class DoctorListBasedOnClinic:
                                                                   width=20,
                                                                   height=20
                                                               ),
-                                                              on_click=lambda _: page.go(f"/viewClinic/{user_id}{clinic_id}")
+                                                              on_click=lambda _: page.go(
+                                                                  f"/viewClinic/{user_id}{clinic_id}")
                                                               ),
 
                                                     Container(padding=padding.only(left=110, top=25),
