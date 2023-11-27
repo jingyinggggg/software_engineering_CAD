@@ -429,7 +429,6 @@ class ClinicModifyDeclineDetails:
         def close_dlg1(dialog):
             dialog.open = False
             page.dialog = dialog
-            # page.views.pop()  # Remove the current view from the stack
             page.go(f"/clinicHomepage/{clinic_id}")  # Navigate to the homepage after closing the dialog
             page.update()
 
