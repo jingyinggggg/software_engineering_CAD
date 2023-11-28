@@ -157,9 +157,9 @@ class ProofStatus:
 
         def get_approved_proof():
             c = db.cursor()
-            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE doctorID = ? AND proofStatus = ? AND prescriptionStatus != NULL ", (user_id, 1,))
+            c.execute("SELECT * FROM booking INNER JOIN users ON booking.patientID = users.id WHERE doctorID = ? AND proofStatus = ? AND prescriptionStatus is null ", (user_id, 1,))
             record = c.fetchall()
-            # print(record)
+            print(record)
             return record
 
         approve_proof = get_approved_proof()

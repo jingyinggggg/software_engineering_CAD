@@ -187,8 +187,8 @@ class DoctorNotification:
                     height=700,
                     bgcolor="#FFFFFF",
                     border_radius=30,
-                    alignment=alignment.center,
                     content=Column(
+                        scroll=True,
                         controls=[
                             Row(
                                 alignment=MainAxisAlignment.CENTER,
@@ -218,7 +218,11 @@ class DoctorNotification:
                                 ]
                             ),
                             # Include the list of notification_controls
-                            *notification_controls
+                            *notification_controls,
+
+                            Container(
+                                margin=margin.only(bottom=20)
+                            )
                         ]
                     )
                 )

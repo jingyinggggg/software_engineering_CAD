@@ -64,6 +64,7 @@ class ClinicAdminUpdateAppointmentPage:
                                     padding=padding.only(left=10, right=10, top=10, bottom=10),
                                     border_radius=15,
                                     border=border.all(1, "#D3D3D3"),
+                                    bgcolor=colors.WHITE,
                                     content=Row(
                                         controls=[
                                             Container(
@@ -165,6 +166,7 @@ class ClinicAdminUpdateAppointmentPage:
                     bgcolor="#F4F4F4",
                     border_radius=30,
                     content=Column(
+                        scroll=True,
                         controls=[
                             Container(
                                 padding=padding.only(top=25, left=10, bottom=10),

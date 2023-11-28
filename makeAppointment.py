@@ -391,10 +391,10 @@ class MakeAppointmentPage:
 
         def navigate_homepage():
             try:
+                page.views.pop(len(page.views) - 1)
                 page.go(f"/homepage/{user_id}")
                 self.chosen_date = None
                 self.selected_time_slot = None
-                page.update()
             except Exception as e:
                 print(f"Error navigating to homepage: {e}")
 

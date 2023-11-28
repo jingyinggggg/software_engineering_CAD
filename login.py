@@ -5,73 +5,11 @@ import sqlite3
 
 db = sqlite3.connect("cad.db", check_same_thread=False)
 
-
-def CreateTable():
-    c = db.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS booking(
-                 bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
-                 patientID INTEGER NOT NULL,
-                 doctorID INTEGER NOT NULL,
-                 appointmentDate TEXT NOT NULL,
-                 appointmentTime TEXT NOT NULL,
-                 appointmentType TEXT NOT NULL, 
-                 clinicID INTEGER NOT NULL,
-                 reasonVisit TEXT NOT NULL,
-                 appointmentStatus TEXT,
-                 bookingStatus INTEGER NOT NULL,
-                 rejectReason TEXT,
-                 proof TEXT,
-                 proofStatus INTEGER,
-                 proofRejectReason TEXT,
-                 reassignDoctorID INTEGER)""")
-    db.commit()
-
-
-# def create_prescriptions_table():
-#     c = db.cursor()
-#     c.execute('''
-#         CREATE TABLE IF NOT EXISTS prescriptions (
-#             prescriptionID INTEGER PRIMARY KEY AUTOINCREMENT,
-#             patientID INTEGER NOT NULL,
-#             bookingID INTEGER NOT NULL,
-#             patientName TEXT NOT NULL,
-#             medicationName TEXT NOT NULL,
-#             quantity TEXT NOT NULL,
-#             duration TEXT NOT NULL,
-#             date_signed DATE NOT NULL,
-#             instructions TEXT NOT NULL
-#         )
-#     ''')
-#     db.commit()
-
-
 # def update():
 #     c = db.cursor()
 #     c.execute(
-#         f"UPDATE clinic SET approvalStatus = ? WHERE id = ?",
-#         (0, 2))
-#     db.commit()
-
-def UpdateTable():
-    c = db.cursor()
-    c.execute("ALTER TABLE booking "
-              "ADD prescriptionStatus INTEGER")
-    db.commit()
-
-# def addToDatabase():
-#     c = db.cursor()
-#     c.execute("INSERT INTO prescriptions (patientID, bookingID, patientName, medicationName, quantity, duration,date_signed, instructions, doctorID) VALUES (?,?,?,?,?,?,?,?,?)",
-#               (1, 36,"Ng Jing Ying", "Flecainide", "50mg", "Two weeks", "2023-11-25", "Take the medicine twice per day.", 1))
-#     db.commit()
-#
-def drop():
-    c= db.cursor()
-    c.execute("DROP TABLE booking")
-    db.commit()
-
-# def delete():
-#     c= db.cursor()
-#     c.execute("DELETE FROM booking")
+#         f"UPDATE doctors SET STATUS = ? WHERE id = ?",
+#         (1, 6))
 #     db.commit()
 
 class LoginPage:
@@ -81,13 +19,7 @@ class LoginPage:
     def view(self, page: Page, params: Params, basket: Basket):
         # print(params)
 
-        # drop()
-        # CreateTable()
-        # addToDatabase()
         # update()
-        # UpdateTable()
-        # delete()
-        # create_prescriptions_table()
 
         page.title = "Call A Doctor"
         page.window_width = 380
@@ -140,32 +72,6 @@ class LoginPage:
             page.dialog = alert_dialog
             alert_dialog.open = False
             page.update()
-
-        # def verifyUser(e):
-        #     c = db.cursor()
-        #     c.execute("SELECT id FROM users WHERE email = ? AND password = ?", (email.value, password.value))
-        #     user = c.fetchone()
-        #
-        #     if user:
-        #         page.go(f"/homepage/{user[0]}")
-        #
-        #     elif email.value == "" or password.value == "":
-        #         open_dlg()
-        #
-        #     else:
-        #         c.execute("SELECT id FROM doctors WHERE email = ? AND password = ?", (email.value, password.value))
-        #         doctor = c.fetchone()
-        #
-        #         if doctor is not None:
-        #             page.go(f"/login/homepage/{doctor[0]}")
-        #         else:
-        #             c.execute("SELECT id FROM admin WHERE email = ? AND password = ?", (email.value, password.value))
-        #             admin = c.fetchone()
-        #
-        #             if admin is not None:
-        #                 page.go(f"/")
-        #             else:
-        #                 open_dlg()
 
         def verifyUser(e):
             c = db.cursor()

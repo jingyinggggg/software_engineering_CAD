@@ -273,6 +273,8 @@ class ClinicHomepage:
                                 )
                             ),
                             Container(
+                                width=280,
+                                alignment=alignment.top_left,
                                 content=Text(
                                     f"Doctor {doctor_name} ({doctor_specialization})"
                                 ),

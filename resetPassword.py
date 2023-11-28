@@ -53,8 +53,18 @@ class ResetPasswordPage:
             title=Text("Successful!", text_align=TextAlign.CENTER),
             content=Text("You have updated your password successfully!",
                          text_align=TextAlign.CENTER),
-            actions=[TextButton("Done", on_click=lambda _: page.go(f"/loginUser"))],
+            actions=[TextButton("Done", on_click=lambda _: page.go(f"/"))],
             actions_alignment=MainAxisAlignment.CENTER
+        )
+
+        error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text("Something went wrong! Please try again...",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Try Again", on_click=lambda _: close_dlg())],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
         )
 
         def open_dlg():
@@ -62,13 +72,26 @@ class ResetPasswordPage:
             alert_dialog.open = True
             page.update()
 
+        def close_dlg():
+            page.dialog = error_dialog
+            error_dialog.open = False
+            page.update()
+
+        def open_dlg1():
+            page.dialog = error_dialog
+            error_dialog.open = True
+            page.update()
+
         def UpdateTable(e):
             try:
-                c = db.cursor()
-                c.execute('UPDATE users SET password = ? WHERE email = ?', (password.value, email.value))
-                db.commit()
-                page.update()
-                open_dlg()
+                if email.value != "" and password.value != "":
+                    c = db.cursor()
+                    c.execute('UPDATE users SET password = ? WHERE email = ?', (password.value, email.value))
+                    db.commit()
+                    page.update()
+                    open_dlg()
+                else:
+                    open_dlg1()
             except Exception as e:
                 print(e)
 

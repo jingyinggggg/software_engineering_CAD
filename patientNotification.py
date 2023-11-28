@@ -54,7 +54,6 @@ class PatientNotificationPage:
 
         def displayRecord(records):
             current_datetime = datetime.now()
-            # current_datetime = datetime(2023, 10, 26, 10, 1)
 
             if records:
                 record_containers = []

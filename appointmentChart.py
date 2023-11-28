@@ -56,8 +56,6 @@ class ClinicViewAppointmentChart:
                 (0, clinic_id))
             record = c.fetchone()
 
-            print(record)
-
             if record:
                 requested_count = record[0]
             else:
@@ -137,11 +135,6 @@ class ClinicViewAppointmentChart:
 
             return PlotlyChart(figure=fig, expand=True)
 
-        print(f"Request:{requested_count}")
-        print(f"Schedule:{scheduled_count}")
-        print(f"Complete:{completed_count}")
-        print(f"Reject:{rejected_count}")
-
         return View(
             "/clinicViewAppointmentChart/:clinic_id",
             controls=[
@@ -191,7 +184,7 @@ class ClinicViewAppointmentChart:
                                               Container(
                                                   margin=margin.only(top=10, left=10),
                                                   content=Text(
-                                                      value="Below is the chart of clinic's appointment for current week:",
+                                                      value="Below is the chart of clinic's appointment:",
                                                       size=13,
                                                       font_family="RobotoSlab",
                                                       weight=FontWeight.BOLD,

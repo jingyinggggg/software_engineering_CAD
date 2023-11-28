@@ -52,6 +52,32 @@ class CreateAdminAccount:
 
         clinic_id, clinicName = get_clinic_details()
 
+        def get_clinic_admin_details():
+            c = db.cursor()
+            c.execute(f"SELECT * FROM clinicAdmin WHERE clinicID = {clinic_id}")
+            record = c.fetchall()
+
+            if record:
+                clinicAdminFullName = record[0][1]
+                clinicAdminUsername = record[0][2]
+                clinicAdminEmail = record[0][3]
+                clinicAdminPassword = record[0][4]
+            else:
+                clinicAdminFullName = ""
+                clinicAdminUsername = ""
+                clinicAdminEmail = ""
+                clinicAdminPassword = ""
+
+            return clinicAdminFullName, clinicAdminUsername, clinicAdminEmail, clinicAdminPassword
+
+        def setText(textField, value):
+            if value != "":
+                textField.value = value
+            else:
+                textField.value = ""
+
+        clinicAdminFullName, clinicAdminUsername, clinicAdminEmail, clinicAdminPassword = get_clinic_admin_details()
+
         fullnameTextField = TextField(
             width=320,
             label="Fullname",
@@ -67,6 +93,8 @@ class CreateAdminAccount:
                                  ),
             dense=True
         )
+
+        setText(fullnameTextField, clinicAdminFullName)
 
         usernameTextField = TextField(
             width=320,
@@ -84,6 +112,8 @@ class CreateAdminAccount:
             dense=True
         )
 
+        setText(usernameTextField, clinicAdminUsername)
+
         emailTextField = TextField(
             width=320,
             label="Email",
@@ -99,6 +129,8 @@ class CreateAdminAccount:
                                  ),
             dense=True
         )
+
+        setText(emailTextField, clinicAdminEmail)
 
         passwordTextField = TextField(
             width=320,
@@ -116,6 +148,10 @@ class CreateAdminAccount:
             dense=True
         )
 
+        setText(passwordTextField, clinicAdminPassword)
+
+
+
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Success", text_align=TextAlign.CENTER),
@@ -129,11 +165,6 @@ class CreateAdminAccount:
         def open_dlg():
             page.dialog = alert_dialog
             alert_dialog.open = True
-            page.update()
-
-        def close_dlg():
-            page.dialog = alert_dialog
-            alert_dialog.open = False
             page.update()
 
         error_dialog = AlertDialog(
@@ -156,6 +187,36 @@ class CreateAdminAccount:
             error_dialog.open = False
             page.update()
 
+        update_success_dialog = AlertDialog(
+            modal=True,
+            title=Text("Success", text_align=TextAlign.CENTER),
+            content=Text("You have updated the admin account successfully!",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Ok", on_click=lambda _: close_update_dlg(update_success_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        update_error_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text("Something went wrong! Please try again...",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Ok", on_click=lambda _: close_update_dlg(update_error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER,
+            open=False
+        )
+
+        def open_update_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+
+        def close_update_dlg(dialog):
+            page.dialog = dialog
+            dialog.open = False
+            page.update()
+
         def addToDatabase(e):
             CreateTable()
             if (fullnameTextField.value != "" and usernameTextField.value != "" and emailTextField.value != "" and
@@ -171,6 +232,70 @@ class CreateAdminAccount:
                 print("success")
             else:
                 open_error_dlg()
+
+        def updateDatabase(e):
+            CreateTable()
+            if (fullnameTextField.value != "" and usernameTextField.value != "" and emailTextField.value != "" and
+                    passwordTextField.value != ""):
+                c = db.cursor()
+                c.execute("UPDATE clinicAdmin SET fullName = ?, username = ?, email = ?, password = ? WHERE clinicID = ?",
+                          (fullnameTextField.value, usernameTextField.value, emailTextField.value, passwordTextField.value,clinic_id))
+                db.commit()
+                page.update()
+                open_update_dlg(update_success_dialog)
+                print("success")
+            else:
+                open_update_dlg(update_error_dialog)
+
+        create_btn = Container(padding=padding.only(left=10, top=10),
+                               visible=False,
+                               content=TextButton(content=Text("Create",
+                                                               size=16,
+                                                               font_family="RobotoSlab",
+                                                               color="WHITE",
+                                                               text_align=TextAlign.CENTER),
+                                                  width=320,
+                                                  height=45,
+                                                  style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                    shape={
+                                                                        "": RoundedRectangleBorder(
+                                                                            radius=7)}
+                                                                    ),
+                                                  on_click=addToDatabase
+
+                                                  ),
+
+                               )
+
+        update_btn = Container(padding=padding.only(left=10, top=10),
+                               visible=False,
+                               content=TextButton(content=Text("Update",
+                                                               size=16,
+                                                               font_family="RobotoSlab",
+                                                               color="WHITE",
+                                                               text_align=TextAlign.CENTER),
+                                                  width=320,
+                                                  height=45,
+                                                  style=ButtonStyle(bgcolor={"": "#3386C5"},
+                                                                    shape={
+                                                                        "": RoundedRectangleBorder(
+                                                                            radius=7)}
+                                                                    ),
+                                                  on_click=updateDatabase
+
+                                                  ),
+
+                               )
+
+        def set_btn_visible(e):
+            if clinicAdminFullName != "" and clinicAdminUsername != "" and clinicAdminEmail != "" and clinicAdminPassword != "":
+                update_btn.visible = True
+                create_btn.visible = False
+            else:
+                update_btn.visible = False
+                create_btn.visible = True
+
+        set_btn_visible(None)
 
         return View(
             "/createAdminAccount/:clinic_id",
@@ -222,24 +347,10 @@ class CreateAdminAccount:
                             Container(padding=padding.only(left=10),
                                       content=passwordTextField),
 
-                            Container(padding=padding.only(left=10, top=10),
-                                      content=TextButton(content=Text("Create",
-                                                                      size=16,
-                                                                      font_family="RobotoSlab",
-                                                                      color="WHITE",
-                                                                      text_align=TextAlign.CENTER),
-                                                         width=320,
-                                                         height=45,
-                                                         style=ButtonStyle(bgcolor={"": "#3386C5"},
-                                                                           shape={
-                                                                               "": RoundedRectangleBorder(
-                                                                                   radius=7)}
-                                                                           ),
-                                                         on_click=addToDatabase
+                            create_btn,
 
-                                                         ),
+                            update_btn
 
-                                      ),
                         ])
                 )
             ])

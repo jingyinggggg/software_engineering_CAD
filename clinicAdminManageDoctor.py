@@ -27,7 +27,6 @@ class ClinicAdminManageDoctorPage:
         blue = "#3386C5"
         lightBlue = "#D0DCEE"
 
-        # Get the appointment details which has updated with the visit proof
         def get_doctor_list():
             c = db.cursor()
             c.execute(
@@ -53,6 +52,7 @@ class ClinicAdminManageDoctorPage:
                         padding=padding.only(left=10, top=10, bottom=10),
                         border_radius=10,
                         border=border.all(1, blue),
+                        bgcolor=colors.WHITE,
                         content=Row(
                             alignment="spaceBetween",
                             controls=[

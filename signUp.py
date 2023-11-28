@@ -40,6 +40,13 @@ class SignUpPage:
             "RobotoSlab": "https://github.com/google/fonts/raw/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf"
         }
 
+        def get_exist_user():
+            c = db.cursor()
+            c.execute("SELECT email FROM users")
+            record = c.fetchall()
+
+            return record
+
         alert_dialog = AlertDialog(
             modal=True,
             title=Text("Successful", text_align=TextAlign.CENTER),
@@ -55,6 +62,15 @@ class SignUpPage:
             content=Text("Something went wrong! Please try again...",
                          text_align=TextAlign.CENTER),
             actions=[TextButton("Try Again", on_click=lambda _: close_dlg(error_dialog))],
+            actions_alignment=MainAxisAlignment.CENTER
+        )
+
+        exist_dialog = AlertDialog(
+            modal=True,
+            title=Text("Failed", text_align=TextAlign.CENTER),
+            content=Text("The email has been registered!",
+                         text_align=TextAlign.CENTER),
+            actions=[TextButton("Try Again", on_click=lambda _: close_dlg(exist_dialog))],
             actions_alignment=MainAxisAlignment.CENTER
         )
 
@@ -123,20 +139,32 @@ class SignUpPage:
             page.update()
 
         def addToDatabase(e):
-            # DropTable()
-            # DeleteTable()
             CreateTable()
-            # print(ReadTable())
             try:
                 if fullName.value != "" and username.value != "" and email.value != "" and phoneNumber.value != "" and password.value != "":
                     c = db.cursor()
-                    c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password) '
-                              'VALUES (?, ?, ?, ?, ?)',
-                              (
-                                  fullName.value, username.value, email.value, phoneNumber.value, password.value))
-                    db.commit()
-                    page.update()
-                    open_dlg(alert_dialog)
+
+                    existing_user = get_exist_user()
+                    existing = False
+
+                    for exist in existing_user:
+                        if email.value == exist[0]:
+                            existing = True
+                            break
+                        else:
+                            existing = False
+                            continue
+
+                    if not existing:
+                        c.execute('INSERT INTO users (fullName, username, email, phoneNumber, password) '
+                                  'VALUES (?, ?, ?, ?, ?)',
+                                  (
+                                      fullName.value, username.value, email.value, phoneNumber.value, password.value))
+                        db.commit()
+                        page.update()
+                        open_dlg(alert_dialog)
+                    else:
+                        open_dlg(exist_dialog)
                 else:
                     open_dlg(error_dialog)
             except Exception as e:
